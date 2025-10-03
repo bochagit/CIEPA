@@ -4,32 +4,14 @@ const defaultTheme = createTheme();
 
 const customShadows = [...defaultTheme.shadows];
 
-// Tu color principal verde #44ad4a
 export const brand = {
-  50: '#f1f8f2',
-  100: '#ddeede',
-  200: '#b6d6ba',
-  300: '#88bd8e',
-  400: '#5ca464',
-  500: '#44ad4a', // Tu color exacto
-  600: '#3a8b3f',
-  700: '#316f35',
-  800: '#2b5a2e',
-  900: '#254a27',
+  main: '#10693d',
+  variant: '#36b449'
 };
 
-// Tu color secundario azul #27a8e1
 export const secondary = {
-  50: '#e3f2fd',
-  100: '#bbdefb',
-  200: '#90caf9',
-  300: '#64b5f6',
-  400: '#42a5f5',
-  500: '#27a8e1', // Tu color exacto
-  600: '#1e88e5',
-  700: '#1976d2',
-  800: '#1565c0',
-  900: '#0d47a1',
+  main: '#2282ab',
+  variant: '#24a9e1'
 };
 
 export const gray = {
@@ -52,7 +34,7 @@ export const green = {
   200: 'hsl(122, 39%, 80%)',
   300: 'hsl(122, 39%, 65%)',
   400: 'hsl(122, 39%, 55%)',
-  500: 'hsl(122, 39%, 48%)', // Mismo que tu marca
+  500: 'hsl(122, 39%, 48%)',
   600: 'hsl(122, 39%, 42%)',
   700: 'hsl(122, 39%, 35%)',
   800: 'hsl(122, 39%, 25%)',
@@ -90,46 +72,46 @@ export const red = {
 export const getDesignTokens = (mode) => {
   customShadows[1] =
     mode === 'dark'
-      ? 'hsla(122, 39%, 5%, 0.7) 0px 4px 16px 0px, hsla(122, 39%, 10%, 0.8) 0px 8px 16px -5px'
-      : 'hsla(122, 39%, 5%, 0.07) 0px 4px 16px 0px, hsla(122, 39%, 10%, 0.07) 0px 8px 16px -5px';
+      ? 'hsla(150, 65%, 20%, 0.7) 0px 4px 16px 0px, hsla(150, 65%, 25%, 0.8) 0px 8px 16px -5px'
+      : 'hsla(150, 65%, 20%, 0.07) 0px 4px 16px 0px, hsla(150, 65%, 25%, 0.07) 0px 8px 16px -5px';
 
   return {
     palette: {
       mode,
       primary: {
-        light: brand[300],
-        main: brand[500], // #44ad4a
-        dark: brand[700],
+        light: brand.variant,
+        main: brand.main,
+        dark: brand.main,
         contrastText: '#ffffff',
         ...(mode === 'dark' && {
           contrastText: '#ffffff',
-          light: brand[400],
-          main: brand[500],
-          dark: brand[600],
+          light: brand.variant,
+          main: brand.main,
+          dark: brand.main,
         }),
       },
       secondary: {
-        light: secondary[300],
-        main: secondary[500], // #27a8e1
-        dark: secondary[700],
+        light: secondary.variant,
+        main: secondary.main,
+        dark: secondary.main,
         contrastText: '#ffffff',
         ...(mode === 'dark' && {
           contrastText: '#ffffff',
-          light: secondary[400],
-          main: secondary[500],
-          dark: secondary[600],
+          light: secondary.variant,
+          main: secondary.main,
+          dark: secondary.main,
         }),
       },
       info: {
-        light: secondary[200],
-        main: secondary[400],
-        dark: secondary[600],
+        light: secondary.variant,
+        main: secondary.main,
+        dark: secondary.main,
         contrastText: '#ffffff',
         ...(mode === 'dark' && {
           contrastText: '#ffffff',
-          light: secondary[300],
-          main: secondary[400],
-          dark: secondary[700],
+          light: secondary.variant,
+          main: secondary.main,
+          dark: secondary.main,
         }),
       },
       warning: {
@@ -184,11 +166,11 @@ export const getDesignTokens = (mode) => {
         }),
       },
       action: {
-        hover: alpha(brand[500], 0.08),
-        selected: alpha(brand[500], 0.12),
+        hover: alpha(brand.main, 0.08),
+        selected: alpha(brand.main, 0.12),
         ...(mode === 'dark' && {
-          hover: alpha(brand[600], 0.08),
-          selected: alpha(brand[600], 0.12),
+          hover: alpha(brand.main, 0.08),
+          selected: alpha(brand.main, 0.12),
         }),
       },
     },
@@ -252,21 +234,21 @@ export const colorSchemes = {
   light: {
     palette: {
       primary: {
-        light: brand[300],
-        main: brand[500], // #44ad4a
-        dark: brand[700],
+        light: brand.variant,
+        dark: brand.main,
+        main: brand.main,
         contrastText: '#ffffff',
       },
       secondary: {
-        light: secondary[300],
-        main: secondary[500], // #27a8e1
-        dark: secondary[700],
+        light: secondary.variant,
+        main: secondary.main,
+        dark: secondary.main,
         contrastText: '#ffffff',
       },
       info: {
-        light: secondary[200],
-        main: secondary[400],
-        dark: secondary[600],
+        light: secondary.variant,
+        main: secondary.main,
+        dark: secondary.main,
         contrastText: '#ffffff',
       },
       warning: {
@@ -301,32 +283,32 @@ export const colorSchemes = {
         warning: orange[500],
       },
       action: {
-        hover: alpha(brand[500], 0.08),
-        selected: alpha(brand[500], 0.12),
+        hover: alpha(brand.main, 0.08),
+        selected: alpha(brand.main, 0.12),
       },
       baseShadow:
-        'hsla(122, 39%, 5%, 0.07) 0px 4px 16px 0px, hsla(122, 39%, 10%, 0.07) 0px 8px 16px -5px',
+        'hsla(150, 65%, 20%, 0.07) 0px 4px 16px 0px, hsla(150, 65%, 25%, 0.07) 0px 8px 16px -5px',
     },
   },
   dark: {
     palette: {
       primary: {
         contrastText: '#ffffff',
-        light: brand[400],
-        main: brand[500], // #44ad4a
-        dark: brand[600],
+        light: brand.variant,
+        main: brand.main,
+        dark: brand.main,
       },
       secondary: {
         contrastText: '#ffffff',
-        light: secondary[400],
-        main: secondary[500], // #27a8e1
-        dark: secondary[600],
+        light: secondary.variant,
+        main: secondary.main,
+        dark: secondary.main,
       },
       info: {
         contrastText: '#ffffff',
-        light: secondary[300],
-        main: secondary[400],
-        dark: secondary[700],
+        light: secondary.variant,
+        main: secondary.main,
+        dark: secondary.main,
       },
       warning: {
         light: orange[400],
@@ -359,11 +341,11 @@ export const colorSchemes = {
         secondary: gray[400],
       },
       action: {
-        hover: alpha(brand[600], 0.08),
-        selected: alpha(brand[600], 0.12),
+        hover: alpha(brand.main, 0.08),
+        selected: alpha(brand.main, 0.12),
       },
       baseShadow:
-        'hsla(122, 39%, 5%, 0.7) 0px 4px 16px 0px, hsla(122, 39%, 10%, 0.8) 0px 8px 16px -5px',
+        'hsla(150, 65%, 20%, 0.7) 0px 4px 16px 0px, hsla(150, 65%, 25%, 0.8) 0px 8px 16px -5px',
     },
   },
 };

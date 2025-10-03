@@ -27,7 +27,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   backdropFilter: 'blur(24px)',
   border: '1px solid',
   borderColor: (theme.vars || theme).palette.divider,
-  backgroundColor: alpha(brand[500], 0.4),
+  backgroundColor: alpha(brand.main, 0.4),
   boxShadow: (theme.vars || theme).shadows[1],
   padding: '8px 12px',
 }));
@@ -87,9 +87,10 @@ export default function AppAppBar() {
 
   return (
     <AppBar
-      position="fixed"
+      position="sticky"
       enableColorOnDark
       sx={{
+        top: '2.5rem',
         boxShadow: 0,
         bgcolor: 'transparent',
         backgroundImage: 'none',
@@ -99,15 +100,17 @@ export default function AppAppBar() {
       <Container maxWidth="lg">
         <StyledToolbar variant="dense" disableGutters>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, gap: '1rem'}}>
-            <CiepaLogo />
+            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+              <CiepaLogo />
+            </Box>
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" color="info" size="small">
+              <Button variant="text" color="info" size="small" sx={{ color: '#222', ":hover": {color: '#eee'} }}>
                 Sobre nosotros
               </Button>
-              <Button variant="text" color="info" size="small">
+              <Button variant="text" color="info" size="small" sx={{ color: '#222', ":hover": {color: '#eee'} }}>
                 Noticias
               </Button>
-              <Button variant="text" color="info" size="small">
+              <Button variant="text" color="info" size="small" sx={{ color: '#222', ":hover": {color: '#eee'} }}>
                 Contacto
               </Button>
             </Box>
@@ -124,10 +127,10 @@ export default function AppAppBar() {
                 <Typography variant="body2" color="text.secondary">
                   Hola, {currentUser.name}
                 </Typography>
-                <Button color="secondary" variant="outlined" size="small" onClick={() => navigate('/dashboard')}>
+                <Button color="primary" variant="outlined" size="small" onClick={() => navigate('/dashboard')}>
                   Dashboard
                 </Button>
-                <Button color="secondary" variant="outlined" size="small" onClick={handleLogout}>
+                <Button color="primary" variant="outlined" size="small" onClick={handleLogout}>
                   Cerrar sesión
                 </Button>
               </Box>
@@ -177,7 +180,7 @@ export default function AppAppBar() {
                       <Button color="primary" variant="outlined" size="small" onClick={() => navigate('/dashboard')}>
                         Dashboard
                       </Button>
-                      <Button color="secondary" variant="outlined" size="small" onClick={handleLogout}>
+                      <Button color="primary" variant="outlined" size="small" onClick={handleLogout}>
                         Cerrar sesión
                       </Button>
                     </Box>

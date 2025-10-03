@@ -62,7 +62,7 @@ export const datePickersCustomizations = {
           fontWeight: theme.typography.fontWeightMedium,
         },
         '&:focus': {
-          outline: `3px solid ${alpha(brand[500], 0.5)}`,
+          outline: `3px solid ${alpha(brand.main, 0.5)}`,
           outlineOffset: '2px',
           backgroundColor: 'transparent',
           [`&.${yearCalendarClasses.selected}`]: { backgroundColor: gray[700] },
@@ -78,7 +78,7 @@ export const datePickersCustomizations = {
             backgroundColor: gray[300],
           },
           '&:focus': {
-            outline: `3px solid ${alpha(brand[500], 0.5)}`,
+            outline: `3px solid ${alpha(brand.main, 0.5)}`,
             outlineOffset: '2px',
             backgroundColor: 'transparent',
             [`&.${yearCalendarClasses.selected}`]: { backgroundColor: gray[300] },
@@ -103,7 +103,7 @@ export const datePickersCustomizations = {
           fontWeight: theme.typography.fontWeightMedium,
         },
         '&:focus': {
-          outline: `3px solid ${alpha(brand[500], 0.5)}`,
+          outline: `3px solid ${alpha(brand.main, 0.5)}`,
           outlineOffset: '2px',
           backgroundColor: 'transparent',
           [`&.${yearCalendarClasses.selected}`]: { backgroundColor: gray[700] },
@@ -119,7 +119,7 @@ export const datePickersCustomizations = {
             backgroundColor: gray[300],
           },
           '&:focus': {
-            outline: `3px solid ${alpha(brand[500], 0.5)}`,
+            outline: `3px solid ${alpha(brand.main, 0.5)}`,
             outlineOffset: '2px',
             backgroundColor: 'transparent',
             [`&.${yearCalendarClasses.selected}`]: { backgroundColor: gray[300] },
@@ -144,7 +144,7 @@ export const datePickersCustomizations = {
           fontWeight: theme.typography.fontWeightMedium,
         },
         '&:focus': {
-          outline: `3px solid ${alpha(brand[500], 0.5)}`,
+          outline: `3px solid ${alpha(brand.main, 0.5)}`,
           outlineOffset: '2px',
           backgroundColor: 'transparent',
           [`&.${pickersDayClasses.selected}`]: { backgroundColor: gray[700] },
@@ -160,7 +160,7 @@ export const datePickersCustomizations = {
             backgroundColor: gray[300],
           },
           '&:focus': {
-            outline: `3px solid ${alpha(brand[500], 0.5)}`,
+            outline: `3px solid ${alpha(brand.main, 0.5)}`,
             outlineOffset: '2px',
             backgroundColor: 'transparent',
             [`&.${pickersDayClasses.selected}`]: { backgroundColor: gray[300] },
