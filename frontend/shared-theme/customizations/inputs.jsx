@@ -58,25 +58,27 @@ export const inputsCustomizations = {
             },
             style: {
               color: 'white',
-              backgroundColor: brand[500],
-              border: `1px solid ${brand[500]}`,
+              backgroundColor: brand.main,
+              border: `1px solid ${brand.main}`,
               '&:hover': {
-                backgroundColor: brand[600],
+                backgroundColor: brand.variant,
+                borderColor: brand.variant,
                 boxShadow: 'none',
               },
               '&:active': {
-                backgroundColor: brand[700],
+                backgroundColor: brand.variant,
+                opacity: '.5',
               },
               ...theme.applyStyles('dark', {
                 color: 'white',
-                backgroundColor: brand[500],
-                border: `1px solid ${brand[500]}`,
+                backgroundColor: brand.main,
+                border: `1px solid ${brand.main}`,
                 '&:hover': {
-                  backgroundColor: brand[600],
+                  backgroundColor: brand.variant,
                   boxShadow: 'none',
                 },
                 '&:active': {
-                  backgroundColor: brand[700],
+                  backgroundColor: brand.variant,
                 },
               }),
             },
@@ -88,13 +90,13 @@ export const inputsCustomizations = {
             },
             style: {
               color: 'white',
-              backgroundColor: secondary[500],
-              border: `1px solid ${secondary[500]}`,
+              backgroundColor: secondary.main,
+              border: `1px solid ${secondary.main}`,
               '&:hover': {
-                backgroundColor: secondary[600],
+                backgroundColor: secondary.variant,
               },
               '&:active': {
-                backgroundColor: secondary[700],
+                backgroundColor: secondary.variant,
               },
             },
           },
@@ -105,21 +107,21 @@ export const inputsCustomizations = {
             style: {
               color: (theme.vars || theme).palette.text.primary,
               border: '1px solid',
-              borderColor: gray[200],
+              borderColor: brand.main,
               backgroundColor: alpha(gray[50], 0.3),
               '&:hover': {
                 backgroundColor: gray[100],
-                borderColor: gray[300],
+                borderColor: brand.variant,
               },
               '&:active': {
                 backgroundColor: gray[200],
               },
               ...theme.applyStyles('dark', {
                 backgroundColor: gray[800],
-                borderColor: gray[700],
+                borderColor: brand.main,
                 '&:hover': {
                   backgroundColor: gray[900],
-                  borderColor: gray[600],
+                  borderColor: brand.variant,
                 },
                 '&:active': {
                   backgroundColor: gray[900],
@@ -133,28 +135,26 @@ export const inputsCustomizations = {
               variant: 'outlined',
             },
             style: {
-              color: brand[700],
+              color: (theme.vars || theme).palette.text.primary,
               border: '1px solid',
-              borderColor: brand[200],
-              backgroundColor: brand[50],
+              borderColor: secondary.main,
+              backgroundColor: alpha(gray[50], 0.3),
               '&:hover': {
-                backgroundColor: brand[100],
-                borderColor: brand[400],
+                backgroundColor: gray[100],
+                borderColor: secondary.variant,
               },
               '&:active': {
-                backgroundColor: alpha(brand[200], 0.7),
+                backgroundColor: gray[200],
               },
               ...theme.applyStyles('dark', {
-                color: brand[50],
-                border: '1px solid',
-                borderColor: brand[900],
-                backgroundColor: alpha(brand[900], 0.3),
+                borderColor: secondary.main,
+                backgroundColor: gray[800],
                 '&:hover': {
-                  borderColor: brand[700],
-                  backgroundColor: alpha(brand[900], 0.6),
+                  borderColor: secondary.variant,
+                  backgroundColor: gray[900],
                 },
                 '&:active': {
-                  backgroundColor: alpha(brand[900], 0.5),
+                  backgroundColor: gray[900],
                 },
               }),
             },
@@ -166,18 +166,18 @@ export const inputsCustomizations = {
             style: {
               color: gray[600],
               '&:hover': {
-                backgroundColor: brand[300],
+                backgroundColor: brand.main,
               },
               '&:active': {
-                backgroundColor: brand[400],
+                backgroundColor: brand.variant,
               },
               ...theme.applyStyles('dark', {
                 color: gray[50],
                 '&:hover': {
-                  backgroundColor: brand[700],
+                  backgroundColor: brand.main,
                 },
                 '&:active': {
-                  backgroundColor: alpha(brand[700], 0.7),
+                  backgroundColor: alpha(brand.main, 0.7),
                 },
               }),
             },
@@ -188,20 +188,20 @@ export const inputsCustomizations = {
               variant: 'text',
             },
             style: {
-              color: brand[700],
+              color: brand.main,
               '&:hover': {
-                backgroundColor: alpha(brand[100], 0.5),
+                backgroundColor: alpha(brand.main, 0.5),
               },
               '&:active': {
-                backgroundColor: alpha(brand[200], 0.7),
+                backgroundColor: alpha(brand.variant, 0.7),
               },
               ...theme.applyStyles('dark', {
-                color: brand[100],
+                color: brand.variant,
                 '&:hover': {
-                  backgroundColor: alpha(brand[900], 0.5),
+                  backgroundColor: alpha(brand.main, 0.5),
                 },
                 '&:active': {
-                  backgroundColor: alpha(brand[900], 0.3),
+                  backgroundColor: alpha(brand.main, 0.3),
                 },
               }),
             },
@@ -220,21 +220,21 @@ export const inputsCustomizations = {
         letterSpacing: 0,
         color: (theme.vars || theme).palette.text.primary,
         border: '1px solid ',
-        borderColor: brand[500],
+        borderColor: brand.main,
         backgroundColor: gray[50],
         '&:hover': {
           backgroundColor: gray[100],
-          borderColor: brand[300],
+          borderColor: brand.variant,
         },
         '&:active': {
           backgroundColor: gray[200],
         },
         ...theme.applyStyles('dark', {
           backgroundColor: gray[800],
-          borderColor: brand[700],
+          borderColor: brand.main,
           '&:hover': {
             backgroundColor: gray[900],
-            borderColor: brand[600],
+            borderColor: brand.main,
           },
           '&:active': {
             backgroundColor: gray[900],
@@ -271,13 +271,13 @@ export const inputsCustomizations = {
         borderRadius: '10px',
         boxShadow: `0 4px 16px ${alpha(gray[400], 0.2)}`,
         [`& .${toggleButtonGroupClasses.selected}`]: {
-          color: brand[500],
+          color: brand.main,
         },
         ...theme.applyStyles('dark', {
           [`& .${toggleButtonGroupClasses.selected}`]: {
             color: '#fff',
           },
-          boxShadow: `0 4px 16px ${alpha(brand[700], 0.5)}`,
+          boxShadow: `0 4px 16px ${alpha(brand.main, 0.5)}`,
         }),
       }),
     },
@@ -293,7 +293,7 @@ export const inputsCustomizations = {
           color: gray[400],
           boxShadow: '0 4px 16px rgba(0, 0, 0, 0.5)',
           [`&.${toggleButtonClasses.selected}`]: {
-            color: brand[300],
+            color: brand.variant,
           },
         }),
       }),
@@ -320,20 +320,20 @@ export const inputsCustomizations = {
         backgroundColor: alpha(gray[100], 0.4),
         transition: 'border-color, background-color, 120ms ease-in',
         '&:hover': {
-          borderColor: brand[300],
+          borderColor: brand.variant,
         },
         '&.Mui-focusVisible': {
-          outline: `3px solid ${alpha(brand[500], 0.5)}`,
+          outline: `3px solid ${alpha(brand.main, 0.5)}`,
           outlineOffset: '2px',
-          borderColor: brand[400],
+          borderColor: brand.main,
         },
         '&.Mui-checked': {
           color: 'white',
-          backgroundColor: brand[500],
-          borderColor: brand[500],
+          backgroundColor: brand.main,
+          borderColor: brand.main,
           boxShadow: `none`,
           '&:hover': {
-            backgroundColor: brand[600],
+            backgroundColor: brand.variant,
           },
         },
         ...theme.applyStyles('dark', {
@@ -341,11 +341,11 @@ export const inputsCustomizations = {
           boxShadow: '0 0 0 1.5px hsl(210, 0%, 0%) inset',
           backgroundColor: alpha(gray[900], 0.8),
           '&:hover': {
-            borderColor: brand[300],
+            borderColor: brand.variant,
           },
           '&.Mui-focusVisible': {
-            borderColor: brand[400],
-            outline: `3px solid ${alpha(brand[500], 0.5)}`,
+            borderColor: brand.variant,
+            outline: `3px solid ${alpha(brand.main, 0.5)}`,
             outlineOffset: '2px',
           },
         }),
@@ -381,12 +381,12 @@ export const inputsCustomizations = {
           borderColor: gray[400],
         },
         [`&.${outlinedInputClasses.focused}`]: {
-          outline: `1px solid ${alpha(brand[500], 0.5)}`,
-          borderColor: brand[400],
+          outline: `1px solid ${alpha(brand.main, 0.5)}`,
+          borderColor: brand.variant,
         },
         ...theme.applyStyles('dark', {
           '&:hover': {
-            borderColor: brand[500],
+            borderColor: brand.main,
           },
         }),
         variants: [

@@ -93,7 +93,7 @@ export default function DashboardLayout({ children }) {
         </Typography>
 
         <Button 
-          variant="contained"
+          variant="outlined"
           color="secondary" 
           onClick={handleLogout}
         >

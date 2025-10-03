@@ -139,7 +139,7 @@ export const navigationCustomizations = {
           width: 0,
         },
         '&:focus-visible': {
-          outline: `3px solid ${alpha(brand[500], 0.5)}`,
+          outline: `3px solid ${alpha(brand.main, 0.5)}`,
           outlineOffset: '4px',
           borderRadius: '2px',
         },
@@ -158,12 +158,12 @@ export const navigationCustomizations = {
       root: ({ theme }) => ({
         '&.Mui-selected': {
           color: 'white',
-          backgroundColor: brand[500],
+          backgroundColor: brand.main,
         },
         ...theme.applyStyles('dark', {
           '&.Mui-selected': {
             color: 'black',
-            backgroundColor: brand[500],
+            backgroundColor: brand.main,
           },
         }),
       }),
