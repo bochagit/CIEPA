@@ -98,7 +98,7 @@ export default function AppAppBar() {
       }}
     >
       <Container maxWidth="lg">
-        <StyledToolbar variant="dense" disableGutters>
+        <StyledToolbar variant="dense" disableGutters sx={{ boxShadow: 'none' }}>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, gap: '1rem'}}>
             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
               <CiepaLogo />

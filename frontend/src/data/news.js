@@ -59,7 +59,79 @@ export const newsData = [
     featured: true,
     imageUrl: "https://via.placeholder.com/600x300?text=Tecnologia+Ambiental",
     excerpt: "Implementación de nuevas tecnologías de sensores IoT para el monitoreo..."
-  }
+  },
+  {
+    id: 6,
+    title: "Noticia de prueba",
+    content: "Esto es para probar como se expande el listado del dashboard cuando se genera una nueva noticia",
+    author: "Gonzalo Cardozo",
+    publishDate:"2025-03-10",
+    category: "Pruebas",
+    status: "draft",
+    featured: true,
+    imageUrl: "https://via.placeholder.com/600x300?text=Prueba",
+    excerpt: "Prueba de news list"
+  },
+  {
+    id: 7,
+    title: "Noticia de prueba",
+    content: "Esto es para probar como se expande el listado del dashboard cuando se genera una nueva noticia",
+    author: "Gonzalo Cardozo",
+    publishDate:"2025-03-10",
+    category: "Pruebas",
+    status: "draft",
+    featured: true,
+    imageUrl: "https://via.placeholder.com/600x300?text=Prueba",
+    excerpt: "Prueba de news list"
+  },
+  {
+    id: 8,
+    title: "Noticia de prueba",
+    content: "Esto es para probar como se expande el listado del dashboard cuando se genera una nueva noticia",
+    author: "Gonzalo Cardozo",
+    publishDate:"2025-03-10",
+    category: "Pruebas",
+    status: "draft",
+    featured: true,
+    imageUrl: "https://via.placeholder.com/600x300?text=Prueba",
+    excerpt: "Prueba de news list"
+  },
+  {
+    id: 9,
+    title: "Noticia de prueba",
+    content: "Esto es para probar como se expande el listado del dashboard cuando se genera una nueva noticia",
+    author: "Gonzalo Cardozo",
+    publishDate:"2025-03-10",
+    category: "Pruebas",
+    status: "draft",
+    featured: true,
+    imageUrl: "https://via.placeholder.com/600x300?text=Prueba",
+    excerpt: "Prueba de news list"
+  },
+  {
+    id: 10,
+    title: "Noticia de prueba",
+    content: "Esto es para probar como se expande el listado del dashboard cuando se genera una nueva noticia",
+    author: "Gonzalo Cardozo",
+    publishDate:"2025-03-10",
+    category: "Pruebas",
+    status: "draft",
+    featured: true,
+    imageUrl: "https://via.placeholder.com/600x300?text=Prueba",
+    excerpt: "Prueba de news list"
+  },
+  {
+    id: 11,
+    title: "Noticia de prueba",
+    content: "Esto es para probar como se expande el listado del dashboard cuando se genera una nueva noticia",
+    author: "Gonzalo Cardozo",
+    publishDate:"2025-03-10",
+    category: "Pruebas",
+    status: "draft",
+    featured: true,
+    imageUrl: "https://via.placeholder.com/600x300?text=Prueba",
+    excerpt: "Prueba de news list"
+  },
 ];
 
 export const categories = [
@@ -70,7 +142,8 @@ export const categories = [
   "Eventos",
   "Tecnología",
   "Medio Ambiente",
-  "Noticias"
+  "Noticias",
+  "Pruebas"
 ];
 
 export const statusOptions = [

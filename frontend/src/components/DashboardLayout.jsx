@@ -62,7 +62,7 @@ export default function DashboardLayout({ children }) {
   const layoutRef = React.useRef(null);
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       {/* Header fijo en la parte superior */}
       <Box sx={{
         position: 'fixed', 
@@ -76,7 +76,8 @@ export default function DashboardLayout({ children }) {
         p: 2,
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        height: 80
       }}>
         <Button 
           variant="outlined" 
@@ -102,15 +103,14 @@ export default function DashboardLayout({ children }) {
       </Box>
 
       {/* Contenido principal con padding top para el header fijo */}
-      <Box sx={{ pt: 10, width: "100%" }}>
+      <Box sx={{ pt: '80px', flex: 1, display: 'flex', height: '100vh', overflow: 'hidden' }}>
         <Box
           ref={layoutRef}
           sx={{
             position: 'relative',
             display: 'flex',
-            overflow: 'hidden',
-            height: '100%',
             width: '100%',
+            height: '100%'
           }}
         >
           <DashboardHeader
@@ -130,6 +130,7 @@ export default function DashboardLayout({ children }) {
               flexDirection: 'column',
               flex: 1,
               minWidth: 0,
+              height: '100%'
             }}
           >
             <Toolbar sx={{ displayPrint: 'none' }} />

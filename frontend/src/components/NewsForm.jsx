@@ -13,8 +13,6 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import { categories, statusOptions } from '../data/news';
 
 function NewsForm(props) {
