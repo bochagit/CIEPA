@@ -38,13 +38,15 @@ export default function Footer() {
           gap: { xs: 4, sm: 8 },
           py: { xs: 8, sm: 10 },
           textAlign: { sm: 'center', md: 'left' },
+          backdropFilter: 'blur(10px)',
+          minWidth: '100%'
         }}
       >
         <Box
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
-            width: '100%',
+            width: '80%',
             justifyContent: 'space-between',
           }}
         >

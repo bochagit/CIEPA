@@ -78,9 +78,11 @@ const StyledCard = styled(Card)(({ theme }) => ({
   padding: 0,
   height: '100%',
   backgroundColor: (theme.vars || theme).palette.background.paper,
+  backdropFilter: 'blur(10px)',
   '&:hover': {
-    backgroundColor: 'transparent',
+    backgroundColor: (theme.vars || theme).palette.background.default,  
     cursor: 'pointer',
+    transform: 'scale(1.005)'
   },
   '&:focus-visible': {
     outline: '3px solid',

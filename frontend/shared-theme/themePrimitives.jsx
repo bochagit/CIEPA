@@ -152,9 +152,8 @@ export const getDesignTokens = (mode) => {
       },
       divider: mode === 'dark' ? alpha(gray[700], 0.6) : alpha(gray[300], 0.4),
       background: {
-        default: 'hsl(0, 0%, 99%)',
-        paper: 'hsl(220, 35%, 97%)',
-        ...(mode === 'dark' && { default: gray[900], paper: 'hsl(220, 30%, 7%)' }),
+        default: mode === 'dark' ? gray[900] : 'hsl(0, 0%, 99%)',
+        paper: mode === 'dark' ? 'hsl(220, 30%, 7%)' : 'hsl(220, 35%, 97%)',
       },
       text: {
         primary: gray[800],
@@ -333,7 +332,7 @@ export const colorSchemes = {
       },
       divider: alpha(gray[700], 0.6),
       background: {
-        default: gray[900],
+        default: gray[900], 
         paper: 'hsl(220, 30%, 7%)',
       },
       text: {

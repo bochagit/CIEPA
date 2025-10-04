@@ -1,0 +1,11 @@
+body {
+    background-image: url('/assets/fondo_light.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+[data-mui-color-scheme="dark"] body {
+    background-image: url('/assets/fondo_dark.png');
+}
