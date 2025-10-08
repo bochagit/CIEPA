@@ -1,0 +1,138 @@
+/**
+ * Custom fonts configuration for CIEPA
+ * Combining Satoshi and Synonym fonts under unified family names
+ */
+
+/* ===== SATOSHI FONTS ===== */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/satoshi/fonts/Satoshi-Light.woff2') format('woff2'),
+       url('/fonts/satoshi/fonts/Satoshi-Light.woff') format('woff'),
+       url('/fonts/satoshi/fonts/Satoshi-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/satoshi/fonts/Satoshi-Regular.woff2') format('woff2'),
+       url('/fonts/satoshi/fonts/Satoshi-Regular.woff') format('woff'),
+       url('/fonts/satoshi/fonts/Satoshi-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/satoshi/fonts/Satoshi-Medium.woff2') format('woff2'),
+       url('/fonts/satoshi/fonts/Satoshi-Medium.woff') format('woff'),
+       url('/fonts/satoshi/fonts/Satoshi-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/satoshi/fonts/Satoshi-Bold.woff2') format('woff2'),
+       url('/fonts/satoshi/fonts/Satoshi-Bold.woff') format('woff'),
+       url('/fonts/satoshi/fonts/Satoshi-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/satoshi/fonts/Satoshi-Black.woff2') format('woff2'),
+       url('/fonts/satoshi/fonts/Satoshi-Black.woff') format('woff'),
+       url('/fonts/satoshi/fonts/Satoshi-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Satoshi Variable Font */
+@font-face {
+  font-family: 'Satoshi Variable';
+  src: url('/fonts/satoshi/fonts/Satoshi-Variable.woff2') format('woff2'),
+       url('/fonts/satoshi/fonts/Satoshi-Variable.woff') format('woff'),
+       url('/fonts/satoshi/fonts/Satoshi-Variable.ttf') format('truetype');
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ===== SYNONYM FONTS ===== */
+@font-face {
+  font-family: 'Synonym';
+  src: url('/fonts/synonym/fonts/Synonym-Extralight.woff2') format('woff2'),
+       url('/fonts/synonym/fonts/Synonym-Extralight.woff') format('woff'),
+       url('/fonts/synonym/fonts/Synonym-Extralight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Synonym';
+  src: url('/fonts/synonym/fonts/Synonym-Light.woff2') format('woff2'),
+       url('/fonts/synonym/fonts/Synonym-Light.woff') format('woff'),
+       url('/fonts/synonym/fonts/Synonym-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Synonym';
+  src: url('/fonts/synonym/fonts/Synonym-Regular.woff2') format('woff2'),
+       url('/fonts/synonym/fonts/Synonym-Regular.woff') format('woff'),
+       url('/fonts/synonym/fonts/Synonym-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Synonym';
+  src: url('/fonts/synonym/fonts/Synonym-Medium.woff2') format('woff2'),
+       url('/fonts/synonym/fonts/Synonym-Medium.woff') format('woff'),
+       url('/fonts/synonym/fonts/Synonym-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Synonym';
+  src: url('/fonts/synonym/fonts/Synonym-Semibold.woff2') format('woff2'),
+       url('/fonts/synonym/fonts/Synonym-Semibold.woff') format('woff'),
+       url('/fonts/synonym/fonts/Synonym-Semibold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Synonym';
+  src: url('/fonts/synonym/fonts/Synonym-Bold.woff2') format('woff2'),
+       url('/fonts/synonym/fonts/Synonym-Bold.woff') format('woff'),
+       url('/fonts/synonym/fonts/Synonym-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Synonym Variable Font */
+@font-face {
+  font-family: 'Synonym Variable';
+  src: url('/fonts/synonym/fonts/Synonym-Variable.woff2') format('woff2'),
+       url('/fonts/synonym/fonts/Synonym-Variable.woff') format('woff'),
+       url('/fonts/synonym/fonts/Synonym-Variable.ttf') format('truetype');
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}

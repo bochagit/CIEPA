@@ -1,5 +1,50 @@
+/* ✅ Sobrescribir TODAS las fuentes con nuestras fuentes unificadas */
+* {
+    font-family: "Satoshi", "Roboto", system-ui, -apple-system, sans-serif !important;
+}
+
+body, html {
+    font-family: "Satoshi", "Roboto", system-ui, -apple-system, sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Títulos usar Synonym */
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Synonym", "Roboto", system-ui, sans-serif !important;
+}
+
+/* ✅ Sobrescribir clases específicas de MUI */
+.MuiTypography-root,
+.MuiButton-root,
+.MuiInputBase-input,
+.MuiFormLabel-root,
+.MuiMenuItem-root,
+.MuiListItemText-primary,
+.MuiListItemText-secondary,
+.MuiTableCell-root,
+.MuiChip-label,
+.MuiTab-root,
+.MuiAlert-message,
+.MuiDialogTitle-root,
+.MuiDialogContent-root,
+.MuiSnackbarContent-message {
+    font-family: "Satoshi", "Roboto", system-ui, sans-serif !important;
+}
+
+/* Títulos en componentes MUI */
+.MuiTypography-h1,
+.MuiTypography-h2,
+.MuiTypography-h3,
+.MuiTypography-h4,
+.MuiTypography-h5,
+.MuiTypography-h6,
+.MuiDialogTitle-root {
+    font-family: "Synonym", "Roboto", system-ui, sans-serif !important;
+}
+
 body {
-    background-image: url('/assets/fondo_light.png');
+    background-image: url('/assets/fondo_light.webp');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -7,5 +52,5 @@ body {
 }
 
 [data-mui-color-scheme="dark"] body {
-    background-image: url('/assets/fondo_dark.png');
+    background-image: url('/assets/fondo_dark.webp');
 }
