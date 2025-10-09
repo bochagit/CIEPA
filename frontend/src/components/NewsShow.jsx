@@ -156,7 +156,7 @@ export default function NewsShow() {
               </Box>
 
               {newsData.excerpt && (
-                <Box sx={{ bgcolor: 'grey.50', p: 2, borderRadius: 1 }}>
+                <Box sx={{ bgcolor: 'transparent', p: 2, borderRadius: 1 }}>
                   <Typography variant="subtitle1" color="text.secondary" fontStyle="italic">
                     {newsData.excerpt}
                   </Typography>

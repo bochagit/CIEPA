@@ -27,7 +27,6 @@ export const gray = {
   900: 'hsl(220, 35%, 3%)',
 };
 
-// Verde complementario basado en tu verde principal
 export const green = {
   50: 'hsl(122, 39%, 95%)',
   100: 'hsl(122, 39%, 88%)',
@@ -41,7 +40,6 @@ export const green = {
   900: 'hsl(122, 39%, 15%)',
 };
 
-// Naranja complementario al verde
 export const orange = {
   50: 'hsl(30, 100%, 97%)',
   100: 'hsl(30, 92%, 90%)',
@@ -55,7 +53,6 @@ export const orange = {
   900: 'hsl(30, 93%, 20%)',
 };
 
-// Rojo complementario
 export const red = {
   50: 'hsl(0, 100%, 97%)',
   100: 'hsl(0, 92%, 90%)',

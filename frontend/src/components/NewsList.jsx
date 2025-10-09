@@ -12,23 +12,37 @@ import useNotifications from '../hooks/useNotifications/useNotifications';
 import { newsData } from '../data/news';
 import PageContainer from './PageContainer';
 import { brand } from '../../shared-theme/themePrimitives'
+import { useTheme, useMediaQuery } from '@mui/material'
 
 export default function NewsList() {
   const navigate = useNavigate();
   const dialogs = useDialogs();
   const notifications = useNotifications();
+  const theme = useTheme();
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   const [news, setNews] = React.useState(newsData);
   const [loading, setLoading] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
-
   const [currentPage, setCurrentPage] = React.useState(1);
-  const itemsPerPage = 10;
+
+  const itemsPerPage = isMobile ? 5 : 10;
 
   const totalPages = Math.ceil(news.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentNews = news.slice(startIndex, endIndex);
+
+  const handleRowClick = (id, event) => {
+    if (event.target.type === 'checkbox' || event.target.closest('[role="checkbox"]')) {
+      return;
+    }
+
+    if(isMobile) {
+      handleView(id);
+    }
+  };
 
   const handleRefresh = React.useCallback(async () => {
     setLoading(true);
@@ -117,8 +131,12 @@ export default function NewsList() {
           </Button>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.secondary" sx={{ display: {xs: 'none', sm: 'block'} }}>
               Mostrando {startIndex + 1} - {Math.min(endIndex, news.length)} de {news.length}
+            </Typography>
+
+            <Typography variant="body2" color="text.secondary" sx={{ display: { xs: 'block', sm: 'none' } }}>
+              {startIndex + 1}-{Math.min(endIndex, news.length)} de {news.length}
             </Typography>
           
             <Tooltip title="Actualizar lista">
@@ -132,7 +150,9 @@ export default function NewsList() {
         <TableContainer 
           component={Paper} 
           sx={{ 
-            maxHeight: 600,
+            maxHeight: { xs:'none', md: 600 },
+            overflow: { xs: 'visible', md: 'auto' },
+
             '&::-webkit-scrollbar': {
               width: '4px',
               height: '2px'
@@ -153,50 +173,64 @@ export default function NewsList() {
             },
           }}
         >
-          <Table stickyHeader>
-            <TableHead sx={{ '& .MuiTableCell-root': { borderBottom: '1px solid #444', color: '#666' } }}>
+          <Table stickyHeader={!isMobile} sx={{ minWidth: { xs: 'auto', md: 650 } }}>
+            <TableHead sx={{ '& .MuiTableCell-root': { borderBottom: '1px solid #444', color: '#666', fontSize: { xs: '.75rem', md: '.875rem' } } }}>
               <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox indeterminate={currentPageIndeterminate} checked={currentNews.length > 0 && currentPageSelected} onChange={handleSelectAll} />
+                <TableCell padding="checkbox" sx={{ width: { xs: '40px', md: '60px' } }}>
+                  <Checkbox indeterminate={currentPageIndeterminate} checked={currentNews.length > 0 && currentPageSelected} onChange={handleSelectAll} size={isMobile ? 'small' : 'medium'}/>
                 </TableCell>
-                <TableCell>Título</TableCell>
-                <TableCell>Autor</TableCell>
-                <TableCell>Categoría</TableCell>
-                <TableCell>Fecha de publicación</TableCell>
+                <TableCell sx={{ minWidth: {xs: 120, md: 200} }}>Título</TableCell>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Autor</TableCell>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Categoría</TableCell>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Fecha de publicación</TableCell>
                 <TableCell>Estado</TableCell>
-                <TableCell>Destacada</TableCell>
-                <TableCell align="center">Acciones</TableCell>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Destacada</TableCell>
+                <TableCell align="center" sx={{ display: { xs: 'none', md:'table-cell' } }}>Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {currentNews.map((row) => (
-                <TableRow key={row.id} hover selected={selected.includes(row.id)}>
+                <TableRow key={row.id} hover selected={selected.includes(row.id)} onClick={(event) => handleRowClick(row.id, event)} sx={{ cursor: {xs: 'pointer', md: 'default'}, '&:hover': {backgroundColor: {xs: alpha(theme.palette.primary.main, 0.08), md: 'inherit'}} }}>
                   <TableCell padding="checkbox">
-                    <Checkbox checked={selected.includes(row.id)} onChange={() => handleSelectOne(row.id)} />
+                    <Checkbox checked={selected.includes(row.id)} onChange={() => handleSelectOne(row.id)} size={isMobile ? 'small' : 'medium'} />
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2" sx={{ maxWidth: 300 }}>{row.title}</Typography>
+                    <Box>
+                      <Typography variant="body2" sx={{ maxWidth: {xs: 150, md: 300}, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 500 }}>
+                        {row.title}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: { xs: 'block', sm: 'none' } }}>
+                        {row.author} • {new Date(row.publishDate).toLocaleDateString()}
+                        <Typography component="span" variant="caption" color="primary.main" sx={{ ml: 1, fontWeight: 600 }}>Toca para ver</Typography>
+                      </Typography>
+                    </Box>
                   </TableCell>
-                  <TableCell>{row.author}</TableCell>
-                  <TableCell>
+                  <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                    <Typography variant="body2" noWrap>
+                      {row.author}
+                    </Typography>
+                  </TableCell>
+                  <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                     <Chip label={row.category} size="small" />
                   </TableCell>
-                  <TableCell>
-                    {new Date(row.publishDate).toLocaleDateString()}
+                  <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+                    <Typography variant="body2" noWrap>
+                      {new Date(row.publishDate).toLocaleDateString()}
+                    </Typography>
                   </TableCell>
                   <TableCell>
                     <Chip label={getStatusLabel(row.status)} color={getStatusColor(row.status)} size="small" />
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                     <Chip label={row.featured ? 'Sí' : 'No' } color={row.featured ? 'primary' : 'default'} size="small" />
                   </TableCell>
-                  <TableCell>
-                    <Stack direction="row" spacing={1} justifyContent="center">
+                  <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+                    <Stack direction="row" spacing={0.5} justifyContent="center">
                       <IconButton size="small" onClick={() => handleView(row.id)}>
                         <VisibilityIcon fontSize="small" />                 
                       </IconButton>
                       <IconButton size="small" onClick={() => handleEdit(row.id)}>
-                        <EditIcon fontSize="small" />                            
+                        <EditIcon fontSize="small" />                       
                       </IconButton>
                       <IconButton size="small" color="error" onClick={() => handleDelete(row.id)}>
                         <DeleteIcon fontSize="small"/>
@@ -210,15 +244,15 @@ export default function NewsList() {
         </TableContainer>
         {
           totalPages > 1 && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-              <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} color="primary" showFirstButton showLastButton />
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, pb: { xs: 2, md: 0 } }}>
+              <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} color="primary" showFirstButton={!isMobile} showLastButton={!isMobile} size={isMobile ? 'small' : 'medium'} />
             </Box>
           )
         }
 
         {
           selected.length > 0 && (
-            <Box sx={{ p: 2, bgcolor: 'action.selected', borderRadius: 1 }}>
+            <Box sx={{ p: 2, bgcolor: 'action.selected', borderRadius: 1, mb: { xs: 2, md: 0 } }}>
               <Typography variant="body2">
                 {selected.length} {(selected.length === 1) ? 'seleccionado' : 'seleccionados'}
               </Typography>

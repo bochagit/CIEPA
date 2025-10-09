@@ -104,13 +104,13 @@ export default function AppAppBar() {
               <CiepaLogo />
             </Box>
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" color="info" size="small" sx={{ color: '#222', ":hover": {color: '#eee'} }}>
+              <Button variant="text" color="info" size="medium" sx={{ color: '#222', ":hover": {color: '#eee'} }}>
                 Sobre nosotros
               </Button>
-              <Button variant="text" color="info" size="small" sx={{ color: '#222', ":hover": {color: '#eee'} }}>
+              <Button variant="text" color="info" size="medium" sx={{ color: '#222', ":hover": {color: '#eee'} }}>
                 Noticias
               </Button>
-              <Button variant="text" color="info" size="small" sx={{ color: '#222', ":hover": {color: '#eee'} }}>
+              <Button variant="text" color="info" size="medium" sx={{ color: '#222', ":hover": {color: '#eee'} }}>
                 Contacto
               </Button>
             </Box>

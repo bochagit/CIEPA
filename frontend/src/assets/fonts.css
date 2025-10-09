@@ -1,9 +1,3 @@
-/**
- * Custom fonts configuration for CIEPA
- * Combining Satoshi and Synonym fonts under unified family names
- */
-
-/* ===== SATOSHI FONTS ===== */
 @font-face {
   font-family: 'Satoshi';
   src: url('/fonts/satoshi/fonts/Satoshi-Light.woff2') format('woff2'),
@@ -54,7 +48,6 @@
   font-display: swap;
 }
 
-/* Satoshi Variable Font */
 @font-face {
   font-family: 'Satoshi Variable';
   src: url('/fonts/satoshi/fonts/Satoshi-Variable.woff2') format('woff2'),
@@ -65,7 +58,6 @@
   font-display: swap;
 }
 
-/* ===== SYNONYM FONTS ===== */
 @font-face {
   font-family: 'Synonym';
   src: url('/fonts/synonym/fonts/Synonym-Extralight.woff2') format('woff2'),
@@ -126,7 +118,6 @@
   font-display: swap;
 }
 
-/* Synonym Variable Font */
 @font-face {
   font-family: 'Synonym Variable';
   src: url('/fonts/synonym/fonts/Synonym-Variable.woff2') format('woff2'),
