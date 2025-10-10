@@ -14,6 +14,7 @@ import Select from '@mui/material/Select';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { categories, statusOptions } from '../data/news';
+import TextEditor from './textEditor';
 
 function NewsForm(props) {
   const { handleClose, handleSubmit, initialValue, open, title } = props;
@@ -31,6 +32,13 @@ function NewsForm(props) {
       excerpt: ''
     }
   );
+
+  const handleContentChange = (content) => {
+    setFormData(prev => ({
+      ...prev,
+      content: content
+    }));
+  };
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -93,15 +101,7 @@ function NewsForm(props) {
 
           <FormControl>
             <FormLabel htmlFor="content">Contenido</FormLabel>
-            <TextField
-              id="content"
-              name="content"
-              multiline
-              value={formData.content}
-              onChange={handleInputChange}
-              placeholder="Contenido completo de la noticia..."
-              required
-            />
+            <TextEditor id="content" value={formData.content} onChange={handleContentChange} />
           </FormControl>
 
           <Stack direction="row" spacing={2}>
@@ -195,7 +195,7 @@ function NewsForm(props) {
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cancelar</Button>
+        <Button onClick={handleClose} sx={{ '&:hover': { border: '1px solid #f00', backgroundColor: 'transparent' } }}>Cancelar</Button>
         <Button type="submit" onClick={onFormSubmit} variant="contained">
           {initialValue ? 'Actualizar' : 'Crear'}
         </Button>
