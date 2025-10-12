@@ -243,19 +243,18 @@ export default function NewsList() {
           </Table>
         </TableContainer>
         {
-          totalPages > 1 && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, pb: { xs: 2, md: 0 } }}>
-              <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} color="primary" showFirstButton={!isMobile} showLastButton={!isMobile} size={isMobile ? 'small' : 'medium'} />
-            </Box>
-          )
-        }
-
-        {
           selected.length > 0 && (
             <Box sx={{ p: 2, bgcolor: 'action.selected', borderRadius: 1, mb: { xs: 2, md: 0 } }}>
               <Typography variant="body2">
                 {selected.length} {(selected.length === 1) ? 'seleccionado' : 'seleccionados'}
               </Typography>
+            </Box>
+          )
+        }
+        {
+          totalPages > 1 && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, pb: { xs: 2, md: 0 } }}>
+              <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} color="primary" showFirstButton={!isMobile} showLastButton={!isMobile} size={isMobile ? 'small' : 'medium'} />
             </Box>
           )
         }
