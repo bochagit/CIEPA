@@ -12,10 +12,14 @@ import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ColorModeIconDropdown from '../../shared-theme/ColorModeIconDropdown';
 import CiepaLogo from './CiepaLogo';
-import { brand } from '../../shared-theme/themePrimitives'
-import Typography from '@mui/material/Typography'
+import { brand } from '../../shared-theme/themePrimitives';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import Menu from '@mui/material/Menu';
 
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -32,10 +36,52 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   padding: '8px 12px',
 }));
 
+const menuData = {
+  acerca: [
+    { label: 'Quiénes somos', href: '/' },
+    { label: 'Principios', href: '/' },
+    { label: 'Objetivos', href: '/' },
+    { label: 'Integrantes', href: '/' }
+  ],
+  trabajo: [
+    { label: 'Qué hacemos', href: '/' },
+    { label: 'Ejes de trabajo', href: '/' },
+    { label: 'Asesoramiento técnico', href: '/' }
+  ],
+  publicaciones: [
+    { label: 'Notas', href: '/' },
+    { label: 'Informes', href: '/' },
+    { label: 'Audiovisual', href: '/' }
+  ],
+  actividades: [
+    { label: 'Conversatorios', href: '/' },
+    { label: 'Ciclo de formaciones', href: '/' }
+  ],
+  jornadas: [
+    { label: 'Lanzamiento del Centro Interdisciplinario de Estudios en Políticas Ambientales', href: '/' },
+    { label: 'De FAUBA a la COP30: aportes y reflexiones sobre la gobernanza climática', href: '/' }
+  ],
+  contacto: [
+    { label: 'Suscripción', href: '/' },
+    { label: 'Dejanos tu mensaje', href: '/' },
+    { label: 'Seguinos en las redes', href: '/' }
+  ]
+}
+
+const menuLabels = {
+  acerca: 'Acerca del CIEPA',
+  trabajo: 'Nuestro trabajo',
+  publicaciones: 'Publicaciones',
+  actividades: 'Actividades',
+  jornadas: 'Jornadas',
+  contacto: 'Contacto'
+}
+
 export default function AppAppBar() {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState(null);
+  const [activeSubmenu, setActiveSubmenu] = React.useState(null);
 
   const checkUser = React.useCallback(() => {
     // Revisar localStorage
@@ -72,6 +118,9 @@ export default function AppAppBar() {
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
+    if(!newOpen){
+      setActiveSubmenu(null);
+    }
   };
 
   const handleSignInClick = () => {
@@ -83,6 +132,155 @@ export default function AppAppBar() {
     sessionStorage.removeItem('currentUser')
     setCurrentUser(null)
     window.dispatchEvent(new CustomEvent('userChanged'))
+  };
+
+  const handleMainMenuClick = (menuKey) => {
+    setActiveSubmenu(menuKey);
+  };
+
+  const handleBackToMain = () => {
+    setActiveSubmenu(null);
+  };
+
+  const handleNavigate = (href) => {
+    navigate(href);
+    setOpen(false);
+    setActiveSubmenu(null);
+  }
+
+  const MenuButton = ({ menuKey, label, items }) => {
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [isHovering, setIsHovering] = React.useState(false);
+    const open = Boolean(anchorEl);
+    const timeoutRef = React.useRef(null);
+
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+      setIsHovering(false);
+    }
+
+    const handleMenuItemClick = (href) => {
+      setAnchorEl(null);
+      setIsHovering(false);
+      navigate(href);
+    };
+
+    const handleMouseEnter = (event) => {
+      if (timeoutRef.current){
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+
+      setIsHovering(true);
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleMouseLeave = () => {
+      setIsHovering(false);
+
+      if (!timeoutRef.current){
+        timeoutRef.current = setTimeout(() => {
+          if (!isHovering){
+            setAnchorEl(null);
+          }
+          timeoutRef.current = null;
+        }, 150);
+      }
+    };
+
+    const handleMenuMouseEnter = () => {
+      if (timeoutRef.current){
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      setIsHovering(true);
+    }
+
+    const handleMenuMouseLeave = () => {
+      setIsHovering(false);
+      setAnchorEl(null);
+    };
+
+    React.useEffect(() => {
+      if (!isHovering && timeoutRef.current){
+        return;
+      } else if (isHovering && timeoutRef.current){
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    }, [isHovering]);
+
+    React.useEffect(() => {
+      return () => {
+        if (timeoutRef.current){
+          clearTimeout(timeoutRef.current);
+        }
+      };
+    }, []);
+
+    return (
+      <>
+        <Button 
+          id={`${menuKey}-button`}
+          aria-controls={open ? `${menuKey}-menu` : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+          variant="text" 
+          color="info" 
+          size="medium" 
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onClick={handleClick}
+          endIcon={open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          sx={{ color: '#222', display: { xs: 'none', md: 'flex' } }}>
+            {label}
+        </Button>
+
+        <Menu
+          id={`${menuKey}-menu`}
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          data-menu={menuKey}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+          slotProps={{
+            paper: {
+              elevation: 3,
+              onMouseEnter: handleMenuMouseEnter,
+              onMouseLeave: handleMenuMouseLeave,
+              sx: {
+                mt: .5,
+                minWidth: 200,
+                borderRadius: 2,
+                backgroundColor: '#ebf7ed',
+                '& .MuiMenuItem-root': {
+                  px: 2,
+                  py: 1,
+                  '&:hover': {
+                    backgroundColor: alpha(brand.main, .4)
+                  },
+                },
+              }
+            }
+          }}
+        >
+          {items.map((item, index) => (
+            <MenuItem
+              key={index}
+              onClick={() => handleMenuItemClick(item.href)}
+              sx={{ py: 1, px: 2, '&:hover': { backgroundColor: alpha(brand.main, 0.4), color: 'primary.contrastText' } }}  
+            >
+              {item.label}
+            </MenuItem>
+          ))}
+        </Menu>
+      </>
+    );
   }
 
   return (
@@ -99,48 +297,41 @@ export default function AppAppBar() {
     >
       <Container maxWidth="lg">
         <StyledToolbar variant="dense" disableGutters sx={{ boxShadow: 'none' }}>
-          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, gap: '1rem'}}>
             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
               <CiepaLogo />
             </Box>
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" color="info" size="medium" sx={{ color: '#222', ":hover": {color: '#eee'} }}>
-                Sobre nosotros
-              </Button>
-              <Button variant="text" color="info" size="medium" sx={{ color: '#222', ":hover": {color: '#eee'} }}>
-                Noticias
-              </Button>
-              <Button variant="text" color="info" size="medium" sx={{ color: '#222', ":hover": {color: '#eee'} }}>
-                Contacto
-              </Button>
+            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'space-evenly', px: 0, gap: '1rem' }}>
+              <MenuButton 
+              menuKey="acerca" 
+              label="Acerca del CIEPA" 
+              items={menuData.acerca} 
+              />
+              <MenuButton 
+                menuKey="trabajo" 
+                label="Nuestro trabajo" 
+                items={menuData.trabajo} 
+              />
+              <MenuButton 
+                menuKey="publicaciones" 
+                label="Publicaciones" 
+                items={menuData.publicaciones} 
+              />
+              <MenuButton 
+                menuKey="actividades" 
+                label="Actividades" 
+                items={menuData.actividades} 
+              />
+              <MenuButton 
+                menuKey="jornadas" 
+                label="Jornadas" 
+                items={menuData.jornadas} 
+              />
+              <MenuButton
+                menuKey="contacto"
+                label="Contacto"
+                items={menuData.contacto}
+              />
             </Box>
-          </Box>
-          <Box
-            sx={{
-              display: { xs: 'none', md: 'flex' },
-              gap: 1,
-              alignItems: 'center',
-            }}
-          >
-            {currentUser ? (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography variant="body2" color="text.secondary">
-                  Hola, {currentUser.name}
-                </Typography>
-                <Button color="primary" variant="outlined" size="small" onClick={() => navigate('/dashboard')}>
-                  Dashboard
-                </Button>
-                <Button color="primary" variant="outlined" size="small" onClick={handleLogout}>
-                  Cerrar sesión
-                </Button>
-              </Box>
-            ) : ( 
-              <Button color="primary" variant="contained" size="small" onClick={handleSignInClick}>
-                Log in
-              </Button>
-            )}
-            <ColorModeIconDropdown />
-          </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
             <ColorModeIconDropdown size="medium" />
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
@@ -150,46 +341,75 @@ export default function AppAppBar() {
               anchor="top"
               open={open}
               onClose={toggleDrawer(false)}
-              PaperProps={{
-                sx: {
-                  top: 'var(--template-frame-height, 0px)',
-                },
+              slotProps={{
+                paper: {
+                  sx: {
+                    top: 'var(--template-frame-height, 0px)',
+                  }
+                }
               }}
             >
               <Box sx={{ p: 2, backgroundColor: 'background.default' }}>
                 <Box
                   sx={{
                     display: 'flex',
-                    justifyContent: 'flex-end',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    mb: 1
                   }}
                 >
+                  {activeSubmenu && (
+                    <IconButton onClick={handleBackToMain} aria-label="Volver">
+                      <ArrowBackIcon />
+                    </IconButton>
+                  )}
+                  {activeSubmenu && (
+                    <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', mr: 6 }}>
+                      {menuLabels[activeSubmenu]}
+                    </Typography>
+                  )}
+                  
                   <IconButton onClick={toggleDrawer(false)}>
                     <CloseRoundedIcon />
                   </IconButton>
                 </Box>
-                <MenuItem>Sobre nosotros</MenuItem>
-                <MenuItem>Noticias</MenuItem>
-                <MenuItem>Contacto</MenuItem>
-                <Divider sx={{ my: 3 }} />
-                <MenuItem>
-                  {currentUser ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="body2">
-                        Hola, {currentUser.name}
-                      </Typography>
-                      <Button color="primary" variant="outlined" size="small" onClick={() => navigate('/dashboard')}>
-                        Dashboard
-                      </Button>
-                      <Button color="primary" variant="outlined" size="small" onClick={handleLogout}>
-                        Cerrar sesión
-                      </Button>
-                    </Box>
-                  ) : (
-                    <Button color="primary" variant="contained" size="small" onClick={handleSignInClick}>
-                      Sign In
-                    </Button>
-                  )}
-                </MenuItem>
+                {!activeSubmenu ? (
+                  <>
+                    {Object.entries(menuLabels).map(([key, label]) => (
+                      <MenuItem key={key} onClick={() => handleMainMenuClick(key)}>
+                        {label}
+                      </MenuItem>
+                      ))}
+                      <Divider sx={{ my: 3 }} />
+                      <MenuItem>
+                        {currentUser ? (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography variant="body2">
+                              Hola, {currentUser.name}
+                            </Typography>
+                            <Button color="primary" variant="outlined" size="small" onClick={() => navigate('/dashboard')}>
+                              Dashboard
+                            </Button>
+                            <Button color="primary" variant="outlined" size="small" onClick={handleLogout}>
+                              Cerrar sesión
+                            </Button>
+                          </Box>
+                        ) : (
+                          <Button color="primary" variant="contained" size="small" onClick={handleSignInClick}>
+                            Sign In
+                          </Button>
+                        )}
+                      </MenuItem>
+                  </>
+                ) : (
+                  <>
+                    {menuData[activeSubmenu].map((item, index) => (
+                      <MenuItem key={index} onClick={() => handleNavigate(item.href)}>
+                        {item.label}
+                      </MenuItem>
+                    ))}
+                  </>
+                )}
               </Box>
             </Drawer>
           </Box>

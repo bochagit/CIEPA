@@ -44,13 +44,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 body {
-    background-image: url('/assets/fondo_light.webp');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-image: linear-gradient(to top, #EBF7ED, #EBF7ED);
 }
 
 [data-mui-color-scheme="dark"] body {
-    background-image: url('/assets/fondo_dark.webp');
+    background-image: linear-gradient(to top, #292f29, #292f29);
 }

@@ -7,11 +7,13 @@ import MainContent from './components/MainContent';
 import Footer from './components/Footer';
 import { Box } from '@mui/material';
 import CiepaLogoGrande from './components/CiepaLogoGrande';
+import TopBar from './components/TopBar';
 
 export default function Blog(props) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
+      <TopBar />
       <Box sx={{width: '100%', height: 'auto', display: {xs: 'none', md: 'flex'}, alignItems: 'center', marginTop: '2rem' }}>
         <CiepaLogoGrande />
       </Box>
