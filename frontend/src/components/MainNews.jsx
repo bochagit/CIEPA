@@ -174,7 +174,7 @@ export function Search() {
   );
 }
 
-export default function MainContent() {
+export default function MainNews() {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState(null);
 
   const handleFocus = (index) => {

@@ -1,7 +1,9 @@
 import * as React from 'react'
-import { Box, Button, Typography, Container } from '@mui/material'
+import { Box, Button, Typography, Container, IconButton } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import ColorModeIconDropdown from '../../shared-theme/ColorModeIconDropdown'
+import InstagramIcon from '@mui/icons-material/Instagram'
+import YoutubeIcon from '@mui/icons-material/YouTube'
 
 export default function TopBar(){
     const navigate = useNavigate()
@@ -52,44 +54,61 @@ export default function TopBar(){
     return (
         <Box
             sx={{
-                display: { xs: 'none', md: 'block' }, // ← Solo en desktop
+                display: { xs: 'none', md: 'block' },
                 bgcolor: 'transparent',
                 py: 1,
-                position: 'absolute',
-                right: 0,
-                top: 0,
-                zIndex: 1100, // ← Por encima de la AppBar
+                zIndex: 1100,
+                width: '100%',
             }}
         >
-        <Container maxWidth="lg">
-            <Box
-            sx={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-                gap: 1,
-            }}
-            >
-                {currentUser ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography variant="body2" color="text.secondary">
-                            Hola, {currentUser.name}
-                        </Typography>
-                        <Button color="primary" variant="outlined" size="small" onClick={() => navigate('/dashboard')}>
-                            Dashboard
-                        </Button>
-                        <Button color="primary" variant="outlined" size="small" onClick={handleLogout}>
-                            Cerrar sesión
-                        </Button>
-                        </Box>
-                ) : (
-                    <Button color="primary" variant="contained" size="small" onClick={handleSignInClick}>
-                        Log in
-                    </Button>
-                    )}
-                <ColorModeIconDropdown />
-            </Box>
-        </Container>
+            <Container maxWidth="xl">
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                        <IconButton
+                        color="inherit"
+                        size="small"
+                        href="https://www.instagram.com/ciepa.centro/"
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        aria-label="Instagram"
+                        sx={{ alignSelf: 'center' }}
+                        >
+                        <InstagramIcon />
+                        </IconButton>
+                        <IconButton
+                        color="inherit"
+                        size="small"
+                        href="https://www.youtube.com/"
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        aria-label="Instagram"
+                        sx={{ alignSelf: 'center' }}
+                        >
+                        <YoutubeIcon />
+                        </IconButton>
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                        {currentUser ? (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Typography variant="body2" color="text.secondary">
+                                    Hola, {currentUser.name}
+                                </Typography>
+                                <Button color="primary" variant="outlined" size="small" onClick={() => navigate('/dashboard')}>
+                                    Dashboard
+                                </Button>
+                                <Button color="primary" variant="outlined" size="small" onClick={handleLogout}>
+                                    Cerrar sesión
+                                </Button>
+                            </Box>
+                        ) : (
+                            <Button color="primary" variant="contained" size="small" onClick={handleSignInClick}>
+                                Log in
+                            </Button>
+                            )}
+                        <ColorModeIconDropdown />
+                    </Box>
+                </Box>
+            </Container>
         </Box>
     );
 }

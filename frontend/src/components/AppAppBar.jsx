@@ -246,6 +246,7 @@ export default function AppAppBar() {
           open={open}
           onClose={handleClose}
           data-menu={menuKey}
+          autoFocus={false}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           transformOrigin={{ vertical: 'top', horizontal: 'center' }}
           slotProps={{
@@ -261,6 +262,7 @@ export default function AppAppBar() {
                 '& .MuiMenuItem-root': {
                   px: 2,
                   py: 1,
+                  height: 50,
                   '&:hover': {
                     backgroundColor: alpha(brand.main, .4)
                   },
