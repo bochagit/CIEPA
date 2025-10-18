@@ -328,7 +328,7 @@ const publicaciones = [
           Próximas Actividades
         </SectionTitle>
       </SectionContainer>
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3 }} >
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, flexWrap: { xs: 'wrap', md: 'nowrap' } }} >
           {actividades.map((actividad) => (
             <Box key={actividad.id} sx={{
               position: 'relative',
@@ -360,7 +360,7 @@ const publicaciones = [
                 top: 0,
                 left: 0,
                 width: '100%',
-                width: '100%',
+                height: '100%',
                 backgroundColor: 'rgba(0, 0, 0, .5)'
               }} />
               <Box sx={{

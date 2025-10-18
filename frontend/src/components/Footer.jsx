@@ -14,12 +14,14 @@ import CiepaLogo from './CiepaLogo';
 
 function Copyright() {
   return (
-    <Typography variant="body2" sx={{ color: 'text.primary', mt: 1 }}>
-      Centro Interdisciplinario de Estudios en Politicas Ambientales (CIEPA)
-      <Typography variant="body2" sx={{ color: 'text.secondary' }} >
-        Creado formalmente por el Consejo Directivo de la Facultad de Agronomía de la UBA (RESCD-2023-870)
+    <Box sx={{ maxWidth: { xs: '80%', md: '100%' }, textAlign: 'left' }}>
+      <Typography variant="body2" sx={{ color: 'text.primary', mt: 1 }}>
+        Centro Interdisciplinario de Estudios en Politicas Ambientales (CIEPA)
       </Typography>
-    </Typography>
+      <Typography variant="body2" sx={{ color: 'text.secondary' }} >
+          Creado formalmente por el Consejo Directivo de la Facultad de Agronomía de la UBA (RESCD-2023-870)
+      </Typography>
+    </Box>
   );
 }
 
@@ -42,61 +44,14 @@ export default function Footer() {
         <Box
           sx={{
             display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
+            flexDirection: 'row',
             width: '80%',
             justifyContent: 'space-between',
           }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 4,
-              minWidth: { xs: '100%', sm: '60%' },
-            }}
-          >
-            <Box sx={{ width: { xs: '100%', sm: '60%' }, display: {xs: 'block', sm:'flex'}, gap: '3rem'}}>
-              <Box sx={{height: '100%', display: {xs: 'block', sm: 'flex'}, justifyContent: 'center', alignItems: 'center'}}>
-                <CiepaLogo />
-              </Box>
-              <Box>
-                <Typography
-                  variant="body2"
-                  gutterBottom
-                  sx={{ fontWeight: 600, mt: 2 }}
-                >
-                  Suscribite al newsletter
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-                  Suscribite para no perderte ninguna actualización
-                </Typography>
-                <Stack direction="row" spacing={1} useFlexGap>
-                  <TextField
-                    id="email-newsletter"
-                    hiddenLabel
-                    size="small"
-                    variant="outlined"
-                    fullWidth
-                    aria-label="Enter your email address"
-                    placeholder="Tu correo..."
-                    slotProps={{
-                      htmlInput: {
-                        autoComplete: 'off',
-                        'aria-label': 'Enter your email address',
-                      },
-                    }}
-                    sx={{ width: '250px' }}
-                  />
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    sx={{ flexShrink: 0 }}
-                  >
-                    Suscribite
-                  </Button>
-                </Stack>
-              </Box>
+          <Box sx={{ display: 'flex', gap: '3rem' }}>
+            <Box sx={{ height: '100%', display: { xs: 'block', sm: 'flex' }, justifyContent: 'center', alignItems: 'center' }}>
+              <CiepaLogo />
             </Box>
           </Box>
           <Box
@@ -110,10 +65,10 @@ export default function Footer() {
               Links
             </Typography>
             <Link color="text.secondary" variant="body2" href="#">
-              Sobre nosotros
+              Quienes somos
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
-              Noticias
+              Notas
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
               Contacto
@@ -134,10 +89,9 @@ export default function Footer() {
             <Copyright />
           </div>
           <Stack
-            direction="row"
             spacing={1}
             useFlexGap
-            sx={{ justifyContent: 'left', color: 'text.secondary' }}
+            sx={{ justifyContent: 'left', color: 'text.secondary', flexDirection: { xs: 'column', md: 'row' } }}
           >
             <IconButton
               color="inherit"
