@@ -97,6 +97,64 @@ export default function MainContent() {
     }
   ];
 
+  const publicaciones = [
+    {
+      id: 1,
+      titulo: "Impacto del cambio climático en la agricultura argentina",
+      descripcion: "Análisis exhaustivo de los efectos del cambio climático en los sistemas productivos nacionales y sus implicancias para la seguridad alimentaria.",
+      imagen: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600&q=80",
+      fecha: "2024-10-15",
+      autor: "Dr. María González"
+    },
+    {
+      id: 2,
+      titulo: "Políticas públicas ambientales: Una perspectiva regional",
+      descripcion: "Estudio comparativo de las políticas ambientales implementadas en América Latina y sus resultados en la conservación del medio ambiente.",
+      imagen: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600&q=80",
+      fecha: "2024-10-10",
+      autor: "Lic. Carlos Mendez"
+    },
+    {
+      id: 3,
+      titulo: "Biodiversidad urbana y planificación sostenible",
+      descripcion: "Propuestas para integrar la conservación de la biodiversidad en el desarrollo urbano y crear ciudades más verdes y sostenibles.",
+      imagen: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600&q=80",
+      fecha: "2024-10-05",
+      autor: "Dra. Ana López"
+    }
+  ];
+
+  const [currentPublicacion, setCurrentPublicacion] = React.useState(0);
+  const [isTransitioning, setIsTransitioning] = React.useState(false);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      handleNextPublicacion();
+    }, 5000)
+
+    return () => clearInterval(interval);
+  }, [currentPublicacion]);
+
+  const handleNextPublicacion = () => {
+    setIsTransitioning(true);
+
+    setTimeout(() => {
+      setCurrentPublicacion((prev) => (prev + 1) % publicaciones.length);
+      setIsTransitioning(false);
+    }, 300);
+  };
+
+  const handlePublicacionClick = (index) => {
+    if (index !== currentPublicacion){
+      setIsTransitioning(true);
+
+      setTimeout(() => {
+        setCurrentPublicacion(index);
+        setIsTransitioning(false);
+      }, 300);
+    }
+  };
+
   return (
     <Container maxWidth="lg">
       <HeroSection>
@@ -169,6 +227,110 @@ export default function MainContent() {
         <SectionTitle variant="h3" component="h2">
           Últimas Publicaciones
         </SectionTitle>
+        <Box sx={{ position: 'relative', height: {xs: 400, md: 500}, borderRadius: 3, overflow: 'hidden', mb: 4, boxShadow: 3 }} >
+          <Box sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundImage: `url(${publicaciones[currentPublicacion].imagen})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            opacity: isTransitioning ? 0 : 1,
+            transition: 'opacity .5s ease-in-out'
+          }} />
+          <Box sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, .4)'
+          }} />
+          <Box sx={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            p: { xs: 3, md: 5 },
+            background: 'linear-gradient(transparent, rgba(0, 0, 0, .8))',
+            color: 'white',
+            opacity: isTransitioning ? 0 : 1,
+            transition: 'opacity .5s ease-in-out'
+          }}
+          >
+            <Chip
+              label="Publicación"
+              size="small"
+              sx={{
+                bgcolor: alpha(brand.main, .9),
+                color: 'white',
+                fontWeight: 600,
+                mb: 2
+              }}
+              />
+              <Typography
+                variant="h4"
+                component="h3"
+                gutterBottom
+                sx={{
+                  fontWeight: 700,
+                  mb: 2,
+                  fontSize: { xs: '.5rem', md: '2.1rem' }
+                }}
+                >
+                  {publicaciones[currentPublicacion].titulo}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    mb: 3,
+                    maxWidth: '800px',
+                    fontSize: { xs: '.9rem', md: '1rem' },
+                    lineHeight: 1.6
+                  }}
+                  >
+                    {publicaciones[currentPublicacion].descripcion}
+                  </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                      <Typography variant="body2" sx={{ opacity: .9 }}>
+                        Por {publicaciones[currentPublicacion].autor}
+                      </Typography>
+                      <Typography variant="body2" sx={{ opacity: .9 }}>
+                        {new Date(publicaciones[currentPublicacion].fecha).toLocaleDateString('es-AR')}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{
+                    position: 'absolute',
+                    bottom: 20,
+                    right: 20,
+                    display: 'flex',
+                    gap: 1
+                  }}
+                  >
+                    {publicaciones.map((_, index) => (
+                      <Box
+                        key={index}
+                        onClick={() => handlePublicacionClick(index)}
+                        sx={{
+                          width: 12,
+                          height: 12,
+                          borderRadius: '50%',
+                          backgroundColor: index === currentPublicacion ? 'white' : alpha('#fff', .5),
+                          cursor: 'pointer',
+                          transition: 'all .3s ease',
+                          '&:hover': {
+                            backgroundColor: 'white',
+                            transform: 'scale(1.2)'
+                          }
+                        }}
+                        />
+                    ))}
+                  </Box>
+        </Box>
         <Box sx={{ textAlign: 'center', mt: 4 }}>
           <Button variant="contained" size="large" sx={{ borderRadius: 3, px: 4 }}>
             Ver todas las publicaciones
@@ -183,7 +345,8 @@ export default function MainContent() {
           Próximas Actividades
         </SectionTitle>
           {actividades.map((actividad) => (
-              <Paper 
+              <Paper
+                key={actividad.id}
                 elevation={1} 
                 sx={{ 
                   margin: 2,
