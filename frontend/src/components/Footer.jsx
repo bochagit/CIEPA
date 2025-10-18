@@ -10,18 +10,15 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import YouTubeIcon from '@mui/icons-material/YouTube';
-import TwitterIcon from '@mui/icons-material/X';
 import CiepaLogo from './CiepaLogo';
 
 function Copyright() {
   return (
-    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-      {'Copyright © '}
-      <Link color="text.secondary" href="#">
-        CIEPA - Centro Interdisciplinario de Estudios en Politicas Ambientales.
-      </Link>
-      &nbsp;
-      {new Date().getFullYear()}
+    <Typography variant="body2" sx={{ color: 'text.primary', mt: 1 }}>
+      Centro Interdisciplinario de Estudios en Politicas Ambientales (CIEPA)
+      <Typography variant="body2" sx={{ color: 'text.secondary' }} >
+        Creado formalmente por el Consejo Directivo de la Facultad de Agronomía de la UBA (RESCD-2023-870)
+      </Typography>
     </Typography>
   );
 }
@@ -152,17 +149,6 @@ export default function Footer() {
               sx={{ alignSelf: 'center' }}
             >
               <InstagramIcon />
-            </IconButton>
-            <IconButton
-              color="inherit"
-              size="small"
-              href="https://x.com/"
-              target='_blank'
-              rel='noopener noreferrer'
-              aria-label="X"
-              sx={{ alignSelf: 'center' }}
-            >
-              <TwitterIcon />
             </IconButton>
             <IconButton
               color="inherit"

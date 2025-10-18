@@ -4,23 +4,17 @@ import {
   Typography, 
   Grid, 
   Card, 
-  CardContent, 
-  CardMedia,
+  CardContent,
   Button,
   Container,
   Divider,
-  Paper,
-  Avatar,
-  Chip
+  Avatar
 } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import { brand } from '../../shared-theme/themePrimitives';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import SchoolIcon from '@mui/icons-material/School';
 import PublicIcon from '@mui/icons-material/Public';
-import EmailIcon from '@mui/icons-material/Email';
-import PhoneIcon from '@mui/icons-material/Phone';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const SectionContainer = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(6),
@@ -70,34 +64,7 @@ const HeroSection = styled(Box)(({ theme }) => ({
 }));
 
 export default function MainContent() {
-  const actividades = [
-    {
-      id: 1,
-      titulo: "Conversatorio: Futuro de la Energía Renovable",
-      fecha: "2024-11-20",
-      hora: "18:00",
-      modalidad: "Presencial + Virtual",
-      descripcion: "Debate sobre las perspectivas y desafíos de la transición energética en Argentina."
-    },
-    {
-      id: 2,
-      titulo: "Taller: Metodologías de Evaluación Ambiental",
-      fecha: "2024-11-15",
-      hora: "14:00",
-      modalidad: "Presencial",
-      descripcion: "Capacitación en herramientas y técnicas para la evaluación de impacto ambiental."
-    },
-    {
-      id: 3,
-      titulo: "Seminario: Políticas Hídricas Regionales",
-      fecha: "2024-11-10",
-      hora: "16:00",
-      modalidad: "Virtual",
-      descripcion: "Análisis de las políticas de gestión del agua en el contexto regional."
-    }
-  ];
-
-  const publicaciones = [
+const publicaciones = [
     {
       id: 1,
       titulo: "Impacto del cambio climático en la agricultura argentina",
@@ -121,6 +88,37 @@ export default function MainContent() {
       imagen: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600&q=80",
       fecha: "2024-10-05",
       autor: "Dra. Ana López"
+    }
+  ];
+
+  const actividades = [
+    {
+      id: 1,
+      titulo: "Gobernanza climática federal en Argentina",
+      descripcion: "Balance y perspectiva de la Ley 27520",
+      imagen: "https://picsum.photos/600/400?random=1",
+      fecha: "2024-11-20"
+    },
+    {
+      id: 2,
+      titulo: "Monitor Ambiental del Presupuesto 2025",
+      descripcion: "¿Qué es la asignación hacia agosto?",
+      imagen: "https://picsum.photos/600/400?random=2",
+      fecha: "2024-11-15"
+    },
+    {
+      id: 3,
+      titulo: "FARN Environmental Report 2024",
+      descripcion: "The future in dispute",
+      imagen: "https://picsum.photos/600/400?random=3",
+      fecha: "2024-11-10"
+    },
+    {
+      id: 4,
+      titulo: "Boletín Nº1 del Observatorio del RUO",
+      descripcion: "",
+      imagen: "https://picsum.photos/600/400?random=4",
+      fecha: "2024-11-05"
     }
   ];
 
@@ -261,80 +259,65 @@ export default function MainContent() {
             transition: 'opacity .5s ease-in-out'
           }}
           >
-            <Chip
-              label="Publicación"
-              size="small"
+            <Typography
+              variant="h4"
+              component="h3"
+              gutterBottom
               sx={{
-                bgcolor: alpha(brand.main, .9),
-                color: 'white',
-                fontWeight: 600,
-                mb: 2
+                fontWeight: 700,
+                mb: 2,
+                fontSize: { xs: '.5rem', md: '2.1rem' }
               }}
-              />
+              >
+                {publicaciones[currentPublicacion].titulo}
+              </Typography>
               <Typography
-                variant="h4"
-                component="h3"
-                gutterBottom
+                variant="body1"
                 sx={{
-                  fontWeight: 700,
-                  mb: 2,
-                  fontSize: { xs: '.5rem', md: '2.1rem' }
+                  mb: 3,
+                  maxWidth: '800px',
+                  fontSize: { xs: '.9rem', md: '1rem' },
+                  lineHeight: 1.6
                 }}
                 >
-                  {publicaciones[currentPublicacion].titulo}
+                  {publicaciones[currentPublicacion].descripcion}
                 </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    mb: 3,
-                    maxWidth: '800px',
-                    fontSize: { xs: '.9rem', md: '1rem' },
-                    lineHeight: 1.6
-                  }}
-                  >
-                    {publicaciones[currentPublicacion].descripcion}
-                  </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                      <Typography variant="body2" sx={{ opacity: .9 }}>
-                        Por {publicaciones[currentPublicacion].autor}
-                      </Typography>
-                      <Typography variant="body2" sx={{ opacity: .9 }}>
-                        {new Date(publicaciones[currentPublicacion].fecha).toLocaleDateString('es-AR')}
-                      </Typography>
-                    </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                    <Typography variant="body2" sx={{ opacity: .9 }}>
+                      Por {publicaciones[currentPublicacion].autor}
+                    </Typography>
+                    <Typography variant="body2" sx={{ opacity: .9 }}>
+                      {new Date(publicaciones[currentPublicacion].fecha).toLocaleDateString('es-AR')}
+                    </Typography>
                   </Box>
-                  <Box sx={{
-                    position: 'absolute',
-                    bottom: 20,
-                    right: 20,
-                    display: 'flex',
-                    gap: 1
-                  }}
-                  >
-                    {publicaciones.map((_, index) => (
-                      <Box
-                        key={index}
-                        onClick={() => handlePublicacionClick(index)}
-                        sx={{
-                          width: 12,
-                          height: 12,
-                          borderRadius: '50%',
-                          backgroundColor: index === currentPublicacion ? 'white' : alpha('#fff', .5),
-                          cursor: 'pointer',
-                          transition: 'all .3s ease',
-                          '&:hover': {
-                            backgroundColor: 'white',
-                            transform: 'scale(1.2)'
-                          }
-                        }}
-                        />
-                    ))}
-                  </Box>
-        </Box>
-        <Box sx={{ textAlign: 'center', mt: 4 }}>
-          <Button variant="contained" size="large" sx={{ borderRadius: 3, px: 4 }}>
-            Ver todas las publicaciones
-          </Button>
+                </Box>
+                <Box sx={{
+                  position: 'absolute',
+                  bottom: 20,
+                  right: 20,
+                  display: 'flex',
+                  gap: 1
+                }}
+                >
+                  {publicaciones.map((_, index) => (
+                    <Box
+                      key={index}
+                      onClick={() => handlePublicacionClick(index)}
+                      sx={{
+                        width: 12,
+                        height: 12,
+                        borderRadius: '50%',
+                        backgroundColor: index === currentPublicacion ? 'white' : alpha('#fff', .5),
+                        cursor: 'pointer',
+                        transition: 'all .3s ease',
+                        '&:hover': {
+                          backgroundColor: 'white',
+                          transform: 'scale(1.2)'
+                        }
+                      }}
+                      />
+                  ))}
+                </Box>
         </Box>
       </SectionContainer>
 
@@ -344,193 +327,96 @@ export default function MainContent() {
         <SectionTitle variant="h3" component="h2">
           Próximas Actividades
         </SectionTitle>
-          {actividades.map((actividad) => (
-              <Paper
-                key={actividad.id}
-                elevation={1} 
-                sx={{ 
-                  margin: 2,
-                  p: 3, 
-                  borderRadius: 2,
-                  border: `1px solid ${alpha(brand.main, 0.1)}`,
-                  '&:hover': {
-                    boxShadow: 4,
-                    transform: 'translateY(-2px)',
-                    transition: 'all 0.2s ease-in-out'
-                  }
-                }}
-              >
-                <Grid container spacing={3} justifyContent="space-evenly" alignItems="center">
-                    <Box sx={{ textAlign: { xs: 'left', md: 'center' } }}>
-                        <Typography variant="h4" color="primary" fontWeight={700}>
-                        {new Date(actividad.fecha).getDate()}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                        {new Date(actividad.fecha).toLocaleDateString('es-AR', { month: 'short', year: 'numeric' })}
-                        </Typography>
-                        <Typography variant="body2" color="primary" fontWeight={600}>
-                        {actividad.hora}
-                        </Typography>
-                    </Box>
-                  <Grid width={500}>
-                    <Typography variant="h6" component="h3" gutterBottom fontWeight={600}>
-                      {actividad.titulo}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" paragraph>
-                      {actividad.descripcion}
-                    </Typography>
-                    <Chip 
-                      label={actividad.modalidad} 
-                      size="small"
-                      variant="outlined"
-                      color="primary"
-                    />
-                  </Grid>
-                  <Grid>
-                    <Box sx={{ textAlign: { xs: 'left', md: 'right' } }}>
-                      <Button 
-                        variant="contained" 
-                        size="small"
-                        sx={{ borderRadius: 2, mb: 1, display: 'block', width: { xs: 'auto', md: '100%' } }}
-                      >
-                        Inscribirse
-                      </Button>
-                      <Button 
-                        variant="text" 
-                        size="small"
-                        sx={{ borderRadius: 2, width: { xs: 'auto', md: '100%' } }}
-                      >
-                        Más información
-                      </Button>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </Paper>
-          ))}
-        <Box sx={{ textAlign: 'center', mt: 4 }}>
-          <Button variant="outlined" size="large" sx={{ borderRadius: 3, px: 4 }}>
-            Ver calendario completo
-          </Button>
-        </Box>
       </SectionContainer>
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3 }} >
+          {actividades.map((actividad) => (
+            <Box key={actividad.id} sx={{
+              position: 'relative',
+              width: { xs: '100%', sm: 'calc(50% - 12px)' },
+              height: { xs: 250, md: 300 },
+              borderRadius: 3,
+              overflow: 'hidden',
+              boxShadow: 3,
+              cursor: 'pointer',
+              transition: 'transform .3s ease-in-out, box-shadow .3s ease-in-out',
+              '&:hover': {
+                transform: 'translateY(-8px)',
+                boxShadow: 6
+              }
+            }} >
+              <Box sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${actividad.imagen})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+              }} />
+              <Box sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                width: '100%',
+                backgroundColor: 'rgba(0, 0, 0, .5)'
+              }} />
+              <Box sx={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                p: { xs: 2, md: 3 },
+                background: 'linear-gradient(transparent, rgba(0, 0, 0, .8))',
+                color: 'white'
+              }} >
+              <Typography variant="h6" component="h3" gutterBottom sx={{
+                fontWeight: 600,
+                mb: 1,
+                fontSize: { xs: '1rem', md: '1.25rem' },
+                lineHeight: 1.3
+              }}>
+                {actividad.titulo}
+              </Typography>
+              {actividad.descripcion && (
+                <Typography variant="body2" sx={{
+                  mb: 2,
+                  fontSize: { xs: '.8rem', md: '.9rem' },
+                  lineHeight: 1.4,
+                  opacity: .9
+                }} >
+                  {actividad.descripcion}
+                </Typography>
+              )}
+              <Typography variant="caption" sx={{
+                opacity: .8,
+                fontSize: '.75rem',
+              }}
+              >
+                {new Date(actividad.fecha).toLocaleDateString('es-AR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </Typography>
+            </Box>
+          </Box>
+          ))}
+        </Box>
 
       <Divider sx={{ my: 6 }} />
 
       <SectionContainer>
         <SectionTitle variant="h3" component="h2">
-          Contacto
+          ¡Contactate con nosotras/os!
         </SectionTitle>
-        <Grid container spacing={4}>
-          <Grid>
-            <Paper 
-              elevation={3} 
-              sx={{ 
-                p: 4, 
-                borderRadius: 3,
-                background: `linear-gradient(135deg, ${alpha(brand.main, 0.05)} 0%, ${alpha(brand.main, 0.02)} 100%)`,
-                border: `1px solid ${alpha(brand.main, 0.1)}`
-              }}
-            >
-              <Typography variant="h5" component="h3" gutterBottom fontWeight={600} color="primary">
-                Información de Contacto
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <EmailIcon sx={{ color: brand.main, mr: 2 }} />
-                <Typography variant="body1">
-                  contacto@ciepa.org.ar
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <PhoneIcon sx={{ color: brand.main, mr: 2 }} />
-                <Typography variant="body1">
-                  +54 11 1234-5678
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
-                <LocationOnIcon sx={{ color: brand.main, mr: 2, mt: 0.5 }} />
-                <Box>
-                  <Typography variant="body1">
-                    Av. San Martín 4453
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    (C1417DSE) CABA, Argentina
-                  </Typography>
-                </Box>
-              </Box>
-              <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                Estamos aquí para responder tus consultas y fomentar la colaboración en temas ambientales.
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid width={'100%'}>
-            <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
-              <Typography variant="h5" component="h3" gutterBottom fontWeight={600} color="primary">
-                Envíanos un mensaje
-              </Typography>
-              <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <Box>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Nombre completo
-                  </Typography>
-                  <Box 
-                    sx={{ 
-                      p: 2, 
-                      border: `1px solid ${alpha(brand.main, 0.3)}`, 
-                      borderRadius: 1,
-                      bgcolor: alpha(brand.main, 0.02)
-                    }}
-                  >
-                    <Typography variant="body2" color="text.secondary">
-                      [Campo de entrada]
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Email
-                  </Typography>
-                  <Box 
-                    sx={{ 
-                      p: 2, 
-                      border: `1px solid ${alpha(brand.main, 0.3)}`, 
-                      borderRadius: 1,
-                      bgcolor: alpha(brand.main, 0.02)
-                    }}
-                  >
-                    <Typography variant="body2" color="text.secondary">
-                      [Campo de entrada]
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Mensaje
-                  </Typography>
-                  <Box 
-                    sx={{ 
-                      p: 2, 
-                      minHeight: 100,
-                      border: `1px solid ${alpha(brand.main, 0.3)}`, 
-                      borderRadius: 1,
-                      bgcolor: alpha(brand.main, 0.02)
-                    }}
-                  >
-                    <Typography variant="body2" color="text.secondary">
-                      [Área de texto]
-                    </Typography>
-                  </Box>
-                </Box>
-                <Button 
-                  variant="contained" 
-                  size="large" 
-                  sx={{ borderRadius: 2, mt: 2 }}
-                >
-                  Enviar mensaje
-                </Button>
-              </Box>
-            </Paper>
-          </Grid>
-        </Grid>
+        <Box sx={{ width: 300, height: 150, m: 'auto', mt: '4rem', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: 2, border: `1px solid ${brand.main}` }} >
+          <Button variant="contained" color="primary" sx={{ height: 50, '&:hover': { boxShadow: 4, backgroundColor: alpha(brand.main, 1), border: `1px solid ${brand.main}` } }} >
+            Contacto
+          </Button>
+        </Box>
       </SectionContainer>
     </Container>
   );
