@@ -304,8 +304,8 @@ const publicaciones = [
                       key={index}
                       onClick={() => handlePublicacionClick(index)}
                       sx={{
-                        width: 12,
-                        height: 12,
+                        width: 10,
+                        height: 10,
                         borderRadius: '50%',
                         backgroundColor: index === currentPublicacion ? 'white' : alpha('#fff', .5),
                         cursor: 'pointer',
