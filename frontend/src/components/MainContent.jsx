@@ -2,7 +2,6 @@ import * as React from 'react';
 import { 
   Box, 
   Typography, 
-  Grid, 
   Card, 
   CardContent,
   Button,
@@ -15,6 +14,7 @@ import { brand } from '../../shared-theme/themePrimitives';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import SchoolIcon from '@mui/icons-material/School';
 import PublicIcon from '@mui/icons-material/Public';
+import { useNavigate } from 'react-router-dom';
 
 const SectionContainer = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(6),
@@ -153,6 +153,8 @@ const publicaciones = [
     }
   };
 
+  const navigate = useNavigate()
+
   return (
     <Container maxWidth="lg">
       <HeroSection>
@@ -163,7 +165,7 @@ const publicaciones = [
           Somos un Centro de Estudios de la Universidad de Buenos Aires integrado por docentes, investigadores, graduada/os y estudiantes de diversas disciplinas que presentan interés y/o trabajan en políticas ambientales. <br />
           A través del estudio y análisis, buscamos aportar a la formulación y desarrollo de políticas públicas ambientales basadas en el conocimiento científico-técnico, promoviendo espacios de articulación, debate y divulgación que impulsen un desarrollo nacional con perspectiva ambiental y una mejor calidad de vida para las personas.
         </Typography>
-        <Button variant="outlined" color="primary" sx={{ marginTop: "2rem" }}>
+        <Button variant="outlined" color="primary" onClick={() => navigate("/quienes-somos")} sx={{ marginTop: "2rem" }}>
           Conocenos
         </Button>
       </HeroSection>

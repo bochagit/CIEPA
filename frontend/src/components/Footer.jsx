@@ -15,6 +15,7 @@ import EmailIcon from '@mui/icons-material/Email'
 import PhoneIcon from '@mui/icons-material/Phone'
 import { alpha } from '@mui/material';
 import { brand } from '../../shared-theme/themePrimitives';
+import { useNavigate } from 'react-router-dom';
 
 function Copyright() {
   return (
@@ -30,6 +31,7 @@ function Copyright() {
 }
 
 export default function Footer() {
+  const navigate = useNavigate()
   return (
     <React.Fragment>
       <Divider />
@@ -189,7 +191,7 @@ export default function Footer() {
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
               Links
             </Typography>
-            <Link color="text.secondary" variant="body2" href="#">
+            <Link color="text.secondary" variant="body2" onClick={() => navigate("/quienes-somos")}>
               Quienes somos
             </Link>
             <Link color="text.secondary" variant="body2" href="#">

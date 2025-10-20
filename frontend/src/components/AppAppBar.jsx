@@ -38,10 +38,10 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 const menuData = {
   acerca: [
-    { label: 'Quiénes somos', href: '/' },
-    { label: 'Principios', href: '/' },
-    { label: 'Objetivos', href: '/' },
-    { label: 'Integrantes', href: '/' }
+    { label: 'Quiénes somos', href: '/quienes-somos' },
+    { label: 'Principios', href: '/principios' },
+    { label: 'Objetivos', href: '/objetivos' },
+    { label: 'Integrantes', href: '/integrantes' }
   ],
   trabajo: [
     { label: 'Qué hacemos', href: '/' },

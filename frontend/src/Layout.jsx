@@ -7,9 +7,8 @@ import Footer from './components/Footer';
 import { Box } from '@mui/material';
 import CiepaLogoGrande from './components/CiepaLogoGrande';
 import TopBar from './components/TopBar';
-import MainContent from './components/MainContent';
 
-export default function Blog(props) {
+export default function Layout({ children, ...props }) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
@@ -23,7 +22,7 @@ export default function Blog(props) {
         component="main"
         sx={{ display: 'flex', flexDirection: 'column', my: 10, gap: 4 }}
       >
-        <MainContent />
+        {children}
       </Container>
       <Footer />
     </AppTheme>
