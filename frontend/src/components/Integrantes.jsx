@@ -3,7 +3,7 @@ import { styled, Typography, Box, alpha } from '@mui/material';
 import { brand } from '../../shared-theme/themePrimitives';
 
 const SectionContainer = styled(Box)(({ theme }) => ({
-  marginBottom: theme.spacing(6),
+  marginBottom: theme.spacing(2),
   padding: theme.spacing(4, 0),
 }));
 

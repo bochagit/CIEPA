@@ -44,9 +44,9 @@ const menuData = {
     { label: 'Integrantes', href: '/integrantes' }
   ],
   trabajo: [
-    { label: 'Qué hacemos', href: '/' },
-    { label: 'Ejes de trabajo', href: '/' },
-    { label: 'Asesoramiento técnico', href: '/' }
+    { label: 'Qué hacemos', href: '/que-hacemos' },
+    { label: 'Ejes de trabajo', href: '/ejes' },
+    { label: 'Asesoramiento técnico', href: '/asesoramiento' }
   ],
   publicaciones: [
     { label: 'Notas', href: '/' },
@@ -379,7 +379,7 @@ export default function AppAppBar() {
                   <>
                     {Object.entries(menuLabels).map(([key, label]) => (
                       <MenuItem key={key} onClick={() => handleMainMenuClick(key)}>
-                        {label}
+                        {label}...
                       </MenuItem>
                       ))}
                       <Divider sx={{ my: 3 }} />

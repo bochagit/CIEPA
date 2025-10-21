@@ -22,7 +22,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 }));
 
 const SectionContainer = styled(Box)(({ theme }) => ({
-  marginBottom: theme.spacing(6),
+  marginBottom: theme.spacing(4),
   padding: theme.spacing(4, 0),
 }));
 
