@@ -12,6 +12,7 @@ import Integrantes from './components/Integrantes';
 import QueHacemos from './components/QueHacemos';
 import EjesTrabajo from './components/EjesTrabajo';
 import Asesoramiento from './components/Asesoramiento';
+import Notas from './components/Notas';
 
 export default function App() {
   return (
@@ -55,6 +56,11 @@ export default function App() {
           <Route path="/asesoramiento" element={
             <Layout>
               <Asesoramiento />
+            </Layout>
+          } />
+          <Route path="/notas" element={
+            <Layout>
+              <Notas />
             </Layout>
           } />
         <Route path="/signin" element={<SignIn />} />

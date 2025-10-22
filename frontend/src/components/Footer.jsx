@@ -191,13 +191,13 @@ export default function Footer() {
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
               Links
             </Typography>
-            <Link color="text.secondary" variant="body2" onClick={() => navigate("/quienes-somos")}>
+            <Link color="text.secondary" variant="body2" onClick={() => navigate("/quienes-somos")} sx={{ '&:hover': { cursor: 'pointer' } }}>
               Quienes somos
             </Link>
-            <Link color="text.secondary" variant="body2" href="#">
+            <Link color="text.secondary" variant="body2" onClick={() => navigate("/notas")} sx={{ '&:hover': { cursor: 'pointer' } }}>
               Notas
             </Link>
-            <Link color="text.secondary" variant="body2" href="#">
+            <Link color="text.secondary" variant="body2" href="#" sx={{ '&:hover': { cursor: 'pointer' } }}>
               Contacto
             </Link>
           </Box>

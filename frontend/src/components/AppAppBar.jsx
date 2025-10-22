@@ -49,7 +49,7 @@ const menuData = {
     { label: 'Asesoramiento técnico', href: '/asesoramiento' }
   ],
   publicaciones: [
-    { label: 'Notas', href: '/' },
+    { label: 'Notas', href: '/notas' },
     { label: 'Informes', href: '/' },
     { label: 'Audiovisual', href: '/' }
   ],

@@ -14,6 +14,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import { styled } from '@mui/material/styles';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import { Pagination } from '@mui/material';
+import { brand } from '../../shared-theme/themePrimitives';
 
 const cardData = [
   {
@@ -71,6 +72,25 @@ const cardData = [
     authors: [{ name: 'Autor 1', avatar: '/static/images/avatar/2.jpg' }],
   },
 ];
+
+const SectionTitle = styled(Typography)(({ theme }) => ({
+  marginBottom: theme.spacing(3),
+  fontWeight: 600,
+  color: brand.main,
+  textAlign: 'center',
+  position: 'relative',
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    bottom: -8,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: 60,
+    height: 3,
+    backgroundColor: brand.main,
+    borderRadius: 2,
+  }
+}));
 
 const StyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',
@@ -174,7 +194,7 @@ export function Search() {
   );
 }
 
-export default function MainNews() {
+export default function Notas() {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState(null);
 
   const handleFocus = (index) => {
@@ -188,9 +208,7 @@ export default function MainNews() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <div>
-        <Typography variant="h1" gutterBottom>
-          Noticias
-        </Typography>
+        <SectionTitle variant="h3" component="h2">Notas</SectionTitle>
       </div>
       <Box
         sx={{
