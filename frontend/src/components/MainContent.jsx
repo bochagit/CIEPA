@@ -60,7 +60,7 @@ const HeroSection = styled(Box)(({ theme }) => ({
   borderRadius: theme.spacing(3),
   padding: theme.spacing(6, 4),
   textAlign: 'center',
-  marginBottom: theme.spacing(6),
+  marginBottom: theme.spacing(2),
 }));
 
 export default function MainContent() {
@@ -157,19 +157,21 @@ const publicaciones = [
 
   return (
     <Container maxWidth="lg">
-      <HeroSection>
-        <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
-          Acerca del CIEPA
-        </Typography>
-        <Typography variant="body1" sx={{ maxWidth: '800px', margin: '0 auto', lineHeight: 1.8 }}>
-          Somos un Centro de Estudios de la Universidad de Buenos Aires integrado por docentes, investigadores, graduada/os y estudiantes de diversas disciplinas que presentan interés y/o trabajan en políticas ambientales. <br />
-          A través del estudio y análisis, buscamos aportar a la formulación y desarrollo de políticas públicas ambientales basadas en el conocimiento científico-técnico, promoviendo espacios de articulación, debate y divulgación que impulsen un desarrollo nacional con perspectiva ambiental y una mejor calidad de vida para las personas.
-        </Typography>
-        <Button variant="outlined" color="primary" onClick={() => navigate("/quienes-somos")} sx={{ marginTop: "2rem" }}>
-          Conocenos
-        </Button>
-      </HeroSection>
-
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' } }}>
+        <HeroSection sx={{ width: { xs: '100%', lg: '40%' }, height: { xs: 'auto', lg: 500 }, borderRadius: { xs: '1.5rem', lg: '1.5rem 0 0 1.5rem' } }}>
+            <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
+              Acerca del CIEPA
+            </Typography>
+            <Typography variant="body1" sx={{ maxWidth: '800px', margin: '0 auto', lineHeight: 1.8 }}>
+              Somos un Centro de Estudios de la Universidad de Buenos Aires integrado por docentes, investigadores, graduada/os y estudiantes de diversas disciplinas que presentan interés y/o trabajan en políticas ambientales. <br />
+              A través del estudio y análisis, buscamos aportar a la formulación y desarrollo de políticas públicas ambientales basadas en el conocimiento científico-técnico, promoviendo espacios de articulación, debate y divulgación que impulsen un desarrollo nacional con perspectiva ambiental y una mejor calidad de vida para las personas.
+            </Typography>
+            <Button variant="outlined" color="primary" onClick={() => navigate("/quienes-somos")} sx={{ marginTop: "2rem" }}>
+              Conocenos
+            </Button>
+        </HeroSection>
+        <Box sx={{ width: { xs: '100%', lg: '60%' }, height: 500, backgroundImage: 'url("https://cdn.prod.website-files.com/605baba32d94435376625d33/6514274293b790a99214bbd6_63d7a17b0c095a3d11423d53_team-celebration-ideas.webp")', backgroundPosition: 'center', backgroundSize: 'cover' , backgroundRepeat: 'no-repeat', borderRadius: { xs: '1.5rem', lg: '0 1.5rem 1.5rem 0' } }} />
+      </Box>
       <SectionContainer>
         <SectionTitle variant="h3" component="h2">
           Nuestro Trabajo
@@ -327,7 +329,7 @@ const publicaciones = [
 
       <SectionContainer>
         <SectionTitle variant="h3" component="h2">
-          Próximas Actividades
+          Últimas Actividades
         </SectionTitle>
       </SectionContainer>
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, flexWrap: { xs: 'wrap', md: 'nowrap' } }} >
@@ -415,7 +417,7 @@ const publicaciones = [
           ¡Contactate con nosotras/os!
         </SectionTitle>
         <Box sx={{ width: 300, height: 150, m: 'auto', mt: '4rem', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: 2, border: `1px solid ${brand.main}` }} >
-          <Button variant="contained" color="primary" sx={{ height: 50, '&:hover': { boxShadow: 4, backgroundColor: alpha(brand.main, 1), border: `1px solid ${brand.main}` } }} >
+          <Button variant="contained" color="primary" onClick={() => navigate("/contacto")} sx={{ height: 50, '&:hover': { boxShadow: 4, backgroundColor: alpha(brand.main, 1), border: `1px solid ${brand.main}` } }} >
             Contacto
           </Button>
         </Box>

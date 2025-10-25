@@ -7,12 +7,13 @@ import ProtectedRoute from './components/ProtectedRoute'
 import MainContent from './components/MainContent';
 import QuienesSomos from './components/QuienesSomos';
 import Principios from './components/Principios';
-import Objetivos from './components/objetivos';
+import Objetivos from './components/Objetivos';
 import Integrantes from './components/Integrantes';
 import QueHacemos from './components/QueHacemos';
 import EjesTrabajo from './components/EjesTrabajo';
 import Asesoramiento from './components/Asesoramiento';
 import Notas from './components/Notas';
+import Contacto from './components/Contacto';
 
 export default function App() {
   return (
@@ -61,6 +62,11 @@ export default function App() {
           <Route path="/notas" element={
             <Layout>
               <Notas />
+            </Layout>
+          } />
+          <Route path="/contacto" element={
+            <Layout>
+              <Contacto />
             </Layout>
           } />
         <Route path="/signin" element={<SignIn />} />

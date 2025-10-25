@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { styled, Typography, Box } from '@mui/material';
+import { styled, Typography, Box, alpha } from '@mui/material';
 import { brand } from '../../shared-theme/themePrimitives';
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
@@ -44,9 +44,7 @@ export default function QuienesSomos(){
             <Typography variant="body1" color="textPrimary" fontSize={'1rem'}>
                 Creemos que las instituciones académicas deben involucrarse y contribuir activamente, mediante la discusión, el análisis y el abordaje de las principales problemáticas que aquejan a nuestra sociedad, co-construyendo junto al Estado y actores de la sociedad civil, las mejores alternativas para su resolución. Es por ello que trabajamos con compromiso, cooperación y responsabilidad.
             </Typography>
-            <Box textAlign={'center'} fontSize={'1.3rem'} marginTop={'3rem'}>
-                [XXXXXXXXX FOTO DE JORNADA DE INAUGURACIÓN CIEPA O DE FAUBA  XXXXXXXXXXXXX]
-            </Box>
+            <Box sx={{ mt: '2rem', maxWidth: '100%', height: 400, border: `2px solid ${alpha(brand.main, 1)}`, borderRadius: '1.5rem', backgroundImage: 'url("https://cdn.prod.website-files.com/605baba32d94435376625d33/6514274293b790a99214bbd6_63d7a17b0c095a3d11423d53_team-celebration-ideas.webp")', backgroundPosition: 'center', backgroundSize: 'cover' , backgroundRepeat: 'no-repeat' }} />
         </SectionContainer>
     )
 }

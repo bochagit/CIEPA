@@ -1,14 +1,23 @@
 import * as React from 'react';
-import CssBaseline from '@mui/material/CssBaseline';
-import Container from '@mui/material/Container';
 import AppTheme from '../shared-theme/AppTheme';
 import AppAppBar from './components/AppAppBar';
 import Footer from './components/Footer';
-import { Box } from '@mui/material';
+import { Box, CssBaseline, Container } from '@mui/material';
 import CiepaLogoGrande from './components/CiepaLogoGrande';
 import TopBar from './components/TopBar';
+import { useLocation } from 'react-router-dom';
 
 export default function Layout({ children, ...props }) {
+  const location = useLocation()
+
+  React.useEffect(() => {
+    window.scrollTo({
+      top: 0, 
+      left: 0,
+      behavior: 'smooth'
+    })
+  }, [location.pathname])
+
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />

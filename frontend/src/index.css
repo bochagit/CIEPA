@@ -48,5 +48,6 @@ body {
 }
 
 [data-mui-color-scheme="dark"] body {
-    background-image: linear-gradient(to top, #292f29, #292f29);
+    /* background-image: linear-gradient(to top, #292f29, #292f29); */
+    background-image: linear-gradient(to top, #111, #222)
 }

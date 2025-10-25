@@ -55,16 +55,11 @@ const menuData = {
   ],
   actividades: [
     { label: 'Conversatorios', href: '/' },
-    { label: 'Ciclo de formaciones', href: '/' }
+    { label: 'Ciclo de formaciones', href: '/' },
+    { label: 'Jornadas', href: '/' }
   ],
-  jornadas: [
-    { label: 'Lanzamiento del Centro Interdisciplinario de Estudios en Políticas Ambientales', href: '/' },
-    { label: 'De FAUBA a la COP30: aportes y reflexiones sobre la gobernanza climática', href: '/' }
-  ],
-  contacto: [
-    { label: 'Suscripción', href: '/' },
-    { label: 'Dejanos tu mensaje', href: '/' },
-    { label: 'Seguinos en las redes', href: '/' }
+  formacion: [
+    { label: 'Materia Energías y Transición energética', href: '/' }
   ]
 }
 
@@ -73,8 +68,7 @@ const menuLabels = {
   trabajo: 'Nuestro trabajo',
   publicaciones: 'Publicaciones',
   actividades: 'Actividades',
-  jornadas: 'Jornadas',
-  contacto: 'Contacto'
+  formacion: 'Formación'
 }
 
 export default function AppAppBar() {
@@ -324,15 +318,25 @@ export default function AppAppBar() {
                 items={menuData.actividades} 
               />
               <MenuButton 
-                menuKey="jornadas" 
-                label="Jornadas" 
-                items={menuData.jornadas} 
+                menuKey="formacion" 
+                label="Formación" 
+                items={menuData.formacion} 
               />
-              <MenuButton
-                menuKey="contacto"
-                label="Contacto"
-                items={menuData.contacto}
-              />
+              <Button
+                variant="text"
+                color="info"
+                size="medium"
+                onClick={() => navigate('/contacto')}
+                sx={{
+                  color: '#222',
+                  display: { xs: 'none', md: 'flex' },
+                  '&:hover': {
+                    backgroundColor: alpha(brand.main, .1)
+                  }
+                }}
+              >
+                Contacto
+              </Button>
             </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
             <ColorModeIconDropdown size="medium" />
@@ -382,6 +386,9 @@ export default function AppAppBar() {
                         {label}...
                       </MenuItem>
                       ))}
+                      <MenuItem onClick={() => handleNavigate('/contacto')}>
+                        Contacto
+                      </MenuItem>
                       <Divider sx={{ my: 3 }} />
                       <MenuItem>
                         {currentUser ? (

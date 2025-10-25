@@ -9,13 +9,8 @@ import Typography from '@mui/material/Typography';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import CiepaLogo from './CiepaLogo';
-import Mapa from './Mapa'
-import LocationOnIcon from '@mui/icons-material/LocationOn'
-import EmailIcon from '@mui/icons-material/Email'
-import PhoneIcon from '@mui/icons-material/Phone'
-import { alpha } from '@mui/material';
-import { brand } from '../../shared-theme/themePrimitives';
 import { useNavigate } from 'react-router-dom';
+
 
 function Copyright() {
   return (
@@ -52,16 +47,19 @@ export default function Footer() {
             display: 'flex',
             flexDirection: 'row',
             width: '100%',
-            justifyContent: 'center',
+            justifyContent: 'space-around',
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', width: 'auto' }}>
-            <Box sx={{ height: '100%', display: { xs: 'none', lg: 'flex' }, flexDirection: 'column', gap: 3, justifyContent: 'center', alignItems: 'center' }}>
-              <CiepaLogo />
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 3, justifyContent: 'center', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', gap: 1 }}>
+                <CiepaLogo />
+                <Typography variant="body1" color="text.secondary">ciepa@agro.uba.ar</Typography>
+              </Box>
               <Stack
                 spacing={2}
                 useFlexGap
-                sx={{ justifyContent: 'left', color: 'text.secondary', flexDirection: 'row' }}
+                sx={{ justifyContent: 'left', color: 'text.secondary', flexDirection: { xs: 'row', sm: 'column' } }}
               >
                 <IconButton
                   color="inherit"
@@ -87,102 +85,10 @@ export default function Footer() {
                 </IconButton>
               </Stack>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'stretch', height: 400, textAlign: 'left', position: { xs: 'static', sm: 'relative' }, left: 25 }}>
-              <Box sx={{
-                width: 300,
-                height: 300,
-                margin: 'auto',
-                backgroundColor: alpha(brand.main, 0.1),
-                border: `2px solid ${brand.main}`,
-                borderRadius: 2,
-                p: 3,
-                display: {xs: 'none', sm: 'block'}
-              }}>
-                <Box>
-                  <Typography variant="h6" sx={{ 
-                    color: brand.main, 
-                    fontWeight: 600, 
-                    mb: 2 
-                  }}>
-                    Información de Contacto
-                  </Typography>
-                  
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
-                    <LocationOnIcon sx={{ color: brand.main, mr: 1, mt: 0.5, fontSize: '1.2rem' }} />
-                    <Box>
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        Av. San Martín 4453
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                        (C1417DSE) CABA, Argentina
-                      </Typography>
-                    </Box>
-                  </Box>
-                  
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <EmailIcon sx={{ color: brand.main, mr: 1, fontSize: '1.2rem' }} />
-                    <Typography variant="body2">
-                      contacto@ciepa.org.ar
-                    </Typography>
-                  </Box>
-                  
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <PhoneIcon sx={{ color: brand.main, mr: 1, fontSize: '1.2rem' }} />
-                    <Typography variant="body2">
-                      +54 11 4576-3000
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
-              <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center' }}>
-                <Box sx={{
-                  position: { xs: 'static', sm: 'relative' },
-                  overflow: 'hidden',
-                  left: -50,
-                  height: 300,
-                }}>
-                  <Mapa />
-                </Box>
-                <Box sx={{ display: { xs: 'flex', sm: 'none' }, flexDirection: 'column' }} >
-                  <Typography variant="h6" sx={{ 
-                    color: brand.main, 
-                    fontWeight: 600, 
-                    mb: 2 
-                  }}>
-                    Información de Contacto
-                  </Typography>
-                  <Box sx={{ display: 'flex', mb: 2 }}>
-                    <LocationOnIcon sx={{ color: brand.main, mr: 1, mt: 0.5, fontSize: '1.2rem' }} />
-                    <Box>
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        Av. San Martín 4453
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                        (C1417DSE) CABA, Argentina
-                      </Typography>
-                    </Box>
-                  </Box>
-                  
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <EmailIcon sx={{ color: brand.main, mr: 1, fontSize: '1.2rem' }} />
-                    <Typography variant="body2">
-                      contacto@ciepa.org.ar
-                    </Typography>
-                  </Box>
-                  
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <PhoneIcon sx={{ color: brand.main, mr: 1, fontSize: '1.2rem' }} />
-                    <Typography variant="body2">
-                      +54 11 4576-3000
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
-            </Box>
           </Box>
           <Box
             sx={{
-              display: { xs: 'none', lg: 'flex' },
+              display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
               gap: 1,
@@ -194,10 +100,16 @@ export default function Footer() {
             <Link color="text.secondary" variant="body2" onClick={() => navigate("/quienes-somos")} sx={{ '&:hover': { cursor: 'pointer' } }}>
               Quienes somos
             </Link>
+            <Link color="text.secondary" variant="body2" onClick={() => navigate("/que-hacemos")} sx={{ '&:hover': { cursor: 'pointer' } }}>
+              Qué hacemos
+            </Link>
             <Link color="text.secondary" variant="body2" onClick={() => navigate("/notas")} sx={{ '&:hover': { cursor: 'pointer' } }}>
               Notas
             </Link>
             <Link color="text.secondary" variant="body2" href="#" sx={{ '&:hover': { cursor: 'pointer' } }}>
+              Conversatorios
+            </Link>
+            <Link color="text.secondary" variant="body2" onClick={() => navigate("/contacto")} sx={{ '&:hover': { cursor: 'pointer' } }}>
               Contacto
             </Link>
           </Box>
