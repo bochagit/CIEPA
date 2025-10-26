@@ -3,15 +3,32 @@ import sanitizeHtml from 'sanitize-html'
 
 const sanitizeOptions = {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-        "img", "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "span", "u", "iframe"
+        "img", "video", "source", "iframe", "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "span", "u", "s", "b", "i", "strong", "em", "p", "br", "ul", "ol", "li", "iframe", "pre", "code", "hr", "a", "div"
     ]),
     allowedAttributes: {
         img: ["src", "alt", "width", "height", "style"],
-        a: ["href", "name", "target"],
-        iframe: ["src", "width", "height", "allow", "frameborder", "allowfullscreen"],
-        "*": ["style"]
+        a: ["href", "name", "target", "rel"],
+        iframe: ["src", "width", "height", "allow", "frameborder", "allowfullscreen", "title", "style"],
+        video: ["src", "controls", "width", "height", "poster", "style"],
+        source: ["src", "type"],
+        "*": ["style", "class", "align", "dir", "lang"]
     },
-    allowedSchemes: ["data", "http", "https"]
+    allowedSchemes: ["data", "http", "https"],
+    allowedSchemesByTag: {
+        img: ["data", "http", "https"],
+        video: ["http", "https"],
+        iframe: ["http", "https"]
+    },
+    allowedIframeHostnames: [
+        "www.youtube.com",
+        "www.google.com"
+    ],
+    transformTags: {
+        "a": sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer" })
+    },
+    parser: {
+        lowerCaseAttributeNames: true
+    },
 }
 
 export const createPost = async (req, res) => {
