@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Layout from './Layout'
 import SignIn from './SignIn';
 import CrudDashboard from './CrudDashboard';
@@ -17,66 +17,64 @@ import Contacto from './components/Contacto';
 
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={
+    <Routes>
+      <Route path="/" element={
+        <Layout>
+          <MainContent />
+        </Layout>
+        } />
+        <Route path="/quienes-somos" element={
           <Layout>
-            <MainContent />
+            <QuienesSomos />
           </Layout>
-          } />
-          <Route path="/quienes-somos" element={
-            <Layout>
-              <QuienesSomos />
-            </Layout>
-          } />
-          <Route path="/principios" element={
-            <Layout>
-              <Principios />
-            </Layout>
-          } />
-          <Route path="/objetivos" element={
-            <Layout>
-              <Objetivos />
-            </Layout>
-          } />
-          <Route path="/integrantes" element={
-            <Layout>
-              <Integrantes />
-            </Layout>
-          } />
-          <Route path="/que-hacemos" element={
-            <Layout>
-              <QueHacemos />
-            </Layout>
-          } />
-          <Route path="/ejes" element={
-            <Layout>
-              <EjesTrabajo />
-            </Layout>
-          } />
-          <Route path="/asesoramiento" element={
-            <Layout>
-              <Asesoramiento />
-            </Layout>
-          } />
-          <Route path="/notas" element={
-            <Layout>
-              <Notas />
-            </Layout>
-          } />
-          <Route path="/contacto" element={
-            <Layout>
-              <Contacto />
-            </Layout>
-          } />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/dashboard/*" element={
-          <ProtectedRoute>
-            <CrudDashboard />
-          </ProtectedRoute>
-        }
-        />
-      </Routes>
-    </Router>
+        } />
+        <Route path="/principios" element={
+          <Layout>
+            <Principios />
+          </Layout>
+        } />
+        <Route path="/objetivos" element={
+          <Layout>
+            <Objetivos />
+          </Layout>
+        } />
+        <Route path="/integrantes" element={
+          <Layout>
+            <Integrantes />
+          </Layout>
+        } />
+        <Route path="/que-hacemos" element={
+          <Layout>
+            <QueHacemos />
+          </Layout>
+        } />
+        <Route path="/ejes" element={
+          <Layout>
+            <EjesTrabajo />
+          </Layout>
+        } />
+        <Route path="/asesoramiento" element={
+          <Layout>
+            <Asesoramiento />
+          </Layout>
+        } />
+        <Route path="/notas" element={
+          <Layout>
+            <Notas />
+          </Layout>
+        } />
+        <Route path="/contacto" element={
+          <Layout>
+            <Contacto />
+          </Layout>
+        } />
+      <Route path="/signin" element={<SignIn />} />
+      <Route path="/dashboard/*" element={
+        <ProtectedRoute>
+          <CrudDashboard />
+        </ProtectedRoute>
+      }
+      />
+    </Routes>
   );
 }

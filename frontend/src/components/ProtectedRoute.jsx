@@ -1,13 +1,24 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { authService } from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
-    const isAuthenticated = authService.isAuthenticated()
-    const currentUser = authService.getCurrentUser()
+    const { isAuthenticated, loading } = useAuth()
 
     console.log('ProtectedRoute - Autenticado: ', isAuthenticated)
-    console.log('Usuario actual: ', currentUser)
+
+    if (loading) {
+        return (
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh'
+            }}>
+                Verificando autenticación...
+            </div>
+        )
+    }
 
     if (!isAuthenticated) {
         console.log('Redirigiendo a inicio de sesión...')

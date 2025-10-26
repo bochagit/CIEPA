@@ -19,7 +19,18 @@ export const authService = {
             return { token, user, expiresIn }
         } catch(error) {
             console.error('Error en authService: ', error)
-            throw error.response?.data || error.message
+
+            if (error.response){
+                const errorMessage = error.response.data?.message || 'Error del servidor'
+                console.error('Error del servidor: ', errorMessage)
+                throw new Error(errorMessage)
+            } else if (error.request){
+                console.error('Error de red: ', error.request)
+                throw new Error('Error de conexión. Verifica tu conexión a internet.')
+            } else {
+                console.error('Error desconocido: ', error.message)
+                throw new Error('Error inesperado. Intentelo nuevamente.')
+            }
         }
     },
 

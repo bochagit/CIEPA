@@ -26,9 +26,15 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401){
-            localStorage.removeItem('token')
-            localStorage.removeItem('user')
-            window.location.href = '/signin'
+            const token = localStorage.getItem('token');
+            const currentPath = window.location.pathname;
+
+            if (token && currentPath !== '/signin'){
+                console.log('Sesión expirada, redirigiendo...');
+                localStorage.removeItem('token')
+                localStorage.removeItem('user')
+                window.location.href = '/signin'
+            }
         }
         return Promise.reject(error)
     }

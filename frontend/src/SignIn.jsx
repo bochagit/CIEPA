@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import CiepaLogo from './components/CiepaLogo';
 import ColorModeIconDropdown from '../shared-theme/ColorModeIconDropdown';
 import Alert from '@mui/material/Alert';
-import { authService } from './services/authService';
+import { useAuth } from './context/AuthContext';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -62,6 +62,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn(props) {
+  const { login } = useAuth();
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
@@ -107,6 +108,8 @@ export default function SignIn(props) {
     event.preventDefault()
     setLoginError('')
 
+    console.log('Iniciando proceso de login...')
+
     if (validateInputs()) {
       const data = new FormData(event.currentTarget);
       const name = data.get('name');
@@ -116,9 +119,9 @@ export default function SignIn(props) {
 
       try {
         setLoading(true);
-        const result = await authService.login(name, password);
+        await login(name, password);
 
-        console.log('Login exitoso: ', result);
+        console.log('Login exitoso');
 
         if(rememberMe) {
           localStorage.setItem('rememberUser', name);
@@ -130,10 +133,15 @@ export default function SignIn(props) {
         navigate('/dashboard')
       } catch(error) {
         console.error('Error en login: ', error);
+        console.error('Tipo de error: ', typeof error);
+        console.error('Error message: ', error.message)
+        
         setLoginError(error.message || 'Error al iniciar sesión. Verifica tus credenciales.');
       } finally {
         setLoading(false);
       }
+    } else {
+      console.log('Validación de inputs falló')
     };
   }
 
