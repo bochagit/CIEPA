@@ -1,8 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
-import authRoutes from './routes/auth.routes'
-import postRoutes from './routes/post.routes'
+import authRoutes from './routes/auth.routes.js'
+import postRoutes from './routes/post.routes.js'
 
 const app = express()
 

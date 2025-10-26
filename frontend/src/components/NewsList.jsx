@@ -5,14 +5,13 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { useNavigate } from 'react-router-dom';
 import { useDialogs } from '../hooks/useDialogs/useDialogs';
 import useNotifications from '../hooks/useNotifications/useNotifications';
-import { newsData } from '../data/news';
 import PageContainer from './PageContainer';
 import { brand } from '../../shared-theme/themePrimitives'
 import { useTheme, useMediaQuery } from '@mui/material'
+import { postService } from '../services/postService';
 
 export default function NewsList() {
   const navigate = useNavigate();
@@ -22,12 +21,45 @@ export default function NewsList() {
 
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
-  const [news, setNews] = React.useState(newsData);
-  const [loading, setLoading] = React.useState(false);
+  const [news, setNews] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
   const [selected, setSelected] = React.useState([]);
   const [currentPage, setCurrentPage] = React.useState(1);
 
   const itemsPerPage = isMobile ? 5 : 10;
+
+  const adaptPostToNews = (post) => ({
+    id: post._id,
+    title: post.title,
+    author: post.author,
+    category: post.category || 'General',
+    publishDate: post.date,
+    status: post.status || 'published',
+    featured: post.featured || false,
+    summary: post.summary,
+    content: post.content
+  })
+
+  const fetchPosts = React.useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const posts = await postService.getAllPosts();
+
+      const adaptedPosts = posts.map(adaptPostToNews);
+      setNews(adaptedPosts);
+    } catch(err) {
+      setError(err.message || 'Error al cargar las notas');
+      notifications.show('Error al cargar las notas', { severity: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  }, [notifications])
+
+  React.useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts])
 
   const totalPages = Math.ceil(news.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -45,15 +77,10 @@ export default function NewsList() {
   };
 
   const handleRefresh = React.useCallback(async () => {
-    setLoading(true);
-    // En una app real, aquí se haría una llamada a la API
-    setTimeout(() => {
-      setNews(newsData);
-      setLoading(false);
-      setCurrentPage(1);
-      notifications.show('Lista de noticias actualizada', { severity: 'success' });
-    }, 500);
-  }, [notifications]);
+    await fetchPosts();
+    setCurrentPage(1);
+    notifications.show('Lista de noticias actualizada', { severity: 'success' });
+  }, [fetchPosts, notifications]);
 
   const handleDelete = React.useCallback(async (id) => {
     const confirmed = await dialogs.confirm(
@@ -62,16 +89,26 @@ export default function NewsList() {
     );
     
     if (confirmed) {
-      setNews(prev => {
-        const newNews = prev.filter(item => item.id !== id);
-        const newTotalPages = Math.ceil(newNews.length / itemsPerPage);
-        if (currentPage > newTotalPages && newTotalPages > 0) {
-          setCurrentPage(newTotalPages)
-        }
-        return newNews;
+      try {
+        setLoading(true);
+
+        await postService.deletePost(id);
+        setNews(prev => {
+          const newNews = prev.filter(item => item.id !== id);
+          const newTotalPages = Math.ceil(newNews.length / itemsPerPage);
+          if (currentPage > newTotalPages && newTotalPages > 0) {
+            setCurrentPage(newTotalPages)
+          }
+          return newNews;
       });
+
       setSelected(prev => prev.filter(selectedId => selectedId !== id));
-      notifications.show('Noticia eliminada correctamente', { severity: 'success' });
+      notifications.show('Nota eliminada correctamente', { severity: 'success' });
+    } catch(err) {
+      notifications.show('Error al eliminar la nota', { severity: 'error' });
+    } finally {
+      setLoading(false);
+    }
     }
   }, [dialogs, notifications, currentPage, itemsPerPage]);
 
@@ -121,11 +158,19 @@ export default function NewsList() {
   return (
     <PageContainer title="Gestión de Noticias">
       <Stack spacing={2}>
+
+        {error && (
+          <Box sx={{ p:2, bgcolor: 'error.light', color: 'error.contrastText', borderRadius: 1 }}>
+            <Typography variant="body2">{error}</Typography>
+          </Box>
+        )}
+
         <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={handleCreate}
+            disabled={loading}
           >
             Nueva Noticia
           </Button>
@@ -147,7 +192,12 @@ export default function NewsList() {
           </Box>
         </Stack>
 
-        <TableContainer 
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+            <Typography>Cargando notas...</Typography>
+          </Box>
+        ) : (
+          <TableContainer 
           component={Paper} 
           sx={{ 
             maxHeight: { xs:'none', md: 600 },
@@ -242,6 +292,7 @@ export default function NewsList() {
             </TableBody>
           </Table>
         </TableContainer>
+        )}
         {
           selected.length > 0 && (
             <Box sx={{ p: 2, bgcolor: 'action.selected', borderRadius: 1, mb: { xs: 2, md: 0 } }}>

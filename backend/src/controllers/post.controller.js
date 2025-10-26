@@ -1,4 +1,4 @@
-import Post from '../models/Post'
+import Post from '../models/Post.js'
 import sanitizeHtml from 'sanitize-html'
 
 const sanitizeOptions = {

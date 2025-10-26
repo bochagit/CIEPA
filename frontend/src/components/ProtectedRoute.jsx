@@ -1,46 +1,19 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { authService } from '../services/authService';
 
 const ProtectedRoute = ({ children }) => {
-    const [currentUser, setCurrentUser] = React.useState(null);
-    const [loading, setLoading] = React.useState(true);
+    const isAuthenticated = authService.isAuthenticated()
+    const currentUser = authService.getCurrentUser()
 
-    React.useEffect(() => {
-        const checkUser = () => {
-            let user = localStorage.getItem('currentUser');
-            if (!user) {
-                user = sessionStorage.getItem('currentUser');
-            }
+    console.log('ProtectedRoute - Autenticado: ', isAuthenticated)
+    console.log('Usuario actual: ', currentUser)
 
-            if (user) {
-                setCurrentUser(JSON.parse(user));
-            } else {
-                setCurrentUser(null);
-            }
-            setLoading(false);
-        }
-
-        checkUser();
-
-        const handleUserChange = () => {
-            checkUser();
-        }
-
-        window.addEventListener('userChanged', handleUserChange)
-
-        return () => {
-            window.removeEventListener('userChanged', handleUserChange)
-        }
-    }, [])
-
-    if (loading) {
-        return <div>Cargando...</div>
-    }
-
-    if (!currentUser) {
+    if (!isAuthenticated) {
+        console.log('Redirigiendo a inicio de sesión...')
         return <Navigate to="/signin" replace />
     }
-
+    
     return children
 }
 

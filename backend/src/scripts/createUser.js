@@ -1,8 +1,8 @@
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
-import User from '../models/User'
-import connectDB from '../config/db'
+import User from '../models/User.js'
+import connectDB from '../config/db.js'
 
 dotenv.config()
 
@@ -10,15 +10,15 @@ const createAdmin = async () => {
     try {
         await connectDB()
 
-        const existingUser = await User.findOne({ name: "<your_name>" })
+        const existingUser = await User.findOne({ name: "Gonzalo" })
         if (existingUser) {
             console.log('Usuario existente')
             process.exit(0)
         }
 
-        const hashedPassword = await bcrypt.hash("<your_password>", 10)
+        const hashedPassword = await bcrypt.hash("Gonzadev", 10)
         const user = await User.create({
-        name: "<your_name>",
+        name: "Gonzalo",
         password: hashedPassword,
         role: "admin"
     })
