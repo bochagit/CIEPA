@@ -11,8 +11,8 @@ import Typography from '@mui/material/Typography';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import useNotifications from '../hooks/useNotifications/useNotifications';
-import { getNewsById } from '../data/news';
 import PageContainer from './PageContainer';
+import { postService } from '../services/postService';
 
 export default function NewsShow() {
   const navigate = useNavigate();
@@ -22,13 +22,56 @@ export default function NewsShow() {
   const [newsData, setNewsData] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
 
+  const formatDateForDisplay = (dateString) => {
+    if (!dateString) return ''
+
+    console.log('Fecha original en lista: ', dateString)
+    try {
+      if (typeof dateString === 'string' && dateString.includes('T')){
+        const dateOnly = dateString.split('T')[0]
+        const [year, month, day] = dateOnly.split('-')
+        const formatted = `${day}/${month}/${year}`
+        console.log('Fecha formateada para mostrar: ', formatted)
+        return formatted
+      }
+
+      if (typeof dateString === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateString)){
+        const [year, month, day] = dateString.split('-')
+        return `${day}/${month}/${year}`
+      }
+
+      if (dateString instanceof Date){
+        const day = String(dateString.getDate()).padStart(2, '0')
+        const month = String(dateString.getMonth() + 1).padStart(2, '0')
+        const year = dateString.getFullYear();
+        return `${day}/${month}/${year}`
+      }
+
+      return dateString
+    } catch(error) {
+      console.warn('Error formateando fecha: ', error)
+      return dateString
+    }
+  }
+
   React.useEffect(() => {
     const loadNews = async () => {
       try {
-        // En una app real, aquí se haría una llamada a la API
-        const news = getNewsById(newsId);
-        if (news) {
-          setNewsData(news);
+        const post = await postService.getPostById(newsId)
+        if (post) {
+          const adaptedNews = {
+            id: post._id,
+            title: post.title,
+            content: post.content,
+            author: post.author,
+            date: post.date,
+            category: post.category || 'General',
+            status: post.status || 'draft',
+            featured: post.featured || false,
+            imageUrl: post.coverImage,
+            excerpt: post.summary
+          }
+          setNewsData(adaptedNews);
         } else {
           notifications.show('Noticia no encontrada', { severity: 'error' });
           navigate('/dashboard/news');
@@ -76,7 +119,9 @@ export default function NewsShow() {
   if (loading) {
     return (
       <PageContainer title="Cargando...">
-        <div>Cargando noticia...</div>
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <Typography>Cargando noticia...</Typography>
+        </Box>
       </PageContainer>
     );
   }
@@ -84,7 +129,9 @@ export default function NewsShow() {
   if (!newsData) {
     return (
       <PageContainer title="Noticia no encontrada">
-        <div>La noticia no fue encontrada.</div>
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <Typography>La noticia no fue encontrada.</Typography>
+        </Box>
       </PageContainer>
     );
   }
@@ -151,7 +198,7 @@ export default function NewsShow() {
 
               <Box>
                 <Typography variant="body2" color="text.secondary" gutterBottom>
-                  Por: {newsData.author} • {new Date(newsData.publishDate).toLocaleDateString('es-ES')}
+                  Por: {newsData.author} • {formatDateForDisplay(newsData.date)}
                 </Typography>
               </Box>
 
@@ -167,9 +214,7 @@ export default function NewsShow() {
                 <Typography variant="h6" gutterBottom>
                   Contenido
                 </Typography>
-                <Typography variant="body1" sx={{ whiteSpace: 'pre-line', lineHeight: 1.6 }}>
-                  {newsData.content}
-                </Typography>
+                <Typography variant="body1" sx={{ whiteSpace: 'pre-line', lineHeight: 1.6 }} dangerouslySetInnerHTML={{ __html: newsData.content }} />
               </Box>
             </Stack>
           </CardContent>

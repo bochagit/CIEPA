@@ -10,19 +10,19 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DashboardHeader from './DashboardHeader';
 import DashboardSidebar from './DashboardSidebar';
 import CiepaLogo from './CiepaLogo';
+import { useAuth } from '../context/AuthContext';
 
 export default function DashboardLayout({ children }) {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuth()
 
   const handleBackToBlog = () => {
     navigate('/');
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('currentUser');
-    sessionStorage.removeItem('currentUser');
-    window.dispatchEvent(new CustomEvent('userChanged'));
+    logout();
     navigate('/');
   };
 

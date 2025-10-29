@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import NewsForm from './NewsForm';
 import useNotifications from '../hooks/useNotifications/useNotifications';
-import { getNewsById, updateNews } from '../data/news';
+import { postService } from '../services/postService';
 import PageContainer from './PageContainer';
 
 export default function NewsEdit() {
@@ -16,10 +16,9 @@ export default function NewsEdit() {
   React.useEffect(() => {
     const loadNews = async () => {
       try {
-        // En una app real, aquí se haría una llamada a la API
-        const news = getNewsById(newsId);
-        if (news) {
-          setNewsData(news);
+        const post = await postService.getPostById(newsId);
+        if (post) {
+          setNewsData(post);
         } else {
           notifications.show('Noticia no encontrada', { severity: 'error' });
           navigate('/dashboard/news');
@@ -40,9 +39,8 @@ export default function NewsEdit() {
 
   const handleSubmit = async (formData) => {
     try {
-      // En una app real, aquí se haría una llamada a la API
-      const updatedNews = updateNews(newsId, formData);
-      console.log('Noticia actualizada:', updatedNews);
+      const updatedPost = await postService.updatePost(newsId, formData);
+      console.log('Noticia actualizada:', updatedPost);
       
       notifications.show('Noticia actualizada correctamente', { severity: 'success' });
       navigate('/dashboard/news');

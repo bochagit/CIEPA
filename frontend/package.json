@@ -17,6 +17,7 @@
     "@mui/x-date-pickers": "8.11.3",
     "@mui/x-date-pickers-pro": "8.11.3",
     "axios": "^1.12.2",
+    "date-fns": "^4.1.0",
     "dayjs": "1.11.18",
     "prop-types": "15.8.1",
     "react": "latest",

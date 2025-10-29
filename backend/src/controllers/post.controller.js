@@ -1,5 +1,6 @@
 import Post from '../models/Post.js'
 import sanitizeHtml from 'sanitize-html'
+import { cloudinary } from '../config/cloudinary.js'
 
 const sanitizeOptions = {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat([
@@ -29,6 +30,42 @@ const sanitizeOptions = {
     parser: {
         lowerCaseAttributeNames: true
     },
+}
+
+const extractPublicIdFromUrl = (url) => {
+    if (!url || !url.includes('cloudinary.com')) return null
+
+    try {
+        const match = url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.[^.]*)?(?:\?|$)/)
+        return match ? match[1] : null
+    } catch(error) {
+        console.error('Error extrayendo public Id: ', error)
+        return null
+    }
+}
+
+const extractAllImages = (content, coverImage) => {
+    const publicIds = []
+
+    if (coverImage){
+        const coverPublicId = extractPublicIdFromUrl(coverImage)
+        if (coverPublicId){
+            publicIds.push(coverPublicId)
+        }
+    }
+
+    if (content) {
+        const cloudinaryUrls = content.match(/https?:\/\/res\.cloudinary\.com\/[^"\s<>]+/g) || []
+
+        cloudinaryUrls.forEach(url => {
+            const publicId = extractPublicIdFromUrl(url)
+            if (publicId && !publicIds.includes(publicId)){
+                publicIds.push(publicId)
+            }
+        })
+    }
+
+    return publicIds
 }
 
 export const createPost = async (req, res) => {
@@ -102,9 +139,38 @@ export const updatePost = async (req, res) => {
 
 export const deletePost = async (req, res) => {
     try {
-        const post = await Post.findByIdAndDelete(req.params.id)
-        if (!post) return res.status(400).json({ message: "Post no encontrado" })
-        res.json({ message: "Nota eliminada correctamente" })
+        const post = await Post.findById(req.params.id)
+        if (!post) {
+            return res.status(400).json({ message: "Post no encontrado" })
+        }
+
+        const imagesToDelete = extractAllImages(post.content, post.coverImage)
+
+        let imagesDeleted = 0
+        if (imagesToDelete.length > 0){
+            console.log(`Eliminando ${imagesToDelete.length} imágenes de Cloudinary...`)
+
+            for (const publicId of imagesToDelete){
+                try {
+                    const result = await cloudinary.uploader.destroy(publicId)
+                    if (result.result === 'ok' || result.result === 'not found'){
+                        imagesDeleted++
+                        console.log(`Imagen eliminada: ${publicId}`)
+                    }
+                } catch(error) {
+                    console.error(`Error eliminando imagen ${publicId}:`, error.message)
+                }
+            }
+        }
+
+        await Post.findByIdAndDelete(req.params.id)
+        console.log('Post eliminado.')
+
+        res.json({
+            message: "Nota eliminada correctamente",
+            imagesDeleted
+        })
+
     } catch(error) {
         res.status(500).json({ message: "Error al intentar eliminar el post" })
     }

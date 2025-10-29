@@ -12,62 +12,104 @@ export const useAuth = () => {
 }
 
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
 
-    const checkAuth = () => {
-        const authenticated = authService.isAuthenticated()
-        const currentUser = authService.getCurrentUser()
+    const isTokenExpired = (token) => {
+        if (!token) return true
+        
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]))
+            const currentTime = Date.now() / 1000
 
-        console.log('Verificando autenticación: ', { authenticated, currentUser })
+            console.log('Token expira en: ', new Date(payload.exp * 1000))
+            console.log('Tiempo actual: ', new Date())
 
-        setIsAuthenticated(authenticated)
-        setUser(currentUser)
-        setLoading(false)
+            return payload.exp < currentTime
+        } catch(error) {
+            console.error('Error decodificando token: ', error)
+            return true
+        }
     }
 
     useEffect(() => {
-        checkAuth()
+        const initializeAuth = () => {
+            const token = localStorage.getItem('token')
+            const userData = localStorage.getItem('user')
 
-        const handleStorageChange = (e) => {
-            if (e.key === 'token' || e.key === 'user') {
-                console.log('Cambio detectado en localStorage: ', e.key)
-                checkAuth()
+            console.log('Verificando autenticación...')
+
+            if (token && userData){
+                if (isTokenExpired(token)){
+                    console.log('Token expirado, cerrando sesión')
+                    localStorage.removeItem('token')
+                    localStorage.removeItem('user')
+                    setUser(null)
+                } else {
+                    console.log('Token válido, restaurando sesión')
+                    setUser(JSON.parse(userData))
+                }
+            } else {
+                console.log('No hay sesión guardada')
+                setUser(null)
+            }
+
+            setLoading(false)
+        }
+
+        initializeAuth()
+    }, [])
+
+    useEffect(() => {
+        if (!user) return
+
+        const checkTokenExpiration = () => {
+            const token = localStorage.getItem('token')
+            if (token && isTokenExpired(token)){
+                console.log('Token expiró durante la sesión')
+                logout()
             }
         }
 
-        window.addEventListener('storage', handleStorageChange)
+        const interval = setInterval(checkTokenExpiration, 10 * 60 * 1000)
 
-        return () => {
-            window.removeEventListener('storage', handleStorageChange)
-        }
-    }, [])
+        return () => clearInterval(interval)
+    }, [user])
 
     const login = async (name, password) => {
         try {
-            const result = await authService.login(name, password)
-            setIsAuthenticated(true)
-            setUser(result.user)
-            return result
-        } catch (error) {
-            throw error
+            console.log('Intentando login...')
+            const response = await authService.login(name, password)
+
+            localStorage.setItem('token', response.token)
+            localStorage.setItem('user', JSON.stringify(response.user))
+
+            setUser(response.user)
+
+            console.log('Login exitoso: ', response.user.name)
+            return { success: true }
+        } catch(error) {
+            console.error('Error en login: ', error)
+            return {
+                success: false,
+                message: error.message || 'Error de conexión'
+            }
         }
     }
 
     const logout = () => {
-        authService.logout()
-        setIsAuthenticated(false)
+        console.log('Cerrando sesión...')
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
         setUser(null)
     }
 
     const value = {
-        isAuthenticated,
         user,
-        loading,
         login,
         logout,
-        checkAuth
+        loading,
+        isAuthenticated: !!user
     }
 
     return (

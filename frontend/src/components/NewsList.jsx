@@ -29,12 +29,44 @@ export default function NewsList() {
 
   const itemsPerPage = isMobile ? 5 : 10;
 
+  const formatDateForDisplay = (dateString) => {
+    if (!dateString) return ''
+
+    console.log('Fecha original en lista: ', dateString)
+    try {
+      if (typeof dateString === 'string' && dateString.includes('T')){
+        const dateOnly = dateString.split('T')[0]
+        const [year, month, day] = dateOnly.split('-')
+        const formatted = `${day}/${month}/${year}`
+        console.log('Fecha formateada para mostrar: ', formatted)
+        return formatted
+      }
+
+      if (typeof dateString === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateString)){
+        const [year, month, day] = dateString.split('-')
+        return `${day}/${month}/${year}`
+      }
+
+      if (dateString instanceof Date){
+        const day = String(dateString.getDate()).padStart(2, '0')
+        const month = String(dateString.getMonth() + 1).padStart(2, '0')
+        const year = dateString.getFullYear();
+        return `${day}/${month}/${year}`
+      }
+
+      return dateString
+    } catch(error) {
+      console.warn('Error formateando fecha: ', error)
+      return dateString
+    }
+  }
+
   const adaptPostToNews = (post) => ({
     id: post._id,
     title: post.title,
     author: post.author,
     category: post.category || 'General',
-    publishDate: post.date,
+    date: post.date,
     status: post.status || 'published',
     featured: post.featured || false,
     summary: post.summary,
@@ -91,6 +123,11 @@ export default function NewsList() {
     if (confirmed) {
       try {
         setLoading(true);
+
+        notifications.show('Eliminando noticia e imágenes...', {
+          severity: 'info',
+          autoHideDuration: 2000
+        })
 
         await postService.deletePost(id);
         setNews(prev => {
@@ -250,7 +287,7 @@ export default function NewsList() {
                         {row.title}
                       </Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ display: { xs: 'block', sm: 'none' } }}>
-                        {row.author} • {new Date(row.publishDate).toLocaleDateString()}
+                        {row.author} • {formatDateForDisplay(row.date)}
                         <Typography component="span" variant="caption" color="primary.main" sx={{ ml: 1, fontWeight: 600 }}>Toca para ver</Typography>
                       </Typography>
                     </Box>
@@ -265,7 +302,7 @@ export default function NewsList() {
                   </TableCell>
                   <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                     <Typography variant="body2" noWrap>
-                      {new Date(row.publishDate).toLocaleDateString()}
+                      {formatDateForDisplay(row.date)}
                     </Typography>
                   </TableCell>
                   <TableCell>
