@@ -43,6 +43,63 @@ h1, h2, h3, h4, h5, h6 {
     font-family: "Synonym", "Roboto", system-ui, sans-serif !important;
 }
 
+.ql-picker.ql-color .ql-picker-options .ql-picker-item:last-child {
+    position: relative;
+    background: linear-gradient(45deg, #aaa 25%, transparent 25%), 
+                linear-gradient(-45deg, #aaa 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #aaa 75%), 
+                linear-gradient(-45deg, transparent 75%, #aaa 75%);
+    background-size: 4px 4px;
+    background-position: 0 0, 0 2px, 2px -2px, -2px 0px;
+    border: 2px solid #666;
+}
+
+.ql-picker.ql-color .ql-picker-options .ql-picker-item:last-child:after {
+    content: 'Por defecto';
+    position: absolute;
+    bottom: 0;
+    left: 1.2rem;
+    font-size: 10px;
+    color: #333;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.ql-picker.ql-background .ql-picker-options .ql-picker-item:last-child {
+    position: relative;
+    background: linear-gradient(45deg, #aaa 25%, transparent 25%), 
+                linear-gradient(-45deg, #aaa 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #aaa 75%), 
+                linear-gradient(-45deg, transparent 75%, #aaa 75%);
+    background-size: 4px 4px;
+    background-position: 0 0, 0 2px, 2px -2px, -2px 0px;
+    border: 2px solid #666;
+}
+
+.ql-picker.ql-background .ql-picker-options .ql-picker-item:last-child:after {
+    content: 'Transparente';
+    position: absolute;
+    bottom: 0;
+    left: 1.2rem;
+    font-size: 10px;
+    color: #333;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.ql-picker.ql-color .ql-picker-options,
+.ql-picker.ql-background .ql-picker-options {
+    padding-bottom: 20px;
+}
+
+.ql-editor .ql-align-center { text-align: center; }
+.ql-editor .ql-align-right { text-align: right; }
+.ql-editor .ql-align-justify { text-align: justify; }
+
+.ql-editor .ql-indent-1 { padding-left: 3em; }
+.ql-editor .ql-indent-2 { padding-left: 6em; }
+.ql-editor .ql-indent-3 { padding-left: 9em; }
+
 body {
     background-image: linear-gradient(to top, #EBF7ED, #EBF7ED);
 }

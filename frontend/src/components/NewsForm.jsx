@@ -13,25 +13,65 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import { categories, statusOptions } from '../data/news';
-import TextEditor from './textEditor';
+import TextEditor from './TextEditor';
+import { format, parseISO } from 'date-fns';
+import { uploadService } from '../services/uploadCloudinary';
+import { Box, CircularProgress, IconButton, Typography, Avatar } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete'
+import ImageIcon from '@mui/icons-material/Image'
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+
+const categories = [
+  'General',
+  'Educación',
+  'Salud',
+  'Tecnología',
+  'Política',
+  'Economía',
+  'Cultura',
+  'Ciencia',
+  'Ambiente'
+]
+
+const statusOptions = [
+  { value: 'published', label: 'Publicado' },
+  { value: 'draft', label: 'Borrador' },
+  { value: 'archived', label: 'Archivado' }
+]
+
+const VisuallyHiddenInput = {
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1
+}
 
 function NewsForm(props) {
   const { handleClose, handleSubmit, initialValue, open, title } = props;
+  const [editorUploading, setEditorUploading] = React.useState(false)
 
   const [formData, setFormData] = React.useState(
     initialValue ?? {
       title: '',
       content: '',
       author: '',
-      publishDate: new Date().toISOString().split('T')[0],
+      date: new Date().toISOString().split('T')[0],
       category: '',
       status: 'draft',
       featured: false,
-      imageUrl: '',
-      excerpt: ''
+      coverImage: '',
+      summary: ''
     }
   );
+
+  const [imageFile, setImageFile] = React.useState(null)
+  const [imagePreview, setImagePreview] = React.useState(null)
+  const [uploading, setUploading] = React.useState(false)
 
   const handleContentChange = (content) => {
     setFormData(prev => ({
@@ -39,6 +79,10 @@ function NewsForm(props) {
       content: content
     }));
   };
+
+  const handleEditorUploadChange = (isUploading) => {
+    setEditorUploading(isUploading)
+  }
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -48,14 +92,130 @@ function NewsForm(props) {
     }));
   };
 
-  const onFormSubmit = (event) => {
+  const handleImageChange = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      if (!file.type.startsWith('image/')){
+        alert('Por favor selecciona un archivo de imagen valido')
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024){
+        alert('El archivo es demasiado grande. Máximo 5MB')
+        return;
+      }
+
+      setImageFile(file)
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target.result)
+      }
+      reader.readAsDataURL(file)
+
+      console.log('Imagen seleccionada: ', file.name, file.size, 'bytes')
+    }
+  }
+
+  const handleRemoveImage = () => {
+    setImageFile(null)
+    setImagePreview(null)
+    setFormData(prev => ({
+      ...prev,
+      coverImage: ''
+    }))
+  }
+
+  const uploadImage = async (file) => {
+    try {
+      setUploading(true)
+      console.log('Iniciando upload...')
+      const result = await uploadService.uploadPostImage(file)
+      console.log('Upload exitoso: ', result)
+      return result.url
+    } catch(error) {
+      console.error('Error subiendo imagen: ', error)
+      throw error
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const onFormSubmit = async (event) => {
     event.preventDefault();
-    handleSubmit(formData);
+
+    if (!formData.title || !formData.content || !formData.author) {
+      return
+    }
+
+    try {
+      let finalFormData = { ...formData }
+
+      if (imageFile) {
+        console.log('Subiendo imagen a Cloudinary...')
+        const imageUrl = await uploadImage(imageFile)
+        finalFormData.coverImage = imageUrl
+        console.log('Imagen subida a Cloudinary: ', imageUrl)
+      }
+
+      handleSubmit(finalFormData);
+    } catch (error) {
+      console.error('Error al procesar formulario: ', error)
+      alert('Error al subir la imagen, intentelo nuevamente.')
+    }
   };
 
   React.useEffect(() => {
     if (initialValue) {
-      setFormData(initialValue);
+      console.log('Datos iniciales recibidos: ', initialValue)
+
+      const formatDateSafely = (dateInput) => {
+        if (!dateInput) return format(new Date(), 'yyyy-MM-dd')
+
+        console.log('Procesando fecha original: ', dateInput)
+        
+        try {
+          if (typeof dateInput === 'string'){
+            if(/^\d{4}-\d{2}-\d{2}$/.test(dateInput)){
+              console.log('Fecha ya en formato correcto: ', dateInput)
+              return dateInput
+            }
+            
+            if(dateInput.includes('T')){
+              const dateOnly = dateInput.split('T')[0]
+              console.log('Fecha extraída sin conversión: ', dateOnly)
+              return dateOnly
+            }
+
+            console.log('Usando parseISO como último recurso')
+            const parsed = parseISO(dateInput)
+            return format(parsed, 'yyyy-MM-dd')
+          }
+
+            if (dateInput instanceof Date){
+              console.log('Formateando objeto Date')
+              return format(dateInput, 'yyyy-MM-dd')
+            }
+        } catch(error) {
+          console.warn('Error parseando fecha: ', error)
+          return format(new Date(), 'yyyy-MM-dd')
+        }
+
+        return format(new Date(), 'yyyy-MM-dd')
+      }
+
+      const adaptedData = {
+        title: initialValue.title || '',
+        content: initialValue.content || '',
+        author: initialValue.author || '',
+        date: formatDateSafely(initialValue.date),
+        category: initialValue.category || '',
+        status: initialValue.status || 'draft',
+        featured: initialValue.featured || false,
+        coverImage: initialValue.coverImage || '',
+        summary: initialValue.summary || ''
+      }
+      setFormData(adaptedData);
     }
   }, [initialValue]);
 
@@ -88,12 +248,12 @@ function NewsForm(props) {
           </FormControl>
 
           <FormControl>
-            <FormLabel htmlFor="excerpt">Resumen/Extracto</FormLabel>
+            <FormLabel htmlFor="summary">Resumen/Extracto</FormLabel>
             <TextField
-              id="excerpt"
-              name="excerpt"
+              id="summary"
+              name="summary"
               multiline
-              value={formData.excerpt}
+              value={formData.summary}
               onChange={handleInputChange}
               placeholder="Breve resumen de la noticia..."
             />
@@ -101,7 +261,7 @@ function NewsForm(props) {
 
           <FormControl>
             <FormLabel htmlFor="content">Contenido</FormLabel>
-            <TextEditor id="content" value={formData.content} onChange={handleContentChange} />
+            <TextEditor id="content" value={formData.content} onChange={handleContentChange} onUploadChange={handleEditorUploadChange} />
           </FormControl>
 
           <Stack direction="row" spacing={2}>
@@ -119,12 +279,12 @@ function NewsForm(props) {
             </FormControl>
 
             <FormControl sx={{ flex: 1 }}>
-              <FormLabel htmlFor="publishDate">Fecha de publicación</FormLabel>
+              <FormLabel htmlFor="date">Fecha de publicación</FormLabel>
               <TextField
-                id="publishDate"
-                name="publishDate"
+                id="date"
+                name="date"
                 type="date"
-                value={formData.publishDate}
+                value={formData.date}
                 onChange={handleInputChange}
                 InputLabelProps={{
                   shrink: true,
@@ -171,15 +331,77 @@ function NewsForm(props) {
           </Stack>
 
           <FormControl>
-            <FormLabel htmlFor="imageUrl">URL de imagen</FormLabel>
-            <OutlinedInput
-              id="imageUrl"
-              name="imageUrl"
-              type="url"
-              value={formData.imageUrl}
-              onChange={handleInputChange}
-              placeholder="https://ejemplo.com/imagen.jpg"
-            />
+            <FormLabel sx={{ mb: 1 }}>Imagen de portada</FormLabel>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Button
+                  component="label"
+                  variant="outlined"
+                  startIcon={uploading ? <CircularProgress size={20} /> : <CloudUploadIcon />}
+                  disabled={uploading}
+                  sx={{ minWidth: 160 }}
+                >
+                  {uploading ? 'Subiendo...' : 'Seleccionar imagen'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={VisuallyHiddenInput}
+                    />
+                </Button>
+
+                {(imagePreview || formData.coverImage) && (
+                  <IconButton
+                    color="error"
+                    onClick={handleRemoveImage}
+                    size="small"
+                    disabled={uploading}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                )}
+              </Stack>
+
+              {imagePreview && (
+                <Box sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 2,
+                  p: 2,
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                  bgcolor: 'background.paper'
+                }}>
+                  <Avatar
+                    src={imagePreview}
+                    sx={{ width: 80, height: 80 }}
+                    variant="rounded"
+                  >
+                    <ImageIcon />
+                  </Avatar>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="body2" fontWeight="medium">
+                      {imageFile ? imageFile.name : 'Imagen actual'}
+                    </Typography>
+                    {imageFile && (
+                      <Typography variant="caption" color="text.secondary">
+                        {(imageFile.size / 1024 / 1024).toFixed(2)} MB
+                      </Typography>
+                    )}
+                    {uploading && (
+                      <Typography variant="caption" color="primary">
+                        Subiendo a Cloudinary...
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+              )}
+
+              <Typography variant="caption" color="text.secondary">
+                Formatos soportados: JPG, PNG, GIF, WebP. Tamaño máximo: 5MB
+              </Typography>
+            </Box>
           </FormControl>
 
           <FormControlLabel
@@ -195,9 +417,9 @@ function NewsForm(props) {
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} sx={{ '&:hover': { border: '1px solid #f00', backgroundColor: 'transparent' } }}>Cancelar</Button>
-        <Button type="submit" onClick={onFormSubmit} variant="contained">
-          {initialValue ? 'Actualizar' : 'Crear'}
+        <Button onClick={handleClose} disabled={uploading} sx={{ '&:hover': { border: '1px solid #f00', backgroundColor: 'transparent' } }}>Cancelar</Button>
+        <Button type="submit" onClick={onFormSubmit} variant="contained" disabled={!formData.title || !formData.content || !formData.author || uploading || editorUploading}>
+          {(uploading || editorUploading) ? 'Procesando...' : (initialValue ? 'Actualizar' : 'Crear')}
         </Button>
       </DialogActions>
     </Dialog>

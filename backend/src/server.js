@@ -1,8 +1,14 @@
 import dotenv from 'dotenv'
-import { connectDB } from './config/db'
-import app from './app'
 
 dotenv.config()
+
+import connectDB from './config/db.js'
+import app from './app.js'
+
+console.log('🔍 Variables cargadas:')
+console.log('PORT:', process.env.PORT)
+console.log('CLOUDINARY_URL:', process.env.CLOUDINARY_URL ? 'SET' : 'NOT SET')
+console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'SET' : 'NOT SET')
 
 const PORT = process.env.PORT || 4000
 

@@ -20,6 +20,7 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import Menu from '@mui/material/Menu';
+import { useAuth } from '../context/AuthContext';
 
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -74,41 +75,8 @@ const menuLabels = {
 export default function AppAppBar() {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
-  const [currentUser, setCurrentUser] = React.useState(null);
+  const { isAuthenticated, user, logout } = useAuth()
   const [activeSubmenu, setActiveSubmenu] = React.useState(null);
-
-  const checkUser = React.useCallback(() => {
-    // Revisar localStorage
-    let user = localStorage.getItem('currentUser')
-
-    //si no hay en localStorage, revisar sessionStorage
-    if (!user) {
-      user = sessionStorage.getItem('currentUser')
-    }
-
-    if (user) {
-      setCurrentUser(JSON.parse(user))
-    } else {
-      setCurrentUser(null)
-    }
-  }, [])
-
-  React.useEffect(() => {
-    checkUser()
-
-    // Escuchar cambios en localStorage
-    const handleStorageChange = () => {
-      checkUser()
-    }
-
-    window.addEventListener('storage', handleStorageChange)
-    window.addEventListener('userChanged', handleStorageChange)
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      window.removeEventListener('userChanged', handleStorageChange)
-    }
-  }, [checkUser])
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -122,11 +90,13 @@ export default function AppAppBar() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('currentUser')
-    sessionStorage.removeItem('currentUser')
-    setCurrentUser(null)
-    window.dispatchEvent(new CustomEvent('userChanged'))
+    logout()
+    navigate('/')
   };
+
+  const handleDashboardClick = () => {
+    navigate('/dashboard')
+  }
 
   const handleMainMenuClick = (menuKey) => {
     setActiveSubmenu(menuKey);
@@ -391,12 +361,12 @@ export default function AppAppBar() {
                       </MenuItem>
                       <Divider sx={{ my: 3 }} />
                       <MenuItem>
-                        {currentUser ? (
+                        {isAuthenticated ? (
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <Typography variant="body2">
-                              Hola, {currentUser.name}
+                              Hola, {user?.name}
                             </Typography>
-                            <Button color="primary" variant="outlined" size="small" onClick={() => navigate('/dashboard')}>
+                            <Button color="primary" variant="outlined" size="small" onClick={handleDashboardClick}>
                               Dashboard
                             </Button>
                             <Button color="primary" variant="outlined" size="small" onClick={handleLogout}>

@@ -4,51 +4,21 @@ import { useNavigate } from 'react-router-dom'
 import ColorModeIconDropdown from '../../shared-theme/ColorModeIconDropdown'
 import InstagramIcon from '@mui/icons-material/Instagram'
 import YoutubeIcon from '@mui/icons-material/YouTube'
+import { useAuth } from '../context/AuthContext'
 
 export default function TopBar(){
     const navigate = useNavigate()
-    const [currentUser, setCurrentUser] = React.useState(null)
-
-    const checkUser = React.useCallback(() => {
-        // Revisar localStorage
-        let user = localStorage.getItem('currentUser')
-    
-        //si no hay en localStorage, revisar sessionStorage
-        if (!user) {
-          user = sessionStorage.getItem('currentUser')
-        }
-    
-        if (user) {
-          setCurrentUser(JSON.parse(user))
-        } else {
-          setCurrentUser(null)
-        }
-    }, [])
-    
-    React.useEffect(() => {
-        checkUser()
-    
-        // Escuchar cambios en localStorage
-        const handleStorageChange = () => {
-          checkUser()
-        }
-    
-        window.addEventListener('storage', handleStorageChange)
-        window.addEventListener('userChanged', handleStorageChange)
-    
-        return () => {
-          window.removeEventListener('storage', handleStorageChange)
-          window.removeEventListener('userChanged', handleStorageChange)
-        }
-      }, [checkUser])
+    const { isAuthenticated, user, logout } = useAuth()
 
     const handleSignInClick = () => { navigate('/signin') }
 
     const handleLogout = () => {
-        localStorage.removeItem('currentUser')
-        sessionStorage.removeItem('currentUser')
-        setCurrentUser(null)
-        window.dispatchEvent(new CustomEvent('userChanged'))
+        logout()
+        navigate('/')
+    }
+
+    const handleDashboardClick = () => {
+        navigate('/dashboard')
     }
 
     return (
@@ -81,19 +51,19 @@ export default function TopBar(){
                         href="https://www.youtube.com/"
                         target='_blank'
                         rel='noopener noreferrer'
-                        aria-label="Instagram"
+                        aria-label="YouTube"
                         sx={{ alignSelf: 'center' }}
                         >
                         <YoutubeIcon />
                         </IconButton>
                     </Box>
                     <Box sx={{ display: 'flex', gap: 1 }}>
-                        {currentUser ? (
+                        {isAuthenticated ? (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                 <Typography variant="body2" color="text.secondary">
-                                    Hola, {currentUser.name}
+                                    Hola, {user?.name}
                                 </Typography>
-                                <Button color="primary" variant="outlined" size="small" onClick={() => navigate('/dashboard')}>
+                                <Button color="primary" variant="outlined" size="small" onClick={handleDashboardClick}>
                                     Dashboard
                                 </Button>
                                 <Button color="primary" variant="outlined" size="small" onClick={handleLogout}>

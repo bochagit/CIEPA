@@ -5,14 +5,13 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { useNavigate } from 'react-router-dom';
 import { useDialogs } from '../hooks/useDialogs/useDialogs';
 import useNotifications from '../hooks/useNotifications/useNotifications';
-import { newsData } from '../data/news';
 import PageContainer from './PageContainer';
 import { brand } from '../../shared-theme/themePrimitives'
 import { useTheme, useMediaQuery } from '@mui/material'
+import { postService } from '../services/postService';
 
 export default function NewsList() {
   const navigate = useNavigate();
@@ -22,12 +21,77 @@ export default function NewsList() {
 
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
-  const [news, setNews] = React.useState(newsData);
-  const [loading, setLoading] = React.useState(false);
+  const [news, setNews] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
   const [selected, setSelected] = React.useState([]);
   const [currentPage, setCurrentPage] = React.useState(1);
 
   const itemsPerPage = isMobile ? 5 : 10;
+
+  const formatDateForDisplay = (dateString) => {
+    if (!dateString) return ''
+
+    console.log('Fecha original en lista: ', dateString)
+    try {
+      if (typeof dateString === 'string' && dateString.includes('T')){
+        const dateOnly = dateString.split('T')[0]
+        const [year, month, day] = dateOnly.split('-')
+        const formatted = `${day}/${month}/${year}`
+        console.log('Fecha formateada para mostrar: ', formatted)
+        return formatted
+      }
+
+      if (typeof dateString === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateString)){
+        const [year, month, day] = dateString.split('-')
+        return `${day}/${month}/${year}`
+      }
+
+      if (dateString instanceof Date){
+        const day = String(dateString.getDate()).padStart(2, '0')
+        const month = String(dateString.getMonth() + 1).padStart(2, '0')
+        const year = dateString.getFullYear();
+        return `${day}/${month}/${year}`
+      }
+
+      return dateString
+    } catch(error) {
+      console.warn('Error formateando fecha: ', error)
+      return dateString
+    }
+  }
+
+  const adaptPostToNews = (post) => ({
+    id: post._id,
+    title: post.title,
+    author: post.author,
+    category: post.category || 'General',
+    date: post.date,
+    status: post.status || 'published',
+    featured: post.featured || false,
+    summary: post.summary,
+    content: post.content
+  })
+
+  const fetchPosts = React.useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const posts = await postService.getAllPosts();
+
+      const adaptedPosts = posts.map(adaptPostToNews);
+      setNews(adaptedPosts);
+    } catch(err) {
+      setError(err.message || 'Error al cargar las notas');
+      notifications.show('Error al cargar las notas', { severity: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  }, [notifications])
+
+  React.useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts])
 
   const totalPages = Math.ceil(news.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -45,15 +109,10 @@ export default function NewsList() {
   };
 
   const handleRefresh = React.useCallback(async () => {
-    setLoading(true);
-    // En una app real, aquí se haría una llamada a la API
-    setTimeout(() => {
-      setNews(newsData);
-      setLoading(false);
-      setCurrentPage(1);
-      notifications.show('Lista de noticias actualizada', { severity: 'success' });
-    }, 500);
-  }, [notifications]);
+    await fetchPosts();
+    setCurrentPage(1);
+    notifications.show('Lista de noticias actualizada', { severity: 'success' });
+  }, [fetchPosts, notifications]);
 
   const handleDelete = React.useCallback(async (id) => {
     const confirmed = await dialogs.confirm(
@@ -62,16 +121,31 @@ export default function NewsList() {
     );
     
     if (confirmed) {
-      setNews(prev => {
-        const newNews = prev.filter(item => item.id !== id);
-        const newTotalPages = Math.ceil(newNews.length / itemsPerPage);
-        if (currentPage > newTotalPages && newTotalPages > 0) {
-          setCurrentPage(newTotalPages)
-        }
-        return newNews;
+      try {
+        setLoading(true);
+
+        notifications.show('Eliminando noticia e imágenes...', {
+          severity: 'info',
+          autoHideDuration: 2000
+        })
+
+        await postService.deletePost(id);
+        setNews(prev => {
+          const newNews = prev.filter(item => item.id !== id);
+          const newTotalPages = Math.ceil(newNews.length / itemsPerPage);
+          if (currentPage > newTotalPages && newTotalPages > 0) {
+            setCurrentPage(newTotalPages)
+          }
+          return newNews;
       });
+
       setSelected(prev => prev.filter(selectedId => selectedId !== id));
-      notifications.show('Noticia eliminada correctamente', { severity: 'success' });
+      notifications.show('Nota eliminada correctamente', { severity: 'success' });
+    } catch(err) {
+      notifications.show('Error al eliminar la nota', { severity: 'error' });
+    } finally {
+      setLoading(false);
+    }
     }
   }, [dialogs, notifications, currentPage, itemsPerPage]);
 
@@ -121,11 +195,19 @@ export default function NewsList() {
   return (
     <PageContainer title="Gestión de Noticias">
       <Stack spacing={2}>
+
+        {error && (
+          <Box sx={{ p:2, bgcolor: 'error.light', color: 'error.contrastText', borderRadius: 1 }}>
+            <Typography variant="body2">{error}</Typography>
+          </Box>
+        )}
+
         <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={handleCreate}
+            disabled={loading}
           >
             Nueva Noticia
           </Button>
@@ -147,7 +229,12 @@ export default function NewsList() {
           </Box>
         </Stack>
 
-        <TableContainer 
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+            <Typography>Cargando notas...</Typography>
+          </Box>
+        ) : (
+          <TableContainer 
           component={Paper} 
           sx={{ 
             maxHeight: { xs:'none', md: 600 },
@@ -200,7 +287,7 @@ export default function NewsList() {
                         {row.title}
                       </Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ display: { xs: 'block', sm: 'none' } }}>
-                        {row.author} • {new Date(row.publishDate).toLocaleDateString()}
+                        {row.author} • {formatDateForDisplay(row.date)}
                         <Typography component="span" variant="caption" color="primary.main" sx={{ ml: 1, fontWeight: 600 }}>Toca para ver</Typography>
                       </Typography>
                     </Box>
@@ -215,7 +302,7 @@ export default function NewsList() {
                   </TableCell>
                   <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                     <Typography variant="body2" noWrap>
-                      {new Date(row.publishDate).toLocaleDateString()}
+                      {formatDateForDisplay(row.date)}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -242,6 +329,7 @@ export default function NewsList() {
             </TableBody>
           </Table>
         </TableContainer>
+        )}
         {
           selected.length > 0 && (
             <Box sx={{ p: 2, bgcolor: 'action.selected', borderRadius: 1, mb: { xs: 2, md: 0 } }}>

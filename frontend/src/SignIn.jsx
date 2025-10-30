@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import CiepaLogo from './components/CiepaLogo';
 import ColorModeIconDropdown from '../shared-theme/ColorModeIconDropdown';
 import Alert from '@mui/material/Alert';
-import { authenticateUser } from './data/mockUsers'
+import { useAuth } from './context/AuthContext';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -62,96 +62,99 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn(props) {
-  const [userError, setUserError] = React.useState(false);
-  const [userErrorMessage, setUserErrorMessage] = React.useState('');
+  const { login } = useAuth();
+  const [nameError, setNameError] = React.useState(false);
+  const [nameErrorMessage, setNameErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const [loginError, setLoginError] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(false);
   const [rememberMe, setRememberMe] = React.useState(false);
+
   const navigate = useNavigate();
 
   const handleBackToHome = () => {
     navigate('/');
   }
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  const validateInputs = () => {
+      const name = document.getElementById('name');
+      const password = document.getElementById('password');
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+      let isValid = true;
+
+      if (!name.value || name.value.length < 1) {
+        setNameError(true);
+        setNameErrorMessage('Por favor ingresá tu nombre de usuario.');
+        isValid = false;
+      } else {
+        setNameError(false);
+        setNameErrorMessage('');
+      }
+
+      if (!password.value || password.value.length < 6) {
+        setPasswordError(true);
+        setPasswordErrorMessage('La contraseña debe tener al menos 6 caracteres.');
+        isValid = false;
+      } else {
+        setPasswordError(false);
+        setPasswordErrorMessage('');
+      }
+
+      return isValid
+    };
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-
-    if(!validateInputs()) {
-      return;
-    }
-
-    setIsLoading(true)
     setLoginError('')
 
-    const data = new FormData(event.currentTarget);
-    const username = data.get('user')
-    const password = data.get('password')
+    console.log('Iniciando proceso de login...')
 
-    // Simula delay de red
-    setTimeout(() => {
-      const user = authenticateUser(username, password)
+    if (validateInputs()) {
+      const data = new FormData(event.currentTarget);
+      const name = data.get('name');
+      const password = data.get('password');
 
-      if (user) {
+      console.log('Enviando login: ', { name })
+
+      try {
+        setLoading(true);
+        await login(name, password);
+
+        console.log('Login exitoso');
+
         if(rememberMe) {
-          localStorage.setItem('currentUser', JSON.stringify(user))
-          // Limpiar sessionStorage si existía
-          sessionStorage.removeItem('currentUser')
+          localStorage.setItem('rememberUser', name);
         } else {
-          sessionStorage.setItem('currentUser', JSON.stringify(user))
-          // Limpiar localStorage si existía
-          localStorage.removeItem('currentUser')
+          localStorage.removeItem('rememberUser');
         }
 
-        window.dispatchEvent(new CustomEvent('userChanged'))
-
-        console.log('login exitoso: ', user)
-
-        navigate('/')
-      } else {
-        setLoginError('Usuario o contraseña incorrectos')
+        console.log('Navegando a dashboard...')
+        navigate('/dashboard')
+      } catch(error) {
+        console.error('Error en login: ', error);
+        console.error('Tipo de error: ', typeof error);
+        console.error('Error message: ', error.message)
+        
+        setLoginError(error.message || 'Error al iniciar sesión. Verifica tus credenciales.');
+      } finally {
+        setLoading(false);
       }
-
-      setIsLoading(false)
-    }, 500)
-  };
-
-  const validateInputs = () => {
-    const user = document.getElementById('user');
-    const password = document.getElementById('password');
-
-    let isValid = true;
-
-    if (!user.value || user.value.length < 3) {
-      setUserError(true);
-      setUserErrorMessage('Ingrese un usuario valido.');
-      isValid = false;
     } else {
-      setUserError(false);
-      setUserErrorMessage('');
-    }
+      console.log('Validación de inputs falló')
+    };
+  }
 
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage('La contraseña debe tener al menos 6 caracteres');
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
+React.useEffect(() => {
+  const rememberedUser = localStorage.getItem('rememberUser');
+  if (rememberedUser) {
+    const nameField = document.getElementById('name');
+    if (nameField) {
+      nameField.value = rememberedUser;
+      setRememberMe(true);
     }
-
-    return isValid;
-  };
+  }
+}, [])
 
   return (
     <AppTheme {...props}>
@@ -192,20 +195,21 @@ export default function SignIn(props) {
             }
 
             <FormControl>
-              <FormLabel htmlFor="user">Usuario</FormLabel>
+              <FormLabel htmlFor="name">Nombre de usuario</FormLabel>
               <TextField
-                error={userError}
-                helperText={userErrorMessage}
-                id="user"
+                error={nameError}
+                helperText={nameErrorMessage}
+                id="name"
                 type="text"
-                name="user"
+                name="name"
                 placeholder="usuario..."
                 autoComplete="username"
                 autoFocus
                 required
                 fullWidth
                 variant="outlined"
-                color={userError ? 'error' : 'primary'}
+                color={nameError ? 'error' : 'primary'}
+                sx={{ ariaLabel: 'name' }}
               />
             </FormControl>
             <FormControl>
@@ -232,9 +236,9 @@ export default function SignIn(props) {
               type="submit"
               fullWidth
               variant="contained"
-              disabled={isLoading}
+              disabled={loading}
             >
-              {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+              {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
             </Button>
           </Box>
         </Card>
