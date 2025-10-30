@@ -214,7 +214,34 @@ export default function NewsShow() {
                 <Typography variant="h6" gutterBottom>
                   Contenido
                 </Typography>
-                <Typography variant="body1" sx={{ whiteSpace: 'pre-line', lineHeight: 1.6 }} dangerouslySetInnerHTML={{ __html: newsData.content }} />
+                <Box
+                  className="ql-editor"
+                  sx={{
+                    border: 'none !important',
+                    padding: '0 !important',
+                    fontFamily: 'inherit',
+                    fontSize: '16px',
+                    lineHeight: 1.6,
+                    '& p': { margin: '0 0 1em 0' },
+                    '& h1, & h2, & h3, & h4, & h5, & h6': {
+                      fontWeight: 'normal',
+                      margin: '1em 0 0.5em 0'
+                    },
+                    '& ul, & ol': {paddingLeft: '1.5em'},
+                    '& blockquote': {
+                      borderLeft: '4px solid #ccc',
+                      margin: '1em 0',
+                      paddingLeft: '1em',
+                      fontStyle: 'italic'
+                    },
+                    '& img': {maxWidth: '100%', height: 'auto'},
+                    '& a': {
+                      color: 'primary.main',
+                      textDecoration: 'none',
+                      '&:hover': {textDecoration: 'underline'}
+                    }
+                  }}
+                  dangerouslySetInnerHTML={{__html: newsData.content}} />
               </Box>
             </Stack>
           </CardContent>

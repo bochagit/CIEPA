@@ -9,7 +9,6 @@ const postSchema = mongoose.Schema({
     category: { type: String, default: 'General' },
     status: { type: String, enum: ['published', 'draft', 'archived'], default: 'draft' },
     coverImage: { type: String },
-    images: [{ type: String }],
     featured: { type: Boolean, default: false }
 })
 

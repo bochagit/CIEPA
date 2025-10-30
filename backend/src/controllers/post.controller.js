@@ -70,7 +70,7 @@ const extractAllImages = (content, coverImage) => {
 
 export const createPost = async (req, res) => {
     try {
-        const { title, summary, content, author, date, category, status, coverImage, images, featured } = req.body
+        const { title, summary, content, author, date, category, status, coverImage, featured } = req.body
 
         if (!title || !content){
             return res.status(400).json({ message: "El titulo y el contenido son obligatorios" })
@@ -109,7 +109,7 @@ export const getPostsById = async (req, res) => {
 
 export const updatePost = async (req, res) => {
     try {
-        const { title, summary, content, author, date, category, status, coverImage, images, featured } = req.body
+        const { title, summary, content, author, date, category, status, coverImage, featured } = req.body
         const cleanContent = sanitizeHtml(content, sanitizeOptions)
 
         const post = await Post.findByIdAndUpdate(
@@ -123,7 +123,6 @@ export const updatePost = async (req, res) => {
                 category,
                 status,
                 coverImage,
-                images,
                 featured
             },
             { new: true }
