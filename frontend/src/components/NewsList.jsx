@@ -77,7 +77,9 @@ export default function NewsList() {
     try {
       setLoading(true);
       setError(null);
-      const posts = await postService.getAllPosts();
+      const response = await postService.getAllPosts();
+
+      const posts = response.posts || []
 
       const adaptedPosts = posts.map(adaptPostToNews);
       setNews(adaptedPosts);

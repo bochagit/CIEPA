@@ -78,7 +78,7 @@ export const createPost = async (req, res) => {
 
         const cleanContent = sanitizeHtml(content, sanitizeOptions)
 
-        const post = new Post({ title, summary, content: cleanContent, author, date, category, status, coverImage, images, featured })
+        const post = new Post({ title, summary, content: cleanContent, author, date, category, status, coverImage, featured })
 
         await post.save()
         res.status(201).json(post)
@@ -88,16 +88,69 @@ export const createPost = async (req, res) => {
     }
 }
 
-export const getPosts = async (req, res) => {
+export const getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.find().sort({ date: -1 })
-        res.json(posts)
+        const {
+            page = 1,
+            limit = 10,
+            search = '',
+            status = '',
+            category = '',
+            featured
+        } = req.query
+
+        const pageNumber = parseInt(page)
+        const limitNumber = parseInt(limit)
+        const skip = (pageNumber - 1) * limitNumber
+
+        let filter = {}
+
+        if (search.trim()){
+            filter.$or = [
+                { title: { $regex: search, $options: 'i' } },
+                { content: { $regex: search, $options: 'i' } },
+                { author: { $regex: search, $options: 'i' } },
+                { summary: { $regex: search, $options: 'i' } }
+            ]
+        }
+
+        if (status) {
+            filter.status = status
+        }
+
+        if (category) {
+            filter.category = category
+        }
+
+        if (featured !== undefined) {
+            filter.featured = featured === 'true'
+        }
+
+        console.log('Filtros aplicados: ', filter)
+
+        const posts = await Post.find(filter)
+        .sort({ date: -1, createdAt: -1 })
+        .skip(skip)
+        .limit(limitNumber)
+
+        const total = await Post.countDocuments(filter)
+
+        console.log(`Posts encontrados: ${posts.length} de ${total} total`)
+
+        res.json({
+            posts,
+            currentPage: pageNumber,
+            totalPages: Math.ceil(total / limitNumber),
+            total,
+            hasNext: pageNumber < Math.ceil(total / limitNumber),
+            hasPrev: pageNumber > 1
+        })
     } catch(error) {
         res.status(500).json({ message: "Error al obtener los posts" })
     }
 }
 
-export const getPostsById = async (req, res) => {
+export const getPostById = async (req, res) => {
     try {
         const post = await Post.findById(req.params.id)
         if (!post) return res.status(400).json({ message: "Post no encontrado" })

@@ -1,77 +1,10 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import Avatar from '@mui/material/Avatar';
-import AvatarGroup from '@mui/material/AvatarGroup';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import FormControl from '@mui/material/FormControl';
-import InputAdornment from '@mui/material/InputAdornment';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import { styled } from '@mui/material/styles';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import { Pagination } from '@mui/material';
+import { Pagination, CircularProgress, Alert, IconButton, styled, OutlinedInput, InputAdornment, FormControl, Typography, Grid, CardMedia, CardContent, Card, Box, Avatar, alpha } from '@mui/material';
 import { brand } from '../../shared-theme/themePrimitives';
-
-const cardData = [
-  {
-    img: 'https://picsum.photos/800/450?random=1',
-    tag: 'Categoria',
-    title: 'Titulo',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    authors: [
-      { name: 'Autor 1', avatar: '/static/images/avatar/1.jpg' },
-      { name: 'Autor 2', avatar: '/static/images/avatar/2.jpg' },
-    ],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=2',
-    tag: 'Categoria',
-    title: 'Titulo',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    authors: [{ name: 'Autor 1', avatar: '/static/images/avatar/6.jpg' }],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=3',
-    tag: 'Categoria',
-    title: 'Titulo',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-    authors: [{ name: 'Autor 1', avatar: '/static/images/avatar/7.jpg' }],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=4',
-    tag: 'Categoria',
-    title: "Titulo",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    authors: [{ name: 'Autor 1', avatar: '/static/images/avatar/3.jpg' }],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=45',
-    tag: 'Categoria',
-    title: 'Titulo',
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    authors: [
-      { name: 'Autor 1', avatar: '/static/images/avatar/4.jpg' },
-      { name: 'Autor 2', avatar: '/static/images/avatar/5.jpg' },
-    ],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=6',
-    tag: 'Categoria',
-    title: 'Titulo',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    authors: [{ name: 'Autor 1', avatar: '/static/images/avatar/2.jpg' }],
-  },
-];
+import { postService } from '../services/postService';
+import { useNavigate } from 'react-router-dom';
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(3),
@@ -97,12 +30,13 @@ const StyledCard = styled(Card)(({ theme }) => ({
   flexDirection: 'column',
   padding: 0,
   height: '100%',
-  backgroundColor: (theme.vars || theme).palette.background.paper,
-  backdropFilter: 'blur(10px)',
+  backgroundColor: (theme.vars || theme).palette.background.default,
+  transition: 'background-color .3s, transform .3s, border .3s',
   '&:hover': {
-    backgroundColor: (theme.vars || theme).palette.background.default,  
+    backgroundColor: (theme.vars || theme).palette.background.default,
     cursor: 'pointer',
-    transform: 'scale(1.005)'
+    transform: 'scale(1.005)',
+    border: `1px solid ${brand.main}`
   },
   '&:focus-visible': {
     outline: '3px solid',
@@ -130,7 +64,39 @@ const StyledTypography = styled(Typography)({
   textOverflow: 'ellipsis',
 });
 
-function Author({ authors }) {
+const formatDateForDisplay = (dateString) => {
+    if (!dateString) return ''
+
+    console.log('Fecha original en lista: ', dateString)
+    try {
+      if (typeof dateString === 'string' && dateString.includes('T')){
+        const dateOnly = dateString.split('T')[0]
+        const [year, month, day] = dateOnly.split('-')
+        const formatted = `${day}/${month}/${year}`
+        console.log('Fecha formateada para mostrar: ', formatted)
+        return formatted
+      }
+
+      if (typeof dateString === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateString)){
+        const [year, month, day] = dateString.split('-')
+        return `${day}/${month}/${year}`
+      }
+
+      if (dateString instanceof Date){
+        const day = String(dateString.getDate()).padStart(2, '0')
+        const month = String(dateString.getMonth() + 1).padStart(2, '0')
+        const year = dateString.getFullYear();
+        return `${day}/${month}/${year}`
+      }
+
+      return dateString
+    } catch(error) {
+      console.warn('Error formateando fecha: ', error)
+      return dateString
+    }
+  }
+
+function Author({ author, date }) {
   return (
     <Box
       sx={{
@@ -145,45 +111,66 @@ function Author({ authors }) {
       <Box
         sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center' }}
       >
-        <AvatarGroup max={3}>
-          {authors.map((author, index) => (
-            <Avatar
-              key={index}
-              alt={author.name}
-              src={author.avatar}
-              sx={{ width: 24, height: 24 }}
-            />
-          ))}
-        </AvatarGroup>
+        <Avatar sx={{ width: 32, height: 32 }}>
+          {author.charAt(0).toUpperCase()}
+        </Avatar>
         <Typography variant="caption">
-          {authors.map((author) => author.name).join(', ')}
+          {author}
         </Typography>
       </Box>
-      <Typography variant="caption">{new Date().toLocaleDateString()}</Typography>
+      <Typography variant="caption">
+        {formatDateForDisplay(date)}
+      </Typography>
     </Box>
   );
 }
 
 Author.propTypes = {
-  authors: PropTypes.arrayOf(
-    PropTypes.shape({
-      avatar: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
-};
+  author: PropTypes.string.isRequired,
+  date: PropTypes.string.isRequired
+}
 
-export function Search() {
+export function Search({ onSearch, searchTerm }) {
+  const [localSearchTerm, setLocalSearchTerm] = React.useState(searchTerm || '')
+
+  const handleInputChange = (event) => {
+    setLocalSearchTerm(event.target.value)
+  }
+
+  const executeSearch = () => {
+    onSearch(localSearchTerm.trim())
+  }
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter'){
+      executeSearch()
+    }
+  }
+
+  React.useEffect(() => {
+    setLocalSearchTerm(searchTerm || '')
+  }, [searchTerm])
+
   return (
     <FormControl sx={{ width: { xs: '100%', md: '25ch' } }} variant="outlined">
       <OutlinedInput
         size="small"
         id="search"
         placeholder="Buscar..."
+        value={localSearchTerm}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyPress}
         sx={{ flexGrow: 1 }}
         startAdornment={
           <InputAdornment position="start" sx={{ color: 'text.primary' }}>
-            <SearchRoundedIcon fontSize="small" />
+            <IconButton
+              onClick={executeSearch}
+              edge="start"
+              size="small"
+              sx={{ backgroundColor: 'transparent !important', border: 'none', '&:hover': { color: 'primary.main', backgroundColor: 'transparent' } }}
+            >
+              <SearchRoundedIcon fontSize="small" />
+            </IconButton>
           </InputAdornment>
         }
         inputProps={{
@@ -194,8 +181,68 @@ export function Search() {
   );
 }
 
+Search.propTypes = {
+  onSearch: PropTypes.func.isRequired,
+  searchTerm: PropTypes.string
+}
+
 export default function Notas() {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState(null);
+  const [posts, setPosts] = React.useState([])
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState('')
+  const [currentPage, setCurrentPage] = React.useState(1)
+  const [totalPages, setTotalPages] = React.useState(1)
+  const [totalPosts, setTotalPosts] = React.useState(0)
+  const [searchTerm, setSearchTerm] = React.useState('')
+  const navigate = useNavigate()
+
+  const postsPerPage = 4
+
+  const fetchPosts = async (page = 1, search = '') => {
+    try {
+      setLoading(true)
+      console.log('Obteniendo posts...', { page, search, limit: postsPerPage })
+
+      const response = await postService.getAllPosts({
+        page,
+        limit: postsPerPage,
+        search: search.trim(),
+        status: 'published'
+      })
+
+      console.log('Posts obtenidos: ', response)
+
+      setPosts(response.posts || [])
+      setTotalPages(Math.ceil((response.total || 0) / postsPerPage))
+      setTotalPosts(response.total || 0)
+      setError('')
+    } catch(error) {
+      console.error('Error obteniendo posts: ', error)
+      setError('Error al cargar las notas. Por favor, intente nuevamente.')
+      setPosts([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  React.useEffect(() => {
+    fetchPosts(currentPage, searchTerm)
+  }, [currentPage, searchTerm])
+
+  const handleSearch = (search) => {
+    setSearchTerm(search)
+    setCurrentPage(1)
+  }
+
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleCardClick = (postId) => {
+    navigate(`/notas/${postId}`)
+  }
 
   const handleFocus = (index) => {
     setFocusedCardIndex(index);
@@ -205,10 +252,55 @@ export default function Notas() {
     setFocusedCardIndex(null);
   };
 
+  const getPlainTextFromHtml = (html, maxLength = 150) => {
+    const tempDiv = document.createElement('div')
+    tempDiv.innerHTML = html || ''
+    const text = tempDiv.textContent || tempDiv.innerText || ''
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text
+  }
+  
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <SectionTitle variant="h3" component="h2">Notas</SectionTitle>
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+          <CircularProgress size={60} />
+        </Box>
+      </Box>
+    )
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <SectionTitle variant="h3" component="h2">Notas</SectionTitle>
+        <Alert severity="error" sx={{ maxWidth: 600, mx: 'auto' }}>
+          {error}
+        </Alert>
+      </Box>
+    )
+  }
+
+  if (posts.length === 0){
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <SectionTitle variant="h3" component="h2">Notas</SectionTitle>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column-reverse', md: 'row' }, width: '100%', justifyContent: 'space-between', alignItems: { xs: 'start', md: 'center' }, gap: 4 }}>
+          <Search onSearch={handleSearch} searchTerm={searchTerm} />
+        </Box>
+        <Alert severity="info" sx={{ maxWidth: 600, mx: 'auto' }}>
+          {searchTerm ? `No se encontraron notas que coincidan con "${searchTerm}"` : 'No hay notas publicadas todavía.'}
+        </Alert>
+      </Box>
+    )
+  }
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <div>
-        <SectionTitle variant="h3" component="h2">Notas</SectionTitle>
+        <SectionTitle variant="h3" component="h2">
+          Notas {searchTerm && `- "${searchTerm}"`}
+        </SectionTitle>
       </div>
       <Box
         sx={{
@@ -219,7 +311,7 @@ export default function Notas() {
           overflow: 'auto',
         }}
       >
-        <Search />
+        <Search onSearch={handleSearch} searchTerm={searchTerm} />
       </Box>
       <Box
         sx={{
@@ -241,216 +333,91 @@ export default function Notas() {
             overflow: 'auto',
           }}
         >
-          <Search />
+          <Search onSearch={handleSearch} searchTerm={searchTerm} />
         </Box>
+        <Typography variant="body2" color="text.secondary">
+          {searchTerm ? (
+            `${posts.length} de ${totalPosts} resultados${searchTerm ? ` para "${searchTerm}"` : ''}`
+          ) : (
+            `${posts.length} de ${totalPosts} notas${totalPages > 1 ? ` (página ${currentPage} de ${totalPages})` : ''}`
+          )}
+        </Typography>
       </Box>
-      <Grid container spacing={2} columns={12}>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <StyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(0)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 0 ? 'Mui-focused' : ''}
-          >
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[0].img}
-              sx={{
-                aspectRatio: '16 / 9',
-                borderBottom: '1px solid',
-                borderColor: 'divider',
-              }}
-            />
-            <StyledCardContent>
-              <Typography gutterBottom variant="caption" component="div">
-                {cardData[0].tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[0].title}
-              </Typography>
-              <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[0].description}
-              </StyledTypography>
-            </StyledCardContent>
-            <Author authors={cardData[0].authors} />
-          </StyledCard>
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <StyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(1)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 1 ? 'Mui-focused' : ''}
-          >
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[1].img}
-              aspect-ratio="16 / 9"
-              sx={{
-                borderBottom: '1px solid',
-                borderColor: 'divider',
-              }}
-            />
-            <StyledCardContent>
-              <Typography gutterBottom variant="caption" component="div">
-                {cardData[1].tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[1].title}
-              </Typography>
-              <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[1].description}
-              </StyledTypography>
-            </StyledCardContent>
-            <Author authors={cardData[1].authors} />
-          </StyledCard>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <StyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(2)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 2 ? 'Mui-focused' : ''}
-            sx={{ height: '100%' }}
-          >
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[2].img}
-              sx={{
-                height: { sm: 'auto', md: '50%' },
-                aspectRatio: { sm: '16 / 9', md: '' },
-              }}
-            />
-            <StyledCardContent>
-              <Typography gutterBottom variant="caption" component="div">
-                {cardData[2].tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[2].title}
-              </Typography>
-              <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[2].description}
-              </StyledTypography>
-            </StyledCardContent>
-            <Author authors={cardData[2].authors} />
-          </StyledCard>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Box
-            sx={{ display: 'flex', flexDirection: 'column', gap: 2, height: '100%' }}
-          >
+      <Grid container spacing={3} columns={12}>
+        {posts.map((post, index) => (
+          <Grid key={post._id} size={{ xs: 12, md: 6 }}>
             <StyledCard
               variant="outlined"
-              onFocus={() => handleFocus(3)}
+              onFocus={() => handleFocus(index)}
               onBlur={handleBlur}
+              onClick={() => handleCardClick(post._id)}
               tabIndex={0}
-              className={focusedCardIndex === 3 ? 'Mui-focused' : ''}
-              sx={{ height: '100%' }}
+              className={focusedCardIndex === index ? 'Mui-focused' : ''}
+              sx={{ 
+                height: '100%',
+                minHeight: '420px'
+              }}
             >
-              <StyledCardContent
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  height: '100%',
-                }}
-              >
-                <div>
-                  <Typography gutterBottom variant="caption" component="div">
-                    {cardData[3].tag}
+              {post.coverImage ? (
+                <CardMedia
+                  component="img"
+                  alt={post.title}
+                  image={post.coverImage}
+                  sx={{
+                    height: '240px',
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
+                    objectFit: 'cover'
+                  }}
+                />
+              ) : (
+                <Box
+                  sx={{
+                    height: '240px',
+                    backgroundColor: 'primary',
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'grey.500',
+                  }}
+                >
+                  <Typography variant="h5" color="inherit">
+                    {post.category}
                   </Typography>
-                  <Typography gutterBottom variant="h6" component="div">
-                    {cardData[3].title}
-                  </Typography>
-                  <StyledTypography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    {cardData[3].description}
-                  </StyledTypography>
-                </div>
+                </Box>
+              )}
+
+              <StyledCardContent>
+                <Typography gutterBottom variant="caption" component="div" color="primary">
+                  {post.category}
+                </Typography>
+                <Typography gutterBottom variant="h6" component="div" sx={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden', textOverflow: 'ellipsis', minHeight: '3em' }}>
+                  {post.title}
+                </Typography>
+                <StyledTypography variant="body2" color="text.secondary" gutterBottom sx={{ WebkitLineClamp: 3, minHeight: '4.5em' }}>
+                  {post.summary || getPlainTextFromHtml(post.content)}
+                </StyledTypography>
               </StyledCardContent>
-              <Author authors={cardData[3].authors} />
-            </StyledCard>
-            <StyledCard
-              variant="outlined"
-              onFocus={() => handleFocus(4)}
-              onBlur={handleBlur}
-              tabIndex={0}
-              className={focusedCardIndex === 4 ? 'Mui-focused' : ''}
-              sx={{ height: '100%' }}
-            >
-              <StyledCardContent
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  height: '100%',
-                }}
-              >
-                <div>
-                  <Typography gutterBottom variant="caption" component="div">
-                    {cardData[4].tag}
-                  </Typography>
-                  <Typography gutterBottom variant="h6" component="div">
-                    {cardData[4].title}
-                  </Typography>
-                  <StyledTypography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    {cardData[4].description}
-                  </StyledTypography>
-                </div>
-              </StyledCardContent>
-              <Author authors={cardData[4].authors} />
-            </StyledCard>
+                <Author author={post.author} date={post.date} />
+              </StyledCard>
+            </Grid>
+        ))}
+        </Grid>
+        {totalPages && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', pt: 4 }}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              color="primary"
+              size="large"
+              showFirstButton
+              showLastButton
+              />
           </Box>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <StyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(5)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 5 ? 'Mui-focused' : ''}
-            sx={{ height: '100%' }}
-          >
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[5].img}
-              sx={{
-                height: { sm: 'auto', md: '50%' },
-                aspectRatio: { sm: '16 / 9', md: '' },
-              }}
-            />
-            <StyledCardContent>
-              <Typography gutterBottom variant="caption" component="div">
-                {cardData[5].tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[5].title}
-              </Typography>
-              <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {cardData[5].description}
-              </StyledTypography>
-            </StyledCardContent>
-            <Author authors={cardData[5].authors} />
-          </StyledCard>
-        </Grid>
-      </Grid>
-    <Box sx={{ display: 'flex', flexDirection: 'row', pt: 4 }}>
-      <Pagination hidePrevButton hideNextButton count={4} boundaryCount={4} />
+        )}
     </Box>
-    </Box>
-  );
+  )
 }
