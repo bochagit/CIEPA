@@ -14,6 +14,7 @@ import EjesTrabajo from './components/EjesTrabajo';
 import Asesoramiento from './components/Asesoramiento';
 import Notas from './components/Notas';
 import Contacto from './components/Contacto';
+import Note from './components/Note';
 
 export default function App() {
   return (
@@ -61,6 +62,11 @@ export default function App() {
         <Route path="/notas" element={
           <Layout>
             <Notas />
+          </Layout>
+        } />
+        <Route path="/notas/:id" element={
+          <Layout>
+            <Note />
           </Layout>
         } />
         <Route path="/contacto" element={
