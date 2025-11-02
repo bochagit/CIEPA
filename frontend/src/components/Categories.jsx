@@ -73,7 +73,7 @@ export default function CategoryManager(){
         setDialogOpen(false)
         setEditingCategory(null)
         setFormData({ name: '' })
-        setSuccessMessage('')
+        setError('')
     }
 
     const handleInputChange = (event) => {
@@ -94,14 +94,18 @@ export default function CategoryManager(){
 
             if (editingCategory){
                 await categoryService.updateCategory(editingCategory._id, { name: trimmedName })
-                setSuccessMessage("Categoría actualizada exitosamente")
             } else {
                 await categoryService.createCategory({ name: trimmedName })
-                setSuccessMessage("Categoría creada exitosamente")
             }
 
-            handleCloseDialog()
-            fetchCategories()
+            setDialogOpen(false)
+            setEditingCategory(null)
+            setFormData({ name: '' })
+
+            await fetchCategories()
+
+            const message = editingCategory ? 'Categoría actualizada exitosamente' : 'Categoría creada exitosamente'
+            setSuccessMessage(message)
 
             setTimeout(() => setSuccessMessage(''), 3000)
         } catch(error) {
