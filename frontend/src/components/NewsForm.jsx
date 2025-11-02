@@ -20,18 +20,7 @@ import { Box, CircularProgress, IconButton, Typography, Avatar } from '@mui/mate
 import DeleteIcon from '@mui/icons-material/Delete'
 import ImageIcon from '@mui/icons-material/Image'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-
-const categories = [
-  'General',
-  'Educación',
-  'Salud',
-  'Tecnología',
-  'Política',
-  'Economía',
-  'Cultura',
-  'Ciencia',
-  'Ambiente'
-]
+import { categoryService } from '../services/categoryService';
 
 const statusOptions = [
   { value: 'published', label: 'Publicado' },
@@ -54,6 +43,25 @@ const VisuallyHiddenInput = {
 function NewsForm(props) {
   const { handleClose, handleSubmit, initialValue, open, title } = props;
   const [editorUploading, setEditorUploading] = React.useState(false)
+  const [categories, setCategories] = React.useState([])
+
+  React.useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categoriesData = await categoryService.getAllCategories()
+        setCategories(categoriesData)
+      } catch(error) {
+        console.error("Error cargando categorías: ", error)
+        setCategories([
+          { _id: '1', name: 'General' },
+          { _id: '2', name: 'Educación' },
+          { _id: '3', name: 'Medio ambiente' }
+        ])
+      }
+    }
+
+    fetchCategories()
+  }, [])
 
   const [formData, setFormData] = React.useState(
     initialValue ?? {
@@ -305,11 +313,16 @@ function NewsForm(props) {
                 required
               >
                 {categories.map((category) => (
-                  <MenuItem key={category} value={category}>
-                    {category}
+                  <MenuItem key={category._id} value={category.name}>
+                    {category.name}
                   </MenuItem>
                 ))}
               </Select>
+              {categories.length === 0 && (
+                <Typography variant="caption" color="text.secondary" sx={{ mt: .5 }}>
+                  No hay categorías disponibles. Crea una en la sección de categorías.
+                </Typography>
+              )}
             </FormControl>
 
             <FormControl sx={{ flex: 1 }}>

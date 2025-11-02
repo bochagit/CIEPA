@@ -4,6 +4,7 @@ import morgan from 'morgan'
 import authRoutes from './routes/auth.routes.js'
 import postRoutes from './routes/post.routes.js'
 import uploadRoutes from './routes/upload.routes.js'
+import categoryRoutes from './routes/category.routes.js'
 
 const app = express()
 
@@ -15,4 +16,6 @@ app.use(morgan("dev"))
 app.use("/api/auth", authRoutes)
 app.use("/api/posts", postRoutes)
 app.use("/api/upload", uploadRoutes)
+app.use("/api/categories", categoryRoutes)
+
 export default app

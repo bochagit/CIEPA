@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Box, Typography, Chip, Avatar, Divider, IconButton, CircularProgress, Alert, Container, Button, styled } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import PersonIcon from '@mui/icons-material/Person'
 import { brand } from '../../shared-theme/themePrimitives'
 import { postService } from '../services/postService'
 
