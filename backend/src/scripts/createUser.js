@@ -10,15 +10,15 @@ const createAdmin = async () => {
     try {
         await connectDB()
 
-        const existingUser = await User.findOne({ name: "CIEPA" })
+        const existingUser = await User.findOne({ name: "<your_name>" })
         if (existingUser) {
             console.log('Usuario existente')
             process.exit(0)
         }
 
-        const hashedPassword = await bcrypt.hash("admin123", 10)
+        const hashedPassword = await bcrypt.hash("<your_password>", 10)
         const user = await User.create({
-        name: "CIEPA",
+        name: "<your_name>",
         password: hashedPassword,
         role: "admin"
     })
