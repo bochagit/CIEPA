@@ -133,10 +133,12 @@ export default function SignIn(props) {
         navigate('/dashboard')
       } catch(error) {
         console.error('Error en login: ', error);
-        console.error('Tipo de error: ', typeof error);
-        console.error('Error message: ', error.message)
-        
-        setLoginError(error.message || 'Error al iniciar sesión. Verifica tus credenciales.');
+        let errorMessage = 'Error al iniciar sesión. Verifica tus credenciales.'
+        if(error.message){
+          errorMessage = error.message
+        }
+        console.log('Mostrando error: ', errorMessage)
+        setLoginError(errorMessage)
       } finally {
         setLoading(false);
       }
@@ -185,7 +187,6 @@ React.useEffect(() => {
             }}
           >
 
-            {/* Mostrar error de login */}
             {
               loginError && (
                 <Alert severity='error' sx={{ mb: 2 }}>

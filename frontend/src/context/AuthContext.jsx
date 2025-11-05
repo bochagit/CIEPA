@@ -90,10 +90,7 @@ export const AuthProvider = ({ children }) => {
             return { success: true }
         } catch(error) {
             console.error('Error en login: ', error)
-            return {
-                success: false,
-                message: error.message || 'Error de conexión'
-            }
+            throw error
         }
     }
 
