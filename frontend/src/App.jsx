@@ -15,6 +15,7 @@ import Asesoramiento from './components/Asesoramiento';
 import Notas from './components/Notas';
 import Contacto from './components/Contacto';
 import Note from './components/Note';
+import Audiovisual from './components/Audiovisual';
 
 export default function App() {
   return (
@@ -69,11 +70,17 @@ export default function App() {
             <Note />
           </Layout>
         } />
+        <Route path="/audiovisual" element={
+          <Layout>
+            <Audiovisual />
+          </Layout>
+        } />
         <Route path="/contacto" element={
           <Layout>
             <Contacto />
           </Layout>
         } />
+        
       <Route path="/signin" element={<SignIn />} />
       <Route path="/dashboard/*" element={
         <ProtectedRoute>

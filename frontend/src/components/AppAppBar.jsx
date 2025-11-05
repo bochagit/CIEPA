@@ -52,7 +52,7 @@ const menuData = {
   publicaciones: [
     { label: 'Notas', href: '/notas' },
     { label: 'Informes', href: '/' },
-    { label: 'Audiovisual', href: '/' }
+    { label: 'Audiovisual', href: '/audiovisual' }
   ],
   actividades: [
     { label: 'Conversatorios', href: '/' },
