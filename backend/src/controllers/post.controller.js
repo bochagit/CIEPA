@@ -110,7 +110,8 @@ export const getAllPosts = async (req, res) => {
                 { title: { $regex: search, $options: 'i' } },
                 { content: { $regex: search, $options: 'i' } },
                 { author: { $regex: search, $options: 'i' } },
-                { summary: { $regex: search, $options: 'i' } }
+                { summary: { $regex: search, $options: 'i' } },
+                { category: { $regex: search, $options: 'i' } }
             ]
         }
 

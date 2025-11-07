@@ -8,7 +8,8 @@ import {
   Container,
   Divider,
   Avatar,
-  Skeleton
+  Skeleton,
+  Alert
 } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import { brand } from '../../shared-theme/themePrimitives';
@@ -105,6 +106,38 @@ const navigate = useNavigate()
       fecha: "2024-11-05"
     }
   ];
+
+  const formatDateForDisplay = (dateString) => {
+    if (!dateString) return ''
+
+    console.log('Fecha original en lista: ', dateString)
+    try {
+      if (typeof dateString === 'string' && dateString.includes('T')){
+        const dateOnly = dateString.split('T')[0]
+        const [year, month, day] = dateOnly.split('-')
+        const formatted = `${day}/${month}/${year}`
+        console.log('Fecha formateada para mostrar: ', formatted)
+        return formatted
+      }
+
+      if (typeof dateString === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateString)){
+        const [year, month, day] = dateString.split('-')
+        return `${day}/${month}/${year}`
+      }
+
+      if (dateString instanceof Date){
+        const day = String(dateString.getDate()).padStart(2, '0')
+        const month = String(dateString.getMonth() + 1).padStart(2, '0')
+        const year = dateString.getFullYear();
+        return `${day}/${month}/${year}`
+      }
+
+      return dateString
+    } catch(error) {
+      console.warn('Error formateando fecha: ', error)
+      return dateString
+    }
+  }
 
   React.useEffect(() => {
     const fetchPublicaciones = async () => {
@@ -332,7 +365,7 @@ const navigate = useNavigate()
                     Por {publicaciones[currentPublicacion].autor}
                   </Typography>
                   <Typography variant="body2" sx={{ opacity: .9 }}>
-                    {new Date(publicaciones[currentPublicacion].fecha).toLocaleDateString('es-AR')}
+                    {formatDateForDisplay(publicaciones[currentPublicacion].fecha)}
                   </Typography>
                 </Box>
                 <Button
