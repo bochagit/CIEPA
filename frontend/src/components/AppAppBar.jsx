@@ -39,7 +39,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 const menuData = {
   acerca: [
-    { label: 'Quiénes somos', href: '/quienes-somos' },
+    { label: '¿Qué es el CIEPA?', href: '/quienes-somos' },
     { label: 'Principios', href: '/principios' },
     { label: 'Objetivos', href: '/objetivos' },
     { label: 'Integrantes', href: '/integrantes' }

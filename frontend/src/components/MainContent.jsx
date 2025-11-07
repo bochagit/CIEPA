@@ -7,7 +7,8 @@ import {
   Button,
   Container,
   Divider,
-  Avatar
+  Avatar,
+  Skeleton
 } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import { brand } from '../../shared-theme/themePrimitives';
@@ -15,6 +16,7 @@ import AnalyticsIcon from '@mui/icons-material/Analytics';
 import SchoolIcon from '@mui/icons-material/School';
 import PublicIcon from '@mui/icons-material/Public';
 import { useNavigate } from 'react-router-dom';
+import { postService } from '../services/postService';
 
 const SectionContainer = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(6),
@@ -64,32 +66,14 @@ const HeroSection = styled(Box)(({ theme }) => ({
 }));
 
 export default function MainContent() {
-const publicaciones = [
-    {
-      id: 1,
-      titulo: "Impacto del cambio climático en la agricultura argentina",
-      descripcion: "Análisis exhaustivo de los efectos del cambio climático en los sistemas productivos nacionales y sus implicancias para la seguridad alimentaria.",
-      imagen: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600&q=80",
-      fecha: "2024-10-15",
-      autor: "Dr. María González"
-    },
-    {
-      id: 2,
-      titulo: "Políticas públicas ambientales: Una perspectiva regional",
-      descripcion: "Estudio comparativo de las políticas ambientales implementadas en América Latina y sus resultados en la conservación del medio ambiente.",
-      imagen: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600&q=80",
-      fecha: "2024-10-10",
-      autor: "Lic. Carlos Mendez"
-    },
-    {
-      id: 3,
-      titulo: "Biodiversidad urbana y planificación sostenible",
-      descripcion: "Propuestas para integrar la conservación de la biodiversidad en el desarrollo urbano y crear ciudades más verdes y sostenibles.",
-      imagen: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600&q=80",
-      fecha: "2024-10-05",
-      autor: "Dra. Ana López"
-    }
-  ];
+const [publicaciones, setPublicaciones] = React.useState([])
+const [loadingPublicaciones, setLoadingPublicaciones] = React.useState(true)
+const [errorPublicaciones, setErrorPublicaciones] = React.useState('')
+
+const [currentPublicacion, setCurrentPublicacion] = React.useState(0)
+const [isTransitioning, setIsTransitioning] = React.useState(false)
+
+const navigate = useNavigate()
 
   const actividades = [
     {
@@ -122,20 +106,60 @@ const publicaciones = [
     }
   ];
 
-  const [currentPublicacion, setCurrentPublicacion] = React.useState(0);
-  const [isTransitioning, setIsTransitioning] = React.useState(false);
+  React.useEffect(() => {
+    const fetchPublicaciones = async () => {
+      try {
+        setLoadingPublicaciones(true)
+        setErrorPublicaciones('')
+
+        const response = await postService.getAllPosts({
+          limit: 3,
+          status: 'published',
+          featured: true
+        })
+
+        console.log('Posts obtenidos: ', response)
+
+        if (response.posts && response.posts.length > 0) {
+          const publicacionesFormateadas = response.posts.map(post => ({
+            id: post._id,
+            titulo: post.title,
+            descripcion: post.summary || post.content.substring(0, 200) + '...',
+            imagen: post.coverImage,
+            fecha: post.date,
+            autor: post.author
+          }))
+          
+        setPublicaciones(publicacionesFormateadas)
+        } else {
+          setPublicaciones([])
+        }
+      } catch(error) {
+        console.error('Error al cargar publicaciones: ', error)
+        setErrorPublicaciones('Error al cargar publicaciones')
+        setPublicaciones([])
+      } finally {
+        setLoadingPublicaciones(false)
+      }
+    }
+
+    fetchPublicaciones()
+  }, [])
 
   React.useEffect(() => {
+    if (publicaciones.length === 0) return
+    
     const interval = setInterval(() => {
-      handleNextPublicacion();
+      handleNextPublicacion()
     }, 5000)
 
-    return () => clearInterval(interval);
-  }, [currentPublicacion]);
+    return () => clearInterval(interval)
+  }, [currentPublicacion, publicaciones.length])
 
   const handleNextPublicacion = () => {
-    setIsTransitioning(true);
+    if (publicaciones.length <= 1) return
 
+    setIsTransitioning(true);
     setTimeout(() => {
       setCurrentPublicacion((prev) => (prev + 1) % publicaciones.length);
       setIsTransitioning(false);
@@ -153,7 +177,12 @@ const publicaciones = [
     }
   };
 
-  const navigate = useNavigate()
+  const handleVerPublicacion = () => {
+    if (publicaciones.length > 0) {
+      const currentPost = publicaciones[currentPublicacion]
+      navigate(`/notas/${currentPost.id}`)
+    }
+  }
 
   return (
     <Container maxWidth="lg">
@@ -229,6 +258,18 @@ const publicaciones = [
         <SectionTitle variant="h3" component="h2">
           Últimas Publicaciones
         </SectionTitle>
+
+        {errorPublicaciones && (
+          <Alert severity="error" sx={{ mb: 4 }}>
+            {errorPublicaciones}
+          </Alert>
+        )}
+
+        {loadingPublicaciones ? (
+          <Box sx={{ position: 'relative', height: {xs: 400, md: 500}, borderRadius: 3, overflow: 'hidden', mb: 4 }}>
+            <Skeleton variant="rectangular" width="100%" height="100%" />
+          </Box>
+        ) : publicaciones.length > 0 ? (
         <Box sx={{ position: 'relative', height: {xs: 400, md: 500}, borderRadius: 3, overflow: 'hidden', mb: 4, boxShadow: 3 }} >
           <Box sx={{
             position: 'absolute',
@@ -263,66 +304,106 @@ const publicaciones = [
             transition: 'opacity .5s ease-in-out'
           }}
           >
+          <Typography
+            variant="h4"
+            component="h3"
+            gutterBottom
+            sx={{
+              fontWeight: 700,
+              mb: 2,
+              fontSize: { xs: '.5rem', md: '2.1rem' }
+            }}
+            >
+              {publicaciones[currentPublicacion].titulo}
+            </Typography>
             <Typography
-              variant="h4"
-              component="h3"
-              gutterBottom
+              variant="body1"
               sx={{
-                fontWeight: 700,
-                mb: 2,
-                fontSize: { xs: '.5rem', md: '2.1rem' }
+                mb: 3,
+                maxWidth: '800px',
+                fontSize: { xs: '.9rem', md: '1rem' },
+                lineHeight: 1.6
               }}
               >
-                {publicaciones[currentPublicacion].titulo}
+                {publicaciones[currentPublicacion].descripcion}
               </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  mb: 3,
-                  maxWidth: '800px',
-                  fontSize: { xs: '.9rem', md: '1rem' },
-                  lineHeight: 1.6
-                }}
-                >
-                  {publicaciones[currentPublicacion].descripcion}
-                </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                    <Typography variant="body2" sx={{ opacity: .9 }}>
-                      Por {publicaciones[currentPublicacion].autor}
-                    </Typography>
-                    <Typography variant="body2" sx={{ opacity: .9 }}>
-                      {new Date(publicaciones[currentPublicacion].fecha).toLocaleDateString('es-AR')}
-                    </Typography>
-                  </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                  <Typography variant="body2" sx={{ opacity: .9 }}>
+                    Por {publicaciones[currentPublicacion].autor}
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: .9 }}>
+                    {new Date(publicaciones[currentPublicacion].fecha).toLocaleDateString('es-AR')}
+                  </Typography>
                 </Box>
-                <Box sx={{
-                  position: 'absolute',
-                  bottom: 20,
-                  right: 20,
-                  display: 'flex',
-                  gap: 1
-                }}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleVerPublicacion}
+                  sx={{
+                    backgroundColor: 'rgba(255, 255, 255, .2)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, .3)',
+                    mt: 2,
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, .3)'
+                    }
+                  }}
                 >
-                  {publicaciones.map((_, index) => (
-                    <Box
-                      key={index}
-                      onClick={() => handlePublicacionClick(index)}
-                      sx={{
-                        width: 10,
-                        height: 10,
-                        borderRadius: '50%',
-                        backgroundColor: index === currentPublicacion ? 'white' : alpha('#fff', .5),
-                        cursor: 'pointer',
-                        transition: 'all .3s ease',
-                        '&:hover': {
-                          backgroundColor: 'white',
-                          transform: 'scale(1.2)'
-                        }
-                      }}
-                      />
-                  ))}
-                </Box>
-        </Box>
+                  Leer más
+                </Button>
+              </Box>
+              <Box sx={{
+                position: 'absolute',
+                bottom: 20,
+                right: 20,
+                display: 'flex',
+                gap: 1
+                }}
+              >
+              {publicaciones.map((_, index) => (
+                <Box
+                  key={index}
+                  onClick={() => handlePublicacionClick(index)}
+                  sx={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: '50%',
+                    backgroundColor: index === currentPublicacion ? 'white' : alpha('#fff', .5),
+                    cursor: 'pointer',
+                    transition: 'all .3s ease',
+                    '&:hover': {
+                      backgroundColor: 'white',
+                      transform: 'scale(1.2)'
+                    }
+                  }}
+                />
+              ))}
+            </Box>
+          </Box>
+        ) : (
+          <Box sx={{
+            textAlign: 'center',
+            py: 8,
+            backgroundColor: 'background.paper',
+            borderRadius: 3,
+            border: `1px solid ${alpha(brand.main, .1)}`
+          }}>
+            <Typography variant="h5" color="text.secondary" gutterBottom>
+              No hay publicaciones destacadas
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              Actualmente no tenemos publicaciones marcadas como destacadas.
+            </Typography>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => navigate('/notas')}
+              sx={{ mt: 1 }}
+            >
+              Ver todas las notas
+            </Button>
+          </Box>
+        )}
       </SectionContainer>
 
       <Divider sx={{ my: 6 }} />

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import { Pagination, CircularProgress, Alert, IconButton, styled, OutlinedInput, InputAdornment, FormControl, Typography, Grid, CardMedia, CardContent, Card, Box, Avatar, alpha } from '@mui/material';
+import { Pagination, CircularProgress, Alert, IconButton, styled, OutlinedInput, InputAdornment, FormControl, Typography, Grid, CardMedia, CardContent, Card, Box, Avatar } from '@mui/material';
 import { brand } from '../../shared-theme/themePrimitives';
 import { postService } from '../services/postService';
 import { useNavigate } from 'react-router-dom';

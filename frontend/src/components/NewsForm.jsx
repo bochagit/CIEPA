@@ -403,7 +403,7 @@ function NewsForm(props) {
                       </Typography>
                     )}
                     {uploading && (
-                      <Typography variant="caption" color="primary">
+                      <Typography variant="caption" color="primary" sx={{ mx: 2 }}>
                         Subiendo a Cloudinary...
                       </Typography>
                     )}
