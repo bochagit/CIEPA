@@ -145,7 +145,7 @@ export default function EventCreate(){
 
             await eventService.createEvent(eventData)
 
-            navigate('dashboard/eventos', {
+            navigate('/dashboard/eventos', {
                 state: {
                     message: `Evento "${formData.title}" creado exitosamente`
                 }
@@ -217,7 +217,7 @@ export default function EventCreate(){
                                             <DatePicker
                                                 label="Fecha del evento"
                                                 value={formData.date}
-                                                onChange={(newValue) => handleInputChange('daate', newValue)}
+                                                onChange={(newValue) => handleInputChange('date', newValue)}
                                                 slotProps={{
                                                     textField: {
                                                         fullWidth: true,

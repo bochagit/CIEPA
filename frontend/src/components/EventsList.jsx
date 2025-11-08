@@ -34,6 +34,7 @@ export default function EventsList(){
     const [events, setEvents] = React.useState([])
     const [loading, setLoading] = React.useState(true)
     const [error, setError] = React.useState('')
+    const [deleting, setDeleting] = React.useState(false)
     const [searchTerm, setSearchTerm] = React.useState('')
     const [typeFilter, setTypeFilter] = React.useState('')
     const [deleteDialog, setDeleteDialog] = React.useState({ open: false, event: null })
@@ -76,12 +77,15 @@ export default function EventsList(){
 
     const handleDelete = async () => {
         try {
+            setDeleting(true)
             await eventService.deleteEvent(deleteDialog.event._id)
             setDeleteDialog({ open: false, event: null })
             fetchEvents()
         } catch(err) {
             setError('Error al eliminar evento')
             console.error(err)
+        } finally {
+            setDeleting(false)
         }
     }
 
@@ -258,7 +262,7 @@ export default function EventsList(){
             <DialogTitle>Confirmar eliminación</DialogTitle>
             <DialogContent>
                 <Typography>
-                    ¿Estás seguro de que queres eliminar el evento "{deleteDialog.event?.title}"?
+                    ¿Estás seguro de que queres eliminar el evento "{deleteDialog.event?.title}"? <br />
                     Esta acción eliminará tambien todas las imagenes asociadas y no se puede deshacer.
                 </Typography>
             </DialogContent>
@@ -266,8 +270,8 @@ export default function EventsList(){
                 <Button onClick={() => setDeleteDialog({ open: false, event: null })}>
                     Cancelar
                 </Button>
-                <Button onClick={(handleDelete)} color="error" variant="contained">
-                    Eliminar
+                <Button onClick={(handleDelete)} disabled={deleting} color="error" variant="contained">
+                    {deleting ? 'Eliminando...' : 'Eliminar'}
                 </Button>
             </DialogActions>
         </Dialog>

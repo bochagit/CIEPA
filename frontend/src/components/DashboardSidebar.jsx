@@ -150,10 +150,10 @@ function DashboardSidebar({
               selected={!!matchPath('/dashboard/categories', pathname)}
             />
             <DashboardSidebarDividerItem />
-            <DashboardSidebarHeaderItem>Eventos</DashboardSidebarHeaderItem>
+            <DashboardSidebarHeaderItem>Actividades</DashboardSidebarHeaderItem>
             <DashboardSidebarPageItem
               id="events"
-              title="Gestionar eventos"
+              title="Gestionar actividades"
               icon={<EventIcon />}
               href="/dashboard/eventos"
               selected={!!matchPath('/dashboard/eventos', pathname)}

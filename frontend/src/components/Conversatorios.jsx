@@ -13,10 +13,31 @@ import {
     ImageList,
     ImageListItem,
     Skeleton,
-    Alert
+    Alert,
+    styled
 } from '@mui/material'
-import { Close as CloseIcon } from '@mui/icons-material'
+import { Close as CloseIcon, ZoomIn as ZoomIcon } from '@mui/icons-material'
 import { eventService } from '../services/eventService'
+import { brand } from '../../shared-theme/themePrimitives'
+
+const SectionTitle = styled(Typography)(({ theme }) => ({
+  marginBottom: theme.spacing(4),
+  fontWeight: 600,
+  color: brand.main,
+  textAlign: 'center',
+  position: 'relative',
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    bottom: -8,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: 60,
+    height: 3,
+    backgroundColor: brand.main,
+    borderRadius: 2,
+  }
+}));
 
 export default function Conversatorios() {
     const [events, setEvents] = React.useState([])
@@ -24,6 +45,8 @@ export default function Conversatorios() {
     const [error, setError] = React.useState('')
     const [selectedEvent, setSelectedEvent] = React.useState(null)
     const [galleryDialog, setGalleryDialog] = React.useState(false)
+    const [selectedImage, setSelectedImage] = React.useState(null)
+    const [imageDialog, setImageDialog] = React.useState(false)
 
     React.useEffect(() => {
         const fetchConversatorios = async () => {
@@ -51,6 +74,17 @@ export default function Conversatorios() {
     const handleCloseGallery = () => {
         setGalleryDialog(false)
         setSelectedEvent(null)
+    }
+
+    const handleImageClick = (imageUrl, event) => {
+        event.stopPropagation()
+        setSelectedImage(imageUrl)
+        setImageDialog(true)
+    }
+
+    const handleCloseImageDialog = () => {
+        setImageDialog(false)
+        setSelectedImage(null)
     }
 
     const formatDateForDisplay = (dateString) => {
@@ -87,9 +121,9 @@ export default function Conversatorios() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Typography variant="h3" component="h1" gutterBottom>
+        <SectionTitle variant="h3" component="h2">
             Conversatorios
-        </Typography>
+        </SectionTitle>
         
         {error && (
             <Alert severity="error" sx={{ mb: 3 }}>
@@ -155,7 +189,7 @@ export default function Conversatorios() {
                     No hay conversatorios disponibles
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    Pronto compartiremos nuevos espacios de diálogo.
+                    Pronto compartiremos nuevas actividades.
                 </Typography>
             </Box>
         )}
@@ -199,7 +233,17 @@ export default function Conversatorios() {
                                 {selectedEvent.gallery && selectedEvent.gallery.length > 0 ? (
                                     <ImageList cols={3} gap={8}>
                                         {selectedEvent.gallery.map((image, index) => (
-                                            <ImageListItem key={index}>
+                                            <ImageListItem
+                                                key={index}
+                                                sx={{ 
+                                                    position: 'relative',
+                                                    cursor: 'pointer',
+                                                    '&:hover .zoom-icon': {
+                                                        opacity: 1
+                                                    }
+                                                 }}
+                                                 onClick={(e) => handleImageClick(image.url, e)}
+                                            >
                                                 <img
                                                     src={image.url}
                                                     alt={`${selectedEvent.title} - Imagen ${index + 1}`}
@@ -210,6 +254,25 @@ export default function Conversatorios() {
                                                         borderRadius: 4
                                                     }}
                                                 />
+                                                <IconButton
+                                                    className="zoom-icon"
+                                                    sx={{
+                                                        position: 'absolute',
+                                                        top: '50%',
+                                                        left: '50%',
+                                                        transform: 'translate(-50%, -50%)',
+                                                        backgroundColor: 'rgba(0, 0, 0, .6)',
+                                                        color: '#fff',
+                                                        opacity: 0,
+                                                        transition: 'opacity .3s',
+                                                        '&:hover': {
+                                                            backgroundColor: 'rgba(0, 0, 0, .8)'
+                                                        }
+                                                    }}
+                                                    size="large"
+                                                >
+                                                    <ZoomIcon />
+                                                </IconButton>
                                             </ImageListItem>
                                         ))}
                                     </ImageList>
@@ -223,6 +286,51 @@ export default function Conversatorios() {
                     )}
                 </Box>
             </DialogContent>
+        </Dialog>
+
+        <Dialog
+            open={imageDialog}
+            onClose={handleCloseImageDialog}
+            maxWidth="lg"
+            fullWidth
+            sx={{
+                '& .MuiDialog-paper': {
+                    backgroundColor: 'rgba(0, 0, 0, .9)',
+                    boxShadow: 'none'
+                }
+            }}
+        >
+            <Box sx={{ position: 'relative', p: 2 }}>
+                <IconButton
+                    onClick={handleCloseImageDialog}
+                    sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        color: '#fff',
+                        backgroundColor: 'rgba(0, 0, 0, .5)',
+                        '&:hover': {
+                            backgroundColor: 'rgba(0, 0, 0, .7)'
+                        },
+                        zIndex: 1
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
+
+                {selectedImage && (
+                    <img
+                        src={selectedImage}
+                        alt="Vista ampliada"
+                        style={{
+                            width: '100%',
+                            height: 'auto',
+                            maxHeight: '80vh',
+                            objectFit: 'contain'
+                        }}
+                    />
+                )}
+            </Box>
         </Dialog>
     </Container>
   )

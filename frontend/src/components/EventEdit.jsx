@@ -442,7 +442,7 @@ export default function EventEdit() {
                             <Button
                                 variant="outlined"
                                 startIcon={<CancelIcon />}
-                                onClick={() => navigate('/dashboard/events')}
+                                onClick={() => navigate('/dashboard/eventos')}
                                 disabled={loading}
                             >
                                 Cancelar
