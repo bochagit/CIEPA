@@ -54,6 +54,19 @@ const editorStorage = new CloudinaryStorage({
     }
 })
 
+const eventStorage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'ciepa/events',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        transformation: [
+            { width: 1200, height: 800, crop: 'limit' },
+            { quality: 'auto' },
+            { fetch_format: 'auto' }
+        ]
+    }
+})
+
 export const uploadPost = multer({
     storage: storage,
     limits: {
@@ -67,5 +80,19 @@ export const uploadEditor = multer({
         fileSize: 2 * 1024 * 1024
     }
 }).single('image')
+
+export const uploadEvent = multer({
+    storage: eventStorage,
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    }
+}).single('image')
+
+export const uploadEventGallery = multer({
+    storage: eventStorage,
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    }
+}).array('images', 10)
 
 export { cloudinary }

@@ -7,6 +7,10 @@ import NewsShow from './components/NewsShow';
 import NewsCreate from './components/NewsCreate';
 import NewsEdit from './components/NewsEdit';
 import CategoryManager from './components/Categories'
+import EventsList from './components/EventsList';
+import EventShow from './components/EventShow';
+import EventCreate from './components/EventCreate';
+import EventEdit from './components/EventEdit';
 import NotificationsProvider from './hooks/useNotifications/NotificationsProvider';
 import DialogsProvider from './hooks/useDialogs/DialogsProvider';
 import AppTheme from '../shared-theme/AppTheme';
@@ -38,6 +42,10 @@ export default function CrudDashboard(props) {
               <Route path="/news/new" element={<NewsCreate />} />
               <Route path="/news/:newsId/edit" element={<NewsEdit />} />
               <Route path="categories" element={<CategoryManager />} />
+              <Route path="/eventos" element={<EventsList />} />
+              <Route path="/eventos/:eventId" element={<EventShow />} />
+              <Route path="/eventos/new" element={<EventCreate />} />
+              <Route path="/eventos/:eventId/edit" element={<EventEdit />} />
             </Routes>
           </DashboardLayout>
         </DialogsProvider>

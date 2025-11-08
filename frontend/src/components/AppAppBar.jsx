@@ -55,9 +55,9 @@ const menuData = {
     { label: 'Audiovisual', href: '/audiovisual' }
   ],
   actividades: [
-    { label: 'Conversatorios', href: '/' },
-    { label: 'Ciclo de formaciones', href: '/' },
-    { label: 'Jornadas', href: '/' }
+    { label: 'Conversatorios', href: '/conversatorios' },
+    { label: 'Ciclo de formaciones', href: '/formaciones' },
+    { label: 'Jornadas', href: '/jornadas' }
   ],
   formacion: [
     { label: 'Materia Energías y Transición energética', href: '/' }

@@ -38,6 +38,49 @@ export const uploadEditorImage = async (req, res) => {
     }
 }
 
+export const uploadEventImage = async (req, res) => {
+    try {
+        if (!req.file){
+            return res.status(400).json({ message: 'No se subió ningún archivo' })
+        }
+
+        console.log('Imagen de evento subida: ', req.file.path)
+
+        res.json({
+            message: 'Imagen subida exitosamente',
+            url: req.file.path,
+            publicId: req.file.filename
+        })
+    } catch(error) {
+        console.error('Error subiendo imagen de evento: ', error)
+        res.status(500).json({ message: 'Error al subir la imagen' })
+    }
+}
+
+export const uploadEventGallery = async (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0){
+            return res.status(400).json({ message: 'No se subieron archivos' })
+        }
+
+        console.log(`${req.files.length} imágenes de galería subidas`)
+
+        const uploadedImages = req.files.map(file => ({
+            url: file.path,
+            publicId: file.filename
+        }))
+
+        res.json({
+            message: 'Imágenes subidas exitosamente',
+            images: uploadedImages,
+            count: uploadedImages.length
+        })
+    } catch(error) {
+        console.error('Error subiendo galería: ', error)
+        res.status(500).json({ message: 'Error al subir las imágenes' })
+    }
+}
+
 export const deleteImage = async (req, res) => {
     try {
         const { publicId } = req.params

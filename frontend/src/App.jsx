@@ -16,6 +16,9 @@ import Notas from './components/Notas';
 import Contacto from './components/Contacto';
 import Note from './components/Note';
 import Audiovisual from './components/Audiovisual';
+import Conversatorios from './components/Conversatorios';
+import Formaciones from './components/Formaciones';
+import Jornadas from './components/Jornadas';
 
 export default function App() {
   return (
@@ -73,6 +76,21 @@ export default function App() {
         <Route path="/audiovisual" element={
           <Layout>
             <Audiovisual />
+          </Layout>
+        } />
+        <Route path="/conversatorios" element={
+          <Layout>
+            <Conversatorios />
+          </Layout>
+        } />
+        <Route path="/formaciones" element={
+          <Layout>
+            <Formaciones />
+          </Layout>
+        } />
+        <Route path="/jornadas" element={
+          <Layout>
+            <Jornadas />
           </Layout>
         } />
         <Route path="/contacto" element={

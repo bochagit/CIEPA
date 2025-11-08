@@ -43,6 +43,51 @@ export const uploadService = {
         }
     },
 
+    uploadEventImage: async (file) => {
+        try {
+            const formData = new FormData()
+            formData.append('image', file)
+
+            console.log('Subiendo imagen de evento')
+
+            const response = await api.post('/upload/evento', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+
+            console.log('Imagen de evento subida: ', response.data.url)
+            return response.data
+        } catch(error) {
+            console.error('Error subiendo imagen de evento: ', error)
+            throw new Error(error.response?.data?.message || 'Error al subir la imagen')
+        }
+    },
+
+    uploadEventGallery: async (files) => {
+        try {
+            const formData = new FormData()
+
+            files.forEach(file => {
+                formData.append('images', file)
+            })
+
+            console.log(`Subiendo ${files.length} imagenes de galería...`)
+            
+            const response = await api.post('/upload/evento-galeria', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+
+            console.log('Galería subida: ', response.data.count, 'imagenes')
+            return response.data
+        } catch(error) {
+            console.error('Error subiendo galería: ', error)
+            throw new Error(error.response?.data?.message || 'Error al subir la galería')
+        }
+    },
+
     deleteImage: async (publicId) => {
         try {
             console.log('Eliminando imagen: ', publicId)

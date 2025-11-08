@@ -63,7 +63,6 @@ export default function DashboardLayout({ children }) {
 
   return (
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      {/* Header fijo en la parte superior */}
       <Box sx={{
         position: 'fixed', 
         top: 0, 
@@ -102,7 +101,6 @@ export default function DashboardLayout({ children }) {
         </Button>
       </Box>
 
-      {/* Contenido principal con padding top para el header fijo */}
       <Box sx={{ pt: '80px', flex: 1, display: 'flex', height: '100vh', overflow: 'hidden', background: (theme.vars || theme).palette.background.default }}>
         <Box
           ref={layoutRef}

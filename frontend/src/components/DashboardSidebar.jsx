@@ -7,6 +7,7 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Toolbar from '@mui/material/Toolbar';
 import ArticleIcon from '@mui/icons-material/Article';
+import { Event as EventIcon } from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
 import ListIcon from '@mui/icons-material/List';
 import { matchPath, useLocation } from 'react-router';
@@ -147,6 +148,15 @@ function DashboardSidebar({
               icon={<ArticleIcon />}
               href="/dashboard/categories"
               selected={!!matchPath('/dashboard/categories', pathname)}
+            />
+            <DashboardSidebarDividerItem />
+            <DashboardSidebarHeaderItem>Eventos</DashboardSidebarHeaderItem>
+            <DashboardSidebarPageItem
+              id="events"
+              title="Gestionar eventos"
+              icon={<EventIcon />}
+              href="/dashboard/eventos"
+              selected={!!matchPath('/dashboard/eventos', pathname)}
             />
           </List>
         </Box>
