@@ -139,7 +139,7 @@ export default function Jornadas() {
                                     {event.title}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    {formatDate(event.date)}
+                                    {formatDateForDisplay(event.date)}
                                 </Typography>
                                 <Typography variant="caption" color="primary" sx={{ mt: 1, display: 'block' }}>
                                     {event.gallery?.length || 0} imágenes • Click para ver galería
@@ -155,7 +155,7 @@ export default function Jornadas() {
                     No hay jornadas disponibles
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    Pronto compartiremos nuevos espacios de diálogo
+                    Pronto compartiremos nuevas jornadas.
                 </Typography>
             </Box>
         )}
@@ -166,7 +166,7 @@ export default function Jornadas() {
             maxWidth="lg"
             fullWidth
         >
-            <DialogContent sx={{ p: 0 }}>
+            <DialogContent sx={{ p: 0, height: '80vh' }}>
                 <Box sx={{ position: 'relative' }}>
                     <IconButton
                         onClick={handleCloseGallery}
@@ -205,7 +205,7 @@ export default function Jornadas() {
                                                     alt={`${selectedEvent.title} - Imagen ${index + 1}`}
                                                     style={{
                                                         width: '100%',
-                                                        height: 200,
+                                                        height: 'auto',
                                                         objectFit: 'cover',
                                                         borderRadius: 4
                                                     }}

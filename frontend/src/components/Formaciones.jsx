@@ -139,7 +139,7 @@ export default function Formaciones() {
                                     {event.title}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    {formatDate(event.date)}
+                                    {formatDateForDisplay(event.date)}
                                 </Typography>
                                 <Typography variant="caption" color="primary" sx={{ mt: 1, display: 'block' }}>
                                     {event.gallery?.length || 0} imágenes • Click para ver galería
@@ -155,7 +155,7 @@ export default function Formaciones() {
                     No hay ciclos de formaciones disponibles
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    Pronto compartiremos nuevos espacios de diálogo
+                    Pronto compartiremos nuevos eventos.
                 </Typography>
             </Box>
         )}

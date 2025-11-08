@@ -27,8 +27,7 @@ import {
     Delete as DeleteIcon,
     Save as SaveIcon,
     Cancel as CancelIcon,
-    PhotoLibrary as GalleryIcon,
-    Key
+    PhotoLibrary as GalleryIcon
 } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { eventService } from '../services/eventService'

@@ -139,7 +139,7 @@ export default function Conversatorios() {
                                     {event.title}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    {formatDate(event.date)}
+                                    {formatDateForDisplay(event.date)}
                                 </Typography>
                                 <Typography variant="caption" color="primary" sx={{ mt: 1, display: 'block' }}>
                                     {event.gallery?.length || 0} imágenes • Click para ver galería
@@ -155,7 +155,7 @@ export default function Conversatorios() {
                     No hay conversatorios disponibles
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    Pronto compartiremos nuevos espacios de diálogo
+                    Pronto compartiremos nuevos espacios de diálogo.
                 </Typography>
             </Box>
         )}

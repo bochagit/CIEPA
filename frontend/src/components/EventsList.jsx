@@ -46,6 +46,12 @@ export default function EventsList(){
         jornada: 'Jornadas'
     }
 
+    const typeColors = {
+        conversatorio: 'primary',
+        formacion: 'secondary',
+        jornada: 'success'
+    }
+
     const fetchEvents = async () => {
         try {
             setLoading(true)
