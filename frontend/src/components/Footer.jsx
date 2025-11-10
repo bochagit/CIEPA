@@ -106,7 +106,7 @@ export default function Footer() {
             <Link color="text.secondary" variant="body2" onClick={() => navigate("/notas")} sx={{ '&:hover': { cursor: 'pointer' } }}>
               Notas
             </Link>
-            <Link color="text.secondary" variant="body2" href="#" sx={{ '&:hover': { cursor: 'pointer' } }}>
+            <Link color="text.secondary" variant="body2" onClick={() => navigate("/conversatorios")} sx={{ '&:hover': { cursor: 'pointer' } }}>
               Conversatorios
             </Link>
             <Link color="text.secondary" variant="body2" onClick={() => navigate("/contacto")} sx={{ '&:hover': { cursor: 'pointer' } }}>

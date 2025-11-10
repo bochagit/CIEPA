@@ -186,7 +186,7 @@ export default function Jornadas() {
         ) : (
             <Box sx={{ textAlign: 'center', py: 8 }}>
                 <Typography variant="h6" color="text.secondary" gutterBottom>
-                    No hay conversatorios disponibles
+                    No hay jornadas disponibles
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                     Pronto compartiremos nuevas actividades.
