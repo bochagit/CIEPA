@@ -16,13 +16,17 @@ const HeaderContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
   backgroundPosition: 'center',
-  backgroundAttachment: 'fixed',
+  backgroundAttachment: 'scroll',
   borderRadius: 0,
   marginBottom: theme.spacing(4),
   overflow: 'hidden',
   maxWidth: '100vw',
   boxSizing: 'border-box',
+  [theme.breakpoints.up('md')]: {
+    backgroundAttachment: 'fixed'
+  },
   '&::before': {
     content: '""',
     position: 'absolute',

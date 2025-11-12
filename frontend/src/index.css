@@ -132,3 +132,9 @@ body {
     /* background-image: linear-gradient(to top, #292f29, #292f29); */
     background-image: linear-gradient(to top, #111, #222)
 }
+
+@media screen and (max-width: 768px) {
+    [data-mui-color-scheme="dark"] .ql-container {
+        background-color: #000 !important;
+    }
+}
