@@ -11,7 +11,11 @@ import eventRoutes from './routes/event.routes.js'
 const app = express()
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://ciepa.onrender.com'],
+    origin: [
+        'http://localhost:5173',
+        'https://ciepa.onrender.com',
+        /https:\/\/.*tunnelmole\.net$/
+    ],
     credentials: true
 }))
 
