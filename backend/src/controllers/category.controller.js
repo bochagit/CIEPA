@@ -105,3 +105,32 @@ export const deleteCategory = async (req, res) => {
         res.status(500).json({ message: "Error al eliminar la categoría" })
     }
 }
+
+export const getInactiveCategories = async (req, res) => {
+    try {
+        const categories = await Category.find({ active: false }).sort({ name: 1 })
+        res.json(categories)
+    } catch(error) {
+        console.error("Error al obtener categorías inactivas: ", error)
+        res.status(500).json({ message: "Error al obtener las categorías inactivas" })
+    }
+}
+
+export const reactivateCategory = async (req, res) => {
+    try {
+        const category = await Category.findByIdAndUpdate(
+            req.params.id,
+            { active: true },
+            { new: true }
+        )
+
+        if (!category){
+            return res.status(404).json({ message: "Categoría no encontrada" })
+        }
+
+        res.json({ message: "Categoría reactivada correctamente", category })
+    } catch(error) {
+        console.error("Error al reactivar categoría: ", error)
+        res.status(500).json({ message: "Error al reactivar la categoría" })
+    }
+}

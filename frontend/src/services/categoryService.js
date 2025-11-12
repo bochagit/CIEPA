@@ -10,6 +10,15 @@ export const categoryService = {
         }
     },
 
+    getInactiveCategories: async () => {
+        try {
+            const response = await api.get('/categories/inactive')
+            return response.data
+        } catch(error) {
+            throw new Error(error.response?.data?.message || "Error al obtener las categorías inactivas")
+        }
+    },
+
     getCategoryById: async (id) => {
         try {
             const response = await api.get(`/categories/${id}`)
@@ -43,6 +52,15 @@ export const categoryService = {
             return response.data
         } catch(error) {
             throw new Error(error.response?.data?.message || "Error al eliminar la categoría")
+        }
+    },
+
+    reactivateCategory: async (id) => {
+        try {
+            const response = await api.put(`/categories/${id}/reactivate`)
+            return response.data
+        } catch(error) {
+            throw new Error(error.response?.data?.message || "Error al reactivar la categoría")
         }
     }
 }

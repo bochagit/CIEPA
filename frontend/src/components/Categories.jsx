@@ -18,17 +18,22 @@ import {
     Typography,
     Stack,
     Alert,
-    CircularProgress
+    CircularProgress,
+    Tabs,
+    Tab,
+    Chip
 } from '@mui/material'
 import {
     Add as AddIcon,
     Edit as EditIcon,
     Delete as DeleteIcon,
+    Restore as RestoreIcon
 } from '@mui/icons-material'
 import { categoryService } from '../services/categoryService'
 
 export default function CategoryManager(){
     const [categories, setCategories] = React.useState([])
+    const [inactiveCategories, setInactiveCategories] = React.useState([])
     const [loading, setLoading] = React.useState(true)
     const [error, setError] = React.useState('')
     const [dialogOpen, setDialogOpen] = React.useState(false)
@@ -36,12 +41,17 @@ export default function CategoryManager(){
     const [formData, setFormData] = React.useState({ name: '' })
     const [submitting, setSubmitting] = React.useState(false)
     const [successMessage, setSuccessMessage] = React.useState()
+    const [currentTab, setCurrentTab] = React.useState(0)
 
     const fetchCategories = React.useCallback(async () => {
         try {
             setLoading(true)
-            const data = await categoryService.getAllCategories()
-            setCategories(data)
+            const [activeData, inactiveData] = await Promise.all([
+                categoryService.getAllCategories(),
+                categoryService.getInactiveCategories()
+            ])
+            setCategories(activeData)
+            setInactiveCategories(inactiveData)
             setError('')
         } catch(error) {
             setError(error.message)
@@ -131,10 +141,30 @@ export default function CategoryManager(){
         }
     }
 
+    const handleReactivate = async (category) => {
+        if (!window.confirm(`¿Estás seguro de reactivar la categoría "${category.name}"?`)){
+            return
+        }
+
+        try {
+            await categoryService.reactivateCategory(category._id)
+            setSuccessMessage("Categoría reactivada exitosamente")
+            fetchCategories()
+
+            setTimeout(() => setSuccessMessage('', 3000))
+        } catch(error) {
+            setError(error.message)
+        }
+    }
+
     const handleKeyPress = (event) => {
         if (event.key === 'Enter' && !submitting){
             handleSubmit()
         }
+    }
+
+    const handleTabChange = (event, newValue) => {
+        setCurrentTab(newValue)
     }
 
     if (loading){
@@ -168,49 +198,92 @@ export default function CategoryManager(){
                 </Alert>
             )}
 
+            <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+                <Tabs value={currentTab} onChange={handleTabChange}>
+                    <Tab
+                        label={
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                Activas
+                                <Chip size="small" label={categories.length} color="primary" />
+                            </Box>
+                        }
+                    />
+                    <Tab
+                        label={
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                Eliminadas
+                                <Chip size="small" label={inactiveCategories.length} color="error" />
+                            </Box>
+                        }
+                    />
+                </Tabs>
+            </Box>
+
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
                         <TableRow>
                             <TableCell>Nombre</TableCell>
+                            <TableCell>Estado</TableCell>
                             <TableCell align="right">Acciones</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {categories.map((category) => (
+                        {(currentTab === 0 ? categories : inactiveCategories).map((category) => (
                             <TableRow key={category._id}>
                                 <TableCell>
                                     <Typography variant="body1" fontWeight="medium">
                                         {category.name}
                                     </Typography>
                                 </TableCell>
+                                <TableCell>
+                                    <Chip
+                                        size="small"
+                                        label={category.active ? "Activa" : "Eliminada"}
+                                        color={category.active ? "success" : "error"}
+                                        variant={category.active ? "filled" : "outlined"}
+                                    />
+                                </TableCell>
                                 <TableCell align="right">
                                     <Stack direction="row" spacing={1} justifyContent="flex-end">
-                                        <IconButton
-                                            onClick={() => handleEdit(category)}
-                                            color="primary"
-                                            size="small"
-                                            title="Editar"
-                                        >
-                                            <EditIcon />
-                                        </IconButton>
-                                        <IconButton
-                                            onClick={() => handleDelete(category)}
-                                            color="error"
-                                            size="small"
-                                            title="Eliminar"
-                                        >
-                                            <DeleteIcon />
-                                        </IconButton>
+                                        {category.active ? (
+                                            <>
+                                                <IconButton
+                                                    onClick={() => handleEdit(category)}
+                                                    color="primary"
+                                                    size="small"
+                                                    title="Editar"
+                                                >
+                                                    <EditIcon />
+                                                </IconButton>
+                                                <IconButton
+                                                    onClick={() => handleDelete(category)}
+                                                    color="error"
+                                                    size="small"
+                                                    title="Eliminar"
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </>
+                                        ) : (
+                                            <IconButton
+                                                onClick={() => handleReactivate(category)}
+                                                color="success"
+                                                size="small"
+                                                title="Reactivar"
+                                            >
+                                                <RestoreIcon />
+                                            </IconButton>
+                                        )}
                                     </Stack>
                                 </TableCell>
                             </TableRow>
                         ))}
-                        {categories.length === 0 && (
+                        {(currentTab === 0 ? categories : inactiveCategories).length === 0 && (
                             <TableRow>
                                 <TableCell colSpan={2} align="center">
                                     <Typography color="text.secondary" sx={{ py: 4 }}>
-                                        No hay categorías creadas
+                                        {currentTab === 0 ? "No hay categorías activas" : "No hay categorías eliminadas"}
                                     </Typography>
                                 </TableCell>
                             </TableRow>
