@@ -200,10 +200,14 @@ function NewsForm(props) {
     if (uploadedCoverImage){
       try {
         await uploadService.deleteImageByUrl(uploadedCoverImage)
-        console.log('Imagen de portada eliminada al cancelar: ', error.message)
+        console.log('Imagen de portada eliminada al cancelar: ', uploadedCoverImage)
       } catch(error) {
         console.warn('Error eliminando imagen al cancelar: ', error.message)
       }
+    }
+
+    if (!formData.content || formData.content.trim() === '<p><br></p>' || formData.content.trim() === ''){
+      console.log('Contenido vacío, limpiando imágenes del editor...')
     }
 
     setUploadedCoverImage(null)

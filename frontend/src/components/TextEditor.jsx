@@ -78,7 +78,7 @@ export default function TextEditor({ value = '', onChange, onUploadChange, place
     React.useEffect(() => {
         if (!content) return
 
-        const imgRegex = /<img[^>]+src="([^"]+)"/g
+        const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/g
         const currentImages = []
         let match
 
@@ -104,7 +104,7 @@ export default function TextEditor({ value = '', onChange, onUploadChange, place
 
             setEditorImages(currentImages)
         }
-    }, [content, editorImages])
+    }, [content])
 
     React.useEffect(() => {
         return () => {

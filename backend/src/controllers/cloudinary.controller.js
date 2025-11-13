@@ -85,6 +85,13 @@ export const deleteImage = async (req, res) => {
     try {
         const { publicId } = req.params
 
+        if (!publicId) {
+            console.log('PublicId vacío')
+            return res.status(400).json({ message: 'PublicId es requerido', received: publicId })
+        }
+
+        publicId = decodeURIComponent(publicId)
+
         const result = await cloudinary.uploader.destroy(publicId)
 
         if (result.result === 'ok'){
