@@ -83,23 +83,46 @@ export const uploadEventGallery = async (req, res) => {
 
 export const deleteImage = async (req, res) => {
     try {
+
+        console.log('Inicio Delete Image')
+        console.log('Params recibidos: ', req.params)
+        console.log('URL completa', req.originalUrl)
+        console.log('Método', req.method)
+        console.log('Headers', req.headers)
+
         let { publicId } = req.params
+
+        console.log('PublicId inicial: ', publicId)
+        console.log('Tipo: ', typeof publicId)
+        console.log('Longitud: ', publicId?.length)
 
         if (!publicId) {
             console.log('PublicId vacío')
             return res.status(400).json({ message: 'PublicId es requerido', received: publicId })
         }
 
+        const originalPublicId = publicId
         publicId = decodeURIComponent(publicId)
+
+        console.log('PublicId originial: ', originalPublicId)
+        console.log('PublicId decodificado: ', publicId)
 
         const result = await cloudinary.uploader.destroy(publicId)
 
         if (result.result === 'ok'){
             res.json({ message: 'Imagen eliminada exitosamente' })
-        } else {
+        } else if (result.result === 'not found'){
             res.status(404).json({ message: 'Imagen no encontrada' })
+        } else {
+            console.log('Resultado desconocido: ', result.result)
+            res.status(500).json({ message: 'Respuesta inesperada de Cloudinary' })
         }
     } catch(error) {
+        console.log('Error en delete image')
+        console.error('Error name: ', error.name)
+        console.error('Error message: ', error.message)
+        console.error('Error stack: ', error.stack)
+        console.error('PublicId que causí error: ', req.params.publicId)
         console.error('Error eliminando imagen: ', error)
         res.status(500).json({ message: 'Error al eliminar la imagen' })
     }
