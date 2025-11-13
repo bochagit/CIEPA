@@ -44,6 +44,7 @@ function NewsForm(props) {
   const { handleClose, handleSubmit, initialValue, open, title } = props;
   const [editorUploading, setEditorUploading] = React.useState(false)
   const [categories, setCategories] = React.useState([])
+  const [uploadedCoverImage, setUploadedCoverImage] = React.useState(null)
 
   React.useEffect(() => {
     const fetchCategories = async () => {
@@ -125,7 +126,17 @@ function NewsForm(props) {
     }
   }
 
-  const handleRemoveImage = () => {
+  const handleRemoveImage = async () => {
+    if (formData.coverImage && uploadedCoverImage){
+      try {
+        await uploadService.deleteImageByUrl(formData.coverImage)
+        console.log('Imagen de portada eliminada: ', formData.coverImage)
+        setUploadedCoverImage(null)
+      } catch(error) {
+        console.warn('No se pudo eliminar imagen de cloudinary: ', error.message)
+      }
+    }
+
     setImageFile(null)
     setImagePreview(null)
     setFormData(prev => ({
@@ -138,8 +149,19 @@ function NewsForm(props) {
     try {
       setUploading(true)
       console.log('Iniciando upload...')
+
+      if (formData.coverImage && uploadedCoverImage){
+        try {
+          await uploadService.deleteImageByUrl(formData.coverImage)
+          console.log('Imagen anterior eliminada: ', formData.coverImage)
+        } catch(error) {
+          console.warn('No se pudo eliminar imagen anterior: ', error.message)
+        }
+      }
+
       const result = await uploadService.uploadPostImage(file)
       console.log('Upload exitoso: ', result)
+      setUploadedCoverImage(result.url)
       return result.url
     } catch(error) {
       console.error('Error subiendo imagen: ', error)
@@ -167,11 +189,39 @@ function NewsForm(props) {
       }
 
       handleSubmit(finalFormData);
+      setUploadedCoverImage(null)
     } catch (error) {
       console.error('Error al procesar formulario: ', error)
       alert('Error al subir la imagen, intentelo nuevamente.')
     }
   };
+
+  const handleFormClose = async() => {
+    if (uploadedCoverImage){
+      try {
+        await uploadService.deleteImageByUrl(uploadedCoverImage)
+        console.log('Imagen de portada eliminada al cancelar: ', error.message)
+      } catch(error) {
+        console.warn('Error eliminando imagen al cancelar: ', error.message)
+      }
+    }
+
+    setUploadedCoverImage(null)
+    setImageFile(null)
+    setImagePreview(null)
+
+    handleClose()
+  }
+
+  React.useEffect(() => {
+    return () => {
+      if (uploadedCoverImage && !formData._id){
+        uploadService.deleteImageByUrl(uploadedCoverImage).catch(error => 
+          console.warn('Error en cleanup de imagen: ', error.message)
+        )
+      }
+    }
+  }, [uploadedCoverImage, formData._id])
 
   React.useEffect(() => {
     if (initialValue) {
@@ -232,7 +282,7 @@ function NewsForm(props) {
       fullWidth
       maxWidth="md"
       open={open}
-      onClose={handleClose}
+      onClose={handleFormClose}
     >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
@@ -430,7 +480,7 @@ function NewsForm(props) {
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} disabled={uploading} sx={{ '&:hover': { border: '1px solid #f00', backgroundColor: 'transparent' } }}>Cancelar</Button>
+        <Button onClick={handleFormClose} disabled={uploading} sx={{ '&:hover': { border: '1px solid #f00', backgroundColor: 'transparent' } }}>Cancelar</Button>
         <Button type="submit" onClick={onFormSubmit} variant="contained" disabled={!formData.title || !formData.content || !formData.author || uploading || editorUploading}>
           {(uploading || editorUploading) ? 'Procesando...' : (initialValue ? 'Actualizar' : 'Crear')}
         </Button>

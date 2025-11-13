@@ -1,5 +1,17 @@
 import api from './api'
 
+const extractPublicIdFromUrl = (url) => {
+    if (!url || !url.includes('cloudinary.com')) return null
+
+    try {
+        const match = url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.[^.]*)?(?:\?|$)/)
+        return match ? match[1] : null
+    } catch(error) {
+        console.error('Error extrayendo publicId: ', error)
+        return null
+    }
+}
+
 export const uploadService = {
     uploadPostImage: async(file) => {
         try {
@@ -99,6 +111,23 @@ export const uploadService = {
         } catch(error) {
             console.error('Error eliminando imagen: ', error)
             throw new Error(error.response?.data?.message || 'Error al eliminar la imagen')
+        }
+    },
+
+    deleteImageByUrl: async (imageUrl) => {
+        try {
+            const publicId = extractPublicIdFromUrl(imageUrl)
+            if (!publicId) {
+                throw new Error('No se puede extraer el publicId de la URL')
+            }
+
+            console.log('Eliminando imagen por URL: ', imageUrl)
+            console.log('PublicId extraído: ', publicId)
+
+            return await uploadService.deleteImage(publicId)
+        } catch(error) {
+            console.error('Error eliminando imagen por URL: ', error)
+            throw new Error(error.message || 'Error al eliminar la imagen')
         }
     }
 }

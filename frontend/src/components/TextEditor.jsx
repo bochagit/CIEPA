@@ -10,6 +10,8 @@ export default function TextEditor({ value = '', onChange, onUploadChange, place
     const { mode } = useColorScheme()
     const quillRef = useRef(null)
 
+    const [editorImages, setEditorImages] = React.useState([])
+
     const handleImageUpload = () => {
         const input = document.createElement('input')
         input.setAttribute('type', 'file')
@@ -50,6 +52,8 @@ export default function TextEditor({ value = '', onChange, onUploadChange, place
 
                 quill.setSelection(range.index + 1)
 
+                setEditorImages(prev => [...prev, result.url])
+
                 console.log('Imagen del editor subida: ', result.url)
             } catch(error) {
                 console.error('Error subiendo imagen del editor: ', error)
@@ -70,6 +74,53 @@ export default function TextEditor({ value = '', onChange, onUploadChange, place
 
         input.click()
     }
+
+    React.useEffect(() => {
+        if (!content) return
+
+        const imgRegex = /<img[^>]+src="([^"]+)"/g
+        const currentImages = []
+        let match
+
+        while((match = imgRegex.exec(content)) !== null){
+            if (match[1].includes('cloudinary.com')){
+                currentImages.push(match[1])
+            }
+        }
+
+        const removedImages = editorImages.filter(imageUrl => !currentImages.includes(imageUrl))
+
+        if (removedImages.length > 0){
+            console.log('Imágenes eliminadas del editor: ', removedImages)
+
+            removedImages.forEach(async (imageUrl) => {
+                try {
+                    await uploadService.deleteImageByUrl(imageUrl)
+                    console.log('Imagen huérfana eliminada: ', imageUrl)
+                } catch(error) {
+                    console.warn('No se pudo eliminar imagen del editor: ', error.message)
+                }
+            })
+
+            setEditorImages(currentImages)
+        }
+    }, [content, editorImages])
+
+    React.useEffect(() => {
+        return () => {
+            if (editorImages.length > 0 && (!content || content.trim() === '')){
+                console.log('Limpiando imágenes del editor al desmontar: ', editorImages.length)
+                editorImages.forEach(async (imageUrl) => {
+                    try {
+                        await uploadService.deleteImageByUrl(imageUrl)
+                        console.log('Imagen del editor eliminada en cleanup: ', imageUrl)
+                    } catch(error) {
+                        console.warn('Error en cleanup del editor: ', error.message)
+                    }
+                })
+            }
+        }
+    }, [editorImages, content])
 
     const modules = React.useMemo(() => ({
         toolbar: {
