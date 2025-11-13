@@ -9,8 +9,36 @@ export default function TextEditor({ value = '', onChange, onUploadChange, place
     const [content, setContent] = useState(value)
     const { mode } = useColorScheme()
     const quillRef = useRef(null)
-
     const [editorImages, setEditorImages] = React.useState([])
+
+    const extractImagesFromContent = React.useCallback((htmlContent) => {
+        if (!htmlContent) return []
+
+        const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/g
+        const images = []
+        let match
+
+        while ((match = imgRegex.exec(htmlContent)) !== null){
+            if (match[1] && match[1].includes('cloudinary.com')){
+                images.push(match[1])
+            }
+        }
+
+        return images
+    }, [])
+
+    React.useEffect(() => {
+        console.log('Valor inicial cambiado: ', value)
+        setContent(value)
+
+        const existingImages = extractImagesFromContent(value)
+        console.log('Imagenes existentes encontradas: ', existingImages.length)
+        existingImages.forEach((img, index) => {
+            console.log(`${index + 1}. ${img}`)
+        })
+
+        setEditorImages(existingImages)
+    }, [value, extractImagesFromContent])
 
     const handleImageUpload = () => {
         const input = document.createElement('input')
@@ -52,7 +80,12 @@ export default function TextEditor({ value = '', onChange, onUploadChange, place
 
                 quill.setSelection(range.index + 1)
 
-                setEditorImages(prev => [...prev, result.url])
+                console.log('Nueva imagen agregada: ', result.url)
+                setEditorImages(prev => {
+                    const updated = [...prev, result.url]
+                    console.log('Imagenes trackeadas despues de agregar: ', updated.length)
+                    return updated
+                })
 
                 console.log('Imagen del editor subida: ', result.url)
             } catch(error) {
@@ -76,19 +109,23 @@ export default function TextEditor({ value = '', onChange, onUploadChange, place
     }
 
     React.useEffect(() => {
-        if (!content) return
-
-        const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/g
-        const currentImages = []
-        let match
-
-        while((match = imgRegex.exec(content)) !== null){
-            if (match[1].includes('cloudinary.com')){
-                currentImages.push(match[1])
-            }
+        if (!content){
+            console.log('Sin contenido, saltando detección')
+            return
         }
 
-        const removedImages = editorImages.filter(imageUrl => !currentImages.includes(imageUrl))
+        const currentImages = extractImagesFromContent(content)
+        console.log('Estado actual:')
+        console.log('- Imágenes en contenido: ', currentImages.length)
+        console.log('- Imagenes trackeadas: ', editorImages.length)
+
+        const removedImages = editorImages.filter(imageUrl => {
+            const isStillPresent = currentImages.includes(imageUrl)
+            if (!isStillPresent){
+                console.log('Imagen marcada para eliminar: ', imageUrl)
+            }
+            return !isStillPresent
+        })
 
         if (removedImages.length > 0){
             console.log('Imágenes eliminadas del editor: ', removedImages)
@@ -104,11 +141,11 @@ export default function TextEditor({ value = '', onChange, onUploadChange, place
 
             setEditorImages(currentImages)
         }
-    }, [content])
+    }, [content, editorImages, extractImagesFromContent])
 
     React.useEffect(() => {
         return () => {
-            if (editorImages.length > 0 && (!content || content.trim() === '')){
+            if (editorImages.length > 0 && (!content || content.trim() === '' || content.trim() === '<p><br></p>')){
                 console.log('Limpiando imágenes del editor al desmontar: ', editorImages.length)
                 editorImages.forEach(async (imageUrl) => {
                     try {
@@ -175,10 +212,6 @@ export default function TextEditor({ value = '', onChange, onUploadChange, place
             onChange(newContent);
         }
     }, [onChange]);
-
-    React.useEffect(() => {
-        setContent(value)
-    }, [value])
 
     React.useEffect(() => {
         const quill = quillRef.current?.getEditor()

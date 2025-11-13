@@ -45,6 +45,8 @@ function NewsForm(props) {
   const [editorUploading, setEditorUploading] = React.useState(false)
   const [categories, setCategories] = React.useState([])
   const [uploadedCoverImage, setUploadedCoverImage] = React.useState(null)
+  const [originalCoverImage, setOriginalCoverImage] = React.useState(null)
+  const isEditing = Boolean(initialValue && initialValue._id)
 
   React.useEffect(() => {
     const fetchCategories = async () => {
@@ -127,16 +129,21 @@ function NewsForm(props) {
   }
 
   const handleRemoveImage = async () => {
-    if (formData.coverImage && uploadedCoverImage){
+    const shouldDeleteFromCloudinary = (
+      (!isEditing && uploadedCoverImage) || 
+      (isEditing && uploadedCoverImage && uploadedCoverImage !== originalCoverImage) ||
+      (isEditing && uploadedCoverImage && formData.coverImage === coverImage)
+    )
+
+    if (shouldDeleteFromCloudinary && formData.coverImage){
       try {
         await uploadService.deleteImageByUrl(formData.coverImage)
         console.log('Imagen de portada eliminada: ', formData.coverImage)
-        setUploadedCoverImage(null)
       } catch(error) {
-        console.warn('No se pudo eliminar imagen de cloudinary: ', error.message)
+        console.warn('No se pudo eliminar imagen de Cloudinary')
       }
     }
-
+    setUploadedCoverImage(null)
     setImageFile(null)
     setImagePreview(null)
     setFormData(prev => ({
@@ -150,7 +157,7 @@ function NewsForm(props) {
       setUploading(true)
       console.log('Iniciando upload...')
 
-      if (formData.coverImage && uploadedCoverImage){
+      if (formData.coverImage && uploadedCoverImage && uploadedCoverImage !== originalCoverImage){
         try {
           await uploadService.deleteImageByUrl(formData.coverImage)
           console.log('Imagen anterior eliminada: ', formData.coverImage)
@@ -190,6 +197,7 @@ function NewsForm(props) {
 
       handleSubmit(finalFormData);
       setUploadedCoverImage(null)
+      setOriginalCoverImage(null)
     } catch (error) {
       console.error('Error al procesar formulario: ', error)
       alert('Error al subir la imagen, intentelo nuevamente.')
@@ -198,19 +206,20 @@ function NewsForm(props) {
 
   const handleFormClose = async() => {
     if (uploadedCoverImage){
-      try {
-        await uploadService.deleteImageByUrl(uploadedCoverImage)
-        console.log('Imagen de portada eliminada al cancelar: ', uploadedCoverImage)
-      } catch(error) {
-        console.warn('Error eliminando imagen al cancelar: ', error.message)
+      const isNewImage = !isEditing || (isEditing && uploadedCoverImage !== originalCoverImage)
+
+      if (isNewImage){
+        try {
+          await uploadService.deleteImageByUrl(uploadedCoverImage)
+          console.log('Imagen de portada eliminada al cancelar: ', uploadedCoverImage)
+        } catch(error) {
+          console.warn('Error eliminando imagen al cancelar: ', error.message)
+        }
       }
     }
 
-    if (!formData.content || formData.content.trim() === '<p><br></p>' || formData.content.trim() === ''){
-      console.log('Contenido vacío, limpiando imágenes del editor...')
-    }
-
     setUploadedCoverImage(null)
+    setOriginalCoverImage(null)
     setImageFile(null)
     setImagePreview(null)
 
@@ -230,6 +239,22 @@ function NewsForm(props) {
   React.useEffect(() => {
     if (initialValue) {
       console.log('Datos iniciales recibidos: ', initialValue)
+
+      if (initialValue.coverImage){
+        setOriginalCoverImage(initialValue.coverImage)
+      }
+
+      if (initialValue.content) {
+        const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/g
+        const contentImages = []
+        let match
+        
+        while((match = imgRegex.exec(initialValue.content)) !== null){
+          if (match[1] && match[1].includes('cloudinary.com')){
+            contentImages.push(match[1])
+          }
+        }
+      }
 
       const formatDateSafely = (dateInput) => {
         if (!dateInput) return format(new Date(), 'yyyy-MM-dd')
@@ -267,6 +292,7 @@ function NewsForm(props) {
       }
 
       const adaptedData = {
+        _id: initialValue._id,
         title: initialValue.title || '',
         content: initialValue.content || '',
         author: initialValue.author || '',
@@ -278,8 +304,16 @@ function NewsForm(props) {
         summary: initialValue.summary || ''
       }
       setFormData(adaptedData);
+
+      if (initialValue.coverImage){
+        setImagePreview(initialValue.coverImage)
+        console.log('Imagen de portada configurada: ', initialValue.coverImage)
+      }
+    } else {
+      setOriginalCoverImage(null)
+      setUploadedCoverImage(null)
     }
-  }, [initialValue]);
+  }, [initialValue, isEditing]);
 
   return (
     <Dialog
