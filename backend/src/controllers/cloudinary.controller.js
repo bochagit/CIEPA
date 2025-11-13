@@ -83,7 +83,7 @@ export const uploadEventGallery = async (req, res) => {
 
 export const deleteImage = async (req, res) => {
     try {
-        const { publicId } = req.params
+        let { publicId } = req.params
 
         if (!publicId) {
             console.log('PublicId vacío')

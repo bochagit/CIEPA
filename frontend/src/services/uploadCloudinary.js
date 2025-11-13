@@ -4,19 +4,13 @@ const extractPublicIdFromUrl = (url) => {
     if (!url || !url.includes('cloudinary.com')) return null
 
     try {
-        const patterns = [
-            /\/upload\/v\d+\/(.+?)(?:\.[^.]*)?(?:\?|$)/,
-            /\/upload\/(.+?)(?:\.[^.]*)?(?:\?|$)/,
-            /\/([^\/]+?)(?:\.[^.]*)?(?:\?|$)/
-        ]
+        const regex = /\/upload\/(?:v\d+\/)?(.+?)(?:\?|$)/
+        const match = url.match(regex)
 
-        for (const pattern of patterns) {
-            const match = url.match(pattern)
-            if (match && match[1]){
-                const publicId = decodeURIComponent(match[1])
-                console.log('PublicId extraído: ', publicId)
-                return publicId
-            }
+        if (match && match[1]){
+            let publicId = match[1]
+            publicId = publicId.replace(/\.[^.]+$/, '')
+            return publicId
         }
 
         return null
@@ -118,8 +112,8 @@ export const uploadService = {
         try {
             console.log('Eliminando imagen: ', publicId)
 
-            const encondedPublicId = encodeURIComponent(publicId)
-            const response = await api.delete(`/upload/${encondedPublicId}`)
+            const encodedPublicId = encodeURIComponent(publicId)
+            const response = await api.delete(`/upload/${encodedPublicId}`)
 
             console.log('Imagen eliminada')
             return response.data
