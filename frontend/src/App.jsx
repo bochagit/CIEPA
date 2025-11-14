@@ -19,6 +19,7 @@ import Audiovisual from './components/Audiovisual';
 import Conversatorios from './components/Conversatorios';
 import Formaciones from './components/Formaciones';
 import Jornadas from './components/Jornadas';
+import Actividades from './components/Actividades';
 
 export default function App() {
   return (
@@ -91,6 +92,11 @@ export default function App() {
         <Route path="/jornadas" element={
           <Layout>
             <Jornadas />
+          </Layout>
+        } />
+        <Route path="/actividades/:id" element={
+          <Layout>
+            <Actividades />
           </Layout>
         } />
         <Route path="/contacto" element={

@@ -7,18 +7,13 @@ import {
     Card,
     CardMedia,
     CardContent,
-    Dialog,
-    DialogContent,
-    IconButton,
-    ImageList,
-    ImageListItem,
     Skeleton,
     Alert,
     styled
 } from '@mui/material'
-import { Close as CloseIcon, ZoomIn as ZoomIcon } from '@mui/icons-material'
 import { eventService } from '../services/eventService'
 import { brand } from '../../shared-theme/themePrimitives'
+import { useNavigate } from 'react-router-dom'
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
@@ -43,10 +38,8 @@ export default function Jornadas() {
     const [events, setEvents] = React.useState([])
     const [loading, setLoading] = React.useState(true)
     const [error, setError] = React.useState('')
-    const [selectedEvent, setSelectedEvent] = React.useState(null)
-    const [galleryDialog, setGalleryDialog] = React.useState(false)
-    const [selectedImage, setSelectedImage] = React.useState(null)
-    const [imageDialog, setImageDialog] = React.useState(false)
+
+    const navigate = useNavigate()
 
     React.useEffect(() => {
         const fetchJornadas = async () => {
@@ -67,24 +60,7 @@ export default function Jornadas() {
     }, [])
 
     const handleEventClick = (event) => {
-        setSelectedEvent(event)
-        setGalleryDialog(true)
-    }
-
-    const handleCloseGallery = () => {
-        setGalleryDialog(false)
-        setSelectedEvent(null)
-    }
-
-    const handleImageClick = (imageUrl, event) => {
-        event.stopPropagation()
-        setSelectedImage(imageUrl)
-        setImageDialog(true)
-    }
-
-    const handleCloseImageDialog = () => {
-        setImageDialog(false)
-        setSelectedImage(null)
+        navigate(`/actividades/${event._id}`)
     }
 
     const formatDateForDisplay = (dateString) => {
@@ -193,145 +169,6 @@ export default function Jornadas() {
                 </Typography>
             </Box>
         )}
-
-        <Dialog
-            open={galleryDialog}
-            onClose={handleCloseGallery}
-            maxWidth="lg"
-            fullWidth
-        >
-            <DialogContent sx={{ p: 0 }}>
-                <Box sx={{ position: 'relative' }}>
-                    <IconButton
-                        onClick={handleCloseGallery}
-                        sx={{
-                            position: 'absolute',
-                            top: 8,
-                            right: 8,
-                            backgroundColor: 'rgba(255, 255, 255, .9)',
-                            zIndex: 1,
-                            '&:hover': {
-                                backgroundColor: 'rgba(255, 255, 255, 1)'
-                            }
-                        }}
-                    >
-                        <CloseIcon />
-                    </IconButton>
-
-                    {selectedEvent && (
-                        <Box>
-                            <Box sx={{ p: 3, backgroundColor: 'primary.main', color: '#fff' }}>
-                                <Typography variant="h5" gutterBottom>
-                                    {selectedEvent.title}
-                                </Typography>
-                                <Typography variant="body1">
-                                    {formatDateForDisplay(selectedEvent.date)}
-                                </Typography>
-                            </Box>
-
-                            <Box sx={{ p: 2 }}>
-                                {selectedEvent.gallery && selectedEvent.gallery.length > 0 ? (
-                                    <ImageList cols={3} gap={8}>
-                                        {selectedEvent.gallery.map((image, index) => (
-                                            <ImageListItem
-                                                key={index}
-                                                sx={{ 
-                                                    position: 'relative',
-                                                    cursor: 'pointer',
-                                                    '&:hover .zoom-icon': {
-                                                        opacity: 1
-                                                    }
-                                                 }}
-                                                 onClick={(e) => handleImageClick(image.url, e)}
-                                            >
-                                                <img
-                                                    src={image.url}
-                                                    alt={`${selectedEvent.title} - Imagen ${index + 1}`}
-                                                    style={{
-                                                        width: '100%',
-                                                        height: 200,
-                                                        objectFit: 'cover',
-                                                        borderRadius: 4
-                                                    }}
-                                                />
-                                                <IconButton
-                                                    className="zoom-icon"
-                                                    sx={{
-                                                        position: 'absolute',
-                                                        top: '50%',
-                                                        left: '50%',
-                                                        transform: 'translate(-50%, -50%)',
-                                                        backgroundColor: 'rgba(0, 0, 0, .6)',
-                                                        color: '#fff',
-                                                        opacity: 0,
-                                                        transition: 'opacity .3s',
-                                                        '&:hover': {
-                                                            backgroundColor: 'rgba(0, 0, 0, .8)'
-                                                        }
-                                                    }}
-                                                    size="large"
-                                                >
-                                                    <ZoomIcon />
-                                                </IconButton>
-                                            </ImageListItem>
-                                        ))}
-                                    </ImageList>
-                                ) : (
-                                    <Typography variant="body1" color="text.secondary" align="center" sx={{ py: 4 }}>
-                                        No hay imágenes disponibles para este evento.
-                                    </Typography>
-                                )}
-                            </Box>
-                        </Box>
-                    )}
-                </Box>
-            </DialogContent>
-        </Dialog>
-
-        <Dialog
-            open={imageDialog}
-            onClose={handleCloseImageDialog}
-            maxWidth="lg"
-            fullWidth
-            sx={{
-                '& .MuiDialog-paper': {
-                    backgroundColor: 'rgba(0, 0, 0, .9)',
-                    boxShadow: 'none'
-                }
-            }}
-        >
-            <Box sx={{ position: 'relative', p: 2 }}>
-                <IconButton
-                    onClick={handleCloseImageDialog}
-                    sx={{
-                        position: 'absolute',
-                        top: 8,
-                        right: 8,
-                        color: '#fff',
-                        backgroundColor: 'rgba(0, 0, 0, .5)',
-                        '&:hover': {
-                            backgroundColor: 'rgba(0, 0, 0, .7)'
-                        },
-                        zIndex: 1
-                    }}
-                >
-                    <CloseIcon />
-                </IconButton>
-
-                {selectedImage && (
-                    <img
-                        src={selectedImage}
-                        alt="Vista ampliada"
-                        style={{
-                            width: '100%',
-                            height: 'auto',
-                            maxHeight: '80vh',
-                            objectFit: 'contain'
-                        }}
-                    />
-                )}
-            </Box>
-        </Dialog>
     </Container>
   )
 }
