@@ -9,7 +9,8 @@ import {
   Divider,
   Avatar,
   Skeleton,
-  Alert
+  Alert,
+  Chip
 } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import { brand } from '../../shared-theme/themePrimitives';
@@ -18,6 +19,7 @@ import SchoolIcon from '@mui/icons-material/School';
 import PublicIcon from '@mui/icons-material/Public';
 import { useNavigate } from 'react-router-dom';
 import { postService } from '../services/postService';
+import { eventService } from '../services/eventService';
 
 const SectionContainer = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(6),
@@ -67,45 +69,34 @@ const HeroSection = styled(Box)(({ theme }) => ({
 }));
 
 export default function MainContent() {
-const [publicaciones, setPublicaciones] = React.useState([])
-const [loadingPublicaciones, setLoadingPublicaciones] = React.useState(true)
-const [errorPublicaciones, setErrorPublicaciones] = React.useState('')
+  const [publicaciones, setPublicaciones] = React.useState([])
+  const [loadingPublicaciones, setLoadingPublicaciones] = React.useState(true)
+  const [errorPublicaciones, setErrorPublicaciones] = React.useState('')
+  const [actividades, setActividades] = React.useState([])
+  const [loadingActividades, setLoadingActividades] = React.useState(true)
+  const [errorActividades, setErrorActividades] = React.useState('')
+  const [currentPublicacion, setCurrentPublicacion] = React.useState(0)
+  const [isTransitioning, setIsTransitioning] = React.useState(false)
 
-const [currentPublicacion, setCurrentPublicacion] = React.useState(0)
-const [isTransitioning, setIsTransitioning] = React.useState(false)
+  const navigate = useNavigate()
 
-const navigate = useNavigate()
-
-  const actividades = [
-    {
-      id: 1,
-      titulo: "Gobernanza climática federal en Argentina",
-      descripcion: "Balance y perspectiva de la Ley 27520",
-      imagen: "https://picsum.photos/600/400?random=1",
-      fecha: "2024-11-20"
-    },
-    {
-      id: 2,
-      titulo: "Monitor Ambiental del Presupuesto 2025",
-      descripcion: "¿Qué es la asignación hacia agosto?",
-      imagen: "https://picsum.photos/600/400?random=2",
-      fecha: "2024-11-15"
-    },
-    {
-      id: 3,
-      titulo: "FARN Environmental Report 2024",
-      descripcion: "The future in dispute",
-      imagen: "https://picsum.photos/600/400?random=3",
-      fecha: "2024-11-10"
-    },
-    {
-      id: 4,
-      titulo: "Boletín Nº1 del Observatorio del RUO",
-      descripcion: "",
-      imagen: "https://picsum.photos/600/400?random=4",
-      fecha: "2024-11-05"
+  const getEventTypeLabel = (type) => {
+    const typeLabels = {
+      'conversatorio': 'Conversatorio',
+      'formacion': 'Ciclo de formaciones',
+      'jornada': 'Jornadas'
     }
-  ];
+    return typeLabels[type] || type
+  }
+
+  const getEventTypeColor = (type) => {
+    const typeColors = {
+      'conversatorio': 'primary',
+      'formacion': 'secondary',
+      'jornada': 'success'
+    }
+    return typeColors[type] || 'default'
+  }
 
   const formatDateForDisplay = (dateString) => {
     if (!dateString) return ''
@@ -180,6 +171,48 @@ const navigate = useNavigate()
   }, [])
 
   React.useEffect(() => {
+    const fetchActividades = async () => {
+      try {
+        setLoadingActividades(true)
+        setErrorActividades('')
+
+        console.log('Cargando ultimas actividades...')
+        const response = await eventService.getAllEvents()
+
+        console.log('Eventos obtenidos: ', response)
+
+        if (response.events && response.events.length > 0){
+          const actividadesFormateadas = response.events
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .slice(0, 4)
+            .map(event => ({
+              id: event._id,
+              titulo: event.title,
+              tipo: event.type,
+              imagen: event.coverImage,
+              fecha: event.date,
+              descripcion: getEventTypeLabel(event.type)
+            }))
+
+            console.log('Actividades formateadas: ', actividadesFormateadas)
+            setActividades(actividadesFormateadas)
+        } else {
+          console.log('No se encontraron eventos')
+          setActividades([])
+        }
+      } catch(error) {
+        console.error('Error al cargar actividades: ', error)
+        setErrorActividades('Error al cargar actividades')
+        setActividades([])
+      } finally {
+        setLoadingActividades(false)
+      }
+    }
+
+    fetchActividades()
+  }, [])
+
+  React.useEffect(() => {
     if (publicaciones.length === 0) return
     
     const interval = setInterval(() => {
@@ -215,6 +248,10 @@ const navigate = useNavigate()
       const currentPost = publicaciones[currentPublicacion]
       navigate(`/notas/${currentPost.id}`)
     }
+  }
+
+  const handleVerActividad = (actividadId) => {
+    navigate(`/actividades/${actividadId}`)
   }
 
   return (
@@ -445,12 +482,30 @@ const navigate = useNavigate()
         <SectionTitle variant="h3" component="h2">
           Últimas Actividades
         </SectionTitle>
-      </SectionContainer>
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, flexWrap: { xs: 'wrap', md: 'nowrap' } }} >
-          {actividades.map((actividad) => (
-            <Box key={actividad.id} sx={{
+
+        {errorActividades && (
+          <Alert severity="error" sx={{ mb: 4 }}>
+            {errorActividades}
+          </Alert>
+        )}
+
+        {loadingActividades ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, flexWrap: { xs: 'wrap', md: 'nowrap' } }}>
+            {[1, 2, 3, 4].map((item) => (
+              <Box key={item} sx={{
+                width: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(25% - 12px)' },
+                height: { xs: 250, md: 300 }
+              }}>
+                <Skeleton variant="rectangular" width="100%" height="100%" sx={{ borderRadius: 3 }} />
+              </Box>
+            ))}
+          </Box>
+        ) : actividades.length > 0 ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, flexWrap: { xs: 'wrap', md: 'nowrap' } }}>
+            {actividades.map((actividad) => (
+              <Box key={actividad.id} onClick={() => handleVerActividad(actividad.id)} sx={{
               position: 'relative',
-              width: { xs: '100%', sm: 'calc(50% - 12px)' },
+              width: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(25% - 12px)' },
               height: { xs: 250, md: 300 },
               borderRadius: 3,
               overflow: 'hidden',
@@ -460,8 +515,9 @@ const navigate = useNavigate()
               '&:hover': {
                 transform: 'translateY(-8px)',
                 boxShadow: 6
-              }
-            }} >
+                }
+              }} 
+            >
               <Box sx={{
                 position: 'absolute',
                 top: 0,
@@ -483,46 +539,68 @@ const navigate = useNavigate()
               }} />
               <Box sx={{
                 position: 'absolute',
+                top: 12,
+                left: 12,
+                zIndex: 2
+              }} >
+                <Chip
+                  label={getEventTypeLabel(actividad.tipo)}
+                  color={getEventTypeColor(actividad.tipo)}
+                  size="small"
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: '.7rem'
+                  }}
+                />
+              </Box>
+              <Box sx={{
+                position: 'absolute',
                 bottom: 0,
                 left: 0,
                 right: 0,
                 p: { xs: 2, md: 3 },
                 background: 'linear-gradient(transparent, rgba(0, 0, 0, .8))',
-                color: 'white'
-              }} >
-              <Typography variant="h6" component="h3" gutterBottom sx={{
-                fontWeight: 600,
-                mb: 1,
-                fontSize: { xs: '1rem', md: '1.25rem' },
-                lineHeight: 1.3
+                color: '#fff'
               }}>
-                {actividad.titulo}
-              </Typography>
-              {actividad.descripcion && (
-                <Typography variant="body2" sx={{
-                  mb: 2,
-                  fontSize: { xs: '.8rem', md: '.9rem' },
-                  lineHeight: 1.4,
-                  opacity: .9
-                }} >
-                  {actividad.descripcion}
+                <Typography variant="h6" component="h3" gutterBottom sx={{
+                  fontWeight: 600,
+                  mb: 1,
+                  fontSize: { xs: '1rem', md: '1.25rem' },
+                  lineHeight: 1.3,
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden'
+                }}>
+                  {actividad.titulo}
                 </Typography>
-              )}
-              <Typography variant="caption" sx={{
-                opacity: .8,
-                fontSize: '.75rem',
-              }}
-              >
-                {new Date(actividad.fecha).toLocaleDateString('es-AR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
+                <Typography variant="caption" sx={{
+                  opacity: .8,
+                  fontSize: '.75rem'
+                }}>
+                  {formatDateForDisplay(actividad.fecha)}
+                </Typography>
+              </Box>
+            </Box>
+            ))}
+            </Box>
+          ) : (
+            <Box sx={{
+              textAlign: 'center',
+              py: 8,
+              backgroundColor: 'background.paper',
+              borderRadius: 3,
+              border: `1px solid ${alpha(brand.main, .1)}`
+            }}>
+              <Typography variant="h5" color="text.secondary" gutterBottom>
+                No hay actividiades recientes
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                Pronto publicaremos nuevas actividades.
               </Typography>
             </Box>
-          </Box>
-          ))}
-        </Box>
+          )}
+        </SectionContainer>
 
       <Divider sx={{ my: 6 }} />
 

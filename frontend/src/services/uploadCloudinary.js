@@ -9,7 +9,7 @@ const extractPublicIdFromUrl = (url) => {
 
         if (match && match[1]){
             let publicId = match[1]
-            publicId = publicId.replace(/\.[^.]+$/, '')
+            publicId = publicId.replace(/\.[a-zA-Z0-9]+$/, '')
             return publicId
         }
 
@@ -125,6 +125,9 @@ export const uploadService = {
 
     deleteImageByUrl: async (imageUrl) => {
         try {
+            console.log('Eliminando por URL')
+            console.log('URL recibida: ', imageUrl)
+
             const publicId = extractPublicIdFromUrl(imageUrl)
             if (!publicId) {
                 throw new Error('No se puede extraer el publicId de la URL')

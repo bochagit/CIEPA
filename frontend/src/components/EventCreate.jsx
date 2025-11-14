@@ -46,6 +46,9 @@ export default function EventCreate(){
     const [uploadingCover, setUploadingCover] = React.useState(false)
     const [uploadingGallery, setUploadingGallery] = React.useState(false)
 
+    const [uploadedCoverImage, setUploadedCoverImage] = React.useState(null)
+    const [uploadedGalleryImages, setUploadedGalleryImages] = React.useState([])
+
     const navigate = useNavigate()
 
     const typeLabels = {
@@ -55,6 +58,16 @@ export default function EventCreate(){
     }
 
     const handleInputChange = (field, value) => {
+        console.log(`handleInputChange: ${field} =`, value)
+
+        if (field === 'coverImage'){
+            console.log('Cambio en cover image')
+            console.log('Valor anterior: ', formData.coverImage)
+            console.log('Valor nuevo: ', value)
+            console.log('Stack trace: ', new Error().stack.split('\n').slice(1, 4).join('\n'))
+            console.log('Fin cambio cover\n')
+        }
+
         setFormData(prev => ({
             ...prev,
             [field]: value
@@ -67,11 +80,48 @@ export default function EventCreate(){
         const file = event.target.files[0]
         if (!file) return
 
+        console.log('HandleCoverImageUpload Ejecutado')
+        console.log('¿Quien llamo esta funcion?', new Error().stack)
+
+        const previousImage = formData.coverImage
+        const previousTrackedImage = uploadedCoverImage
+
         try {
             setUploadingCover(true)
             setError('')
+
+            console.log('Subiendo portada')
+            console.log('Imagen anterior: ', previousImage)
+            console.log('Imagen trackeada anterior: ', previousTrackedImage)
+
             const uploadedImage = await uploadService.uploadEventImage(file)
+            console.log('Nueva imagen subida: ', uploadedImage.url)
+
             handleInputChange('coverImage', uploadedImage.url)
+            setUploadedCoverImage(uploadedImage.url)
+
+            console.log('Evaluando si eliminar anterior')
+            console.log('PreviousImage: ', previousImage)
+            console.log('PreviousTrackedImage: ', previousTrackedImage)
+            console.log('¿Son iguales?: ', previousImage === previousTrackedImage)
+            console.log('¿Ambos existen?: ', Boolean(previousImage && previousTrackedImage))
+
+            if (previousImage && previousTrackedImage && previousImage === previousTrackedImage){
+                console.log('Eliminando imagen anterior')
+                console.log('Eliminando: ', previousImage)
+
+                try {
+                    await uploadService.deleteImageByUrl(previousImage)
+                    console.log('Imagen anterior eliminada exitosamente')
+                } catch(deleteError) {
+                    console.warn('No se pudo eliminar imagen anterior: ', deleteError.message)
+                }
+            } else {
+                console.log('No se elimina imagen anterior')
+                console.log('Razón: no cumple condiciones para eliminación')
+            }
+
+            console.log('Fin subida portada')
         } catch(err) {
             setError('Error al subir imagen de portada: ' + err.message)
             console.error(err)
@@ -84,9 +134,16 @@ export default function EventCreate(){
         const files = Array.from(event.target.files)
         if (files.length === 0) return
 
+        console.log('Handle gallery upload ejecutado')
+        console.log('Archivos a subir: ', files.length)
+        console.log('imagen portada Antes: ', formData.coverImage)
+        console.log('Portada trackeada Antes: ', uploadedCoverImage)
+        
         try {
             setUploadingGallery(true)
             setError('')
+
+            console.log('Iniciando subida de galería...')
             const uploadedGallery = await uploadService.uploadEventGallery(files)
 
             const newGalleryImages = uploadedGallery.images.map((img, index) => ({
@@ -94,7 +151,21 @@ export default function EventCreate(){
                 order: formData.gallery.length + index
             }))
 
+            console.log('Nuevas imagenes de galería: ', newGalleryImages.length)
+            console.log('Actualizando galería en formData...')
+
             handleInputChange('gallery', [...formData.gallery, ...newGalleryImages])
+
+            const newUrls = uploadedGallery.images.map(img => img.url)
+            setUploadedGalleryImages(prev => {
+                const updated = [...prev, ...newUrls]
+                console.log('Tracking galería actualizado: ', updated.length)
+                return updated
+            })
+
+            console.log('Imagen portada Despues: ', formData.coverImage)
+            console.log('Portada trackeada Despues: ', uploadedCoverImage)
+            console.log('Fin gallery upload')
         } catch(err) {
             setError('Error al subir imágenes de galería: ' + err.message)
             console.error(err)
@@ -103,7 +174,31 @@ export default function EventCreate(){
         }
     }
 
-    const removeGalleryImage = (index) => {
+    const removeGalleryImage = async (index) => {
+        const imageToRemove = formData.gallery[index]
+
+        console.log('Eliminando imagen galería')
+        console.log('Indice: ', index)
+        console.log('Imagen a eliminar: ', imageToRemove.url)
+        console.log('Total en galería: ', formData.gallery.length)
+        console.log('Total trackeadas: ', uploadedGalleryImages.length)
+        console.log('Esta en tracking: ', uploadedGalleryImages.includes(imageToRemove.url))
+
+        if (uploadedGalleryImages.includes(imageToRemove.url)){
+            try{
+                await uploadService.deleteImageByUrl(imageToRemove.url)
+                setUploadedGalleryImages(prev => {
+                    const filtered = prev.filter(url => url !== imageToRemove.url)
+                    console.log('Tracking actualizado: ', filtered.length, 'imagenes restantes')
+                    return filtered
+                })
+            } catch(error) {
+                console.warn('No se pudo eliminar imagen de Cloudinary: ', error.message)
+            }
+        } else {
+            console.log('Imagen no está en tracking - removiendo localmente')
+        }
+
         const newGallery = formData.gallery.filter((_, i) => i !== index)
         const reorderedGallery = newGallery.map((img, i) => ({ ...img, order: i }))
         handleInputChange('gallery', reorderedGallery)
@@ -140,10 +235,12 @@ export default function EventCreate(){
             const eventData = {
                 ...formData,
                 title: formData.title.trim(),
-                date: formData.date.toISOString()
             }
 
             await eventService.createEvent(eventData)
+
+            setUploadedCoverImage(null)
+            setUploadedGalleryImages([])
 
             navigate('/dashboard/eventos', {
                 state: {
@@ -157,6 +254,76 @@ export default function EventCreate(){
             setLoading(false)
         }
     }
+
+    const handleCancel = async () => {
+        if (uploadedCoverImage){
+            try {
+                await uploadService.deleteImageByUrl(uploadedCoverImage)
+            } catch(error) {
+                console.warn('Error eliminando imagen de portada: ', error.message)
+            }
+        }
+
+        if (uploadedGalleryImages.length > 0){
+            const deletePromises = uploadedGalleryImages.map(async (imageUrl) => {
+                try {
+                    await uploadService.deleteImageByUrl(imageUrl)
+                } catch(error) {
+                    console.warn('Error eliminando imagen de galería: ', error.message)
+                }
+            })
+
+            await Promise.allSettled(deletePromises)
+        }
+
+        navigate('/dashboard/eventos')
+    }
+
+    React.useEffect(() => {
+        console.log('Cambio en uploadedCoverImage')
+        console.log('Nuevo valor: ', uploadedCoverImage)
+        console.log('Stack trace: ', new Error().stack.split('\n').slice(1, 4).join('\n'))
+        console.log('Fin cambio\n')
+    }, [uploadedCoverImage])
+
+    React.useEffect(() => {
+        console.log('Cambio en formData.coverImage')
+        console.log('Nuevo valor: ', formData.coverImage)
+        console.log('Fin cambio\n')
+    }, [formData.coverImage])
+
+    React.useEffect(() => {
+        return () => {
+            console.log('Cleanup al desmontar')
+
+            const currentUploadedCover = uploadedCoverImage
+            const currentUploadedGallery = [...uploadedGalleryImages]
+
+            console.log('Imagen portada a limpiar: ', currentUploadedCover)
+            console.log('Imagenes galería a limpiar: ', currentUploadedGallery.length)
+
+            const allUploadedImages = [
+                currentUploadedCover,
+                ...currentUploadedGallery
+            ].filter(Boolean)
+
+            if (allUploadedImages.length > 0){
+                console.log('Limpiando', allUploadedImages.length, 'imágenes')
+                allUploadedImages.forEach(async (imageUrl) => {
+                    try {
+                        console.log('Eliminando en cleanup: ', imageUrl)
+                        await uploadService.deleteImageByUrl(imageUrl)
+                        console.log('Eliminada en cleanup: ', imageUrl)
+                    } catch(error) {
+                        console.warn('Error en cleanup: ', error.message)
+                    }
+                })
+            } else {
+                console.log('No hay imágenes para limpiar')
+            }
+            console.log('Fin cleanup')
+        }
+    }, [])
 
     return (
         <Box sx={{ p: 3 }}>
@@ -355,7 +522,7 @@ export default function EventCreate(){
                             <Button
                                 variant="outlined"
                                 startIcon={<CancelIcon />}
-                                onClick={() => navigate('/dashboard/eventos')}
+                                onClick={handleCancel}
                                 disabled={loading}
                             >
                                 Cancelar

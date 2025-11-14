@@ -19,10 +19,6 @@ import {
     Backdrop,
     Skeleton
 } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { es } from 'date-fns/locale';
 import {
     CloudUpload as UploadIcon,
     Delete as DeleteIcon,
@@ -48,9 +44,16 @@ export default function EventEdit() {
     const [error, setError] = React.useState('')
     const [uploadingCover, setUploadingCover] = React.useState(false)
     const [uploadingGallery, setUploadingGallery] = React.useState(false)
+    const [uploadedCoverImage, setUploadedCoverImage] = React.useState(null)
+    const [originalCoverImage, setOriginalCoverImage] = React.useState(null)
+    const [uploadedGalleryImages, setUploadedGalleryImages] = React.useState([])
+    const [originalGalleryImages, setOriginalGalleryImages] = React.useState([])
+    const [removedOriginalImages, setRemovedOriginalImages] = React.useState([])
 
     const navigate = useNavigate()
     const { eventId } = useParams()
+
+    const isEditing = Boolean(eventId && originalData)
 
     const typeLabels = {
         conversatorio: 'Conversatorios',
@@ -63,17 +66,51 @@ export default function EventEdit() {
             try {
                 setLoadingEvent(true)
                 const event = await eventService.getEventById(eventId)
+
+                const formatEventDate = (dateInput) => {
+                    if (!dateInput) return new Date().toISOString().split('T')[0]
+                    
+                    if (typeof dateInput === 'string') {
+                        if (/^\d{4}-\d{2}-\d{2}$/.test(dateInput)) {
+                            return dateInput
+                        }
+                        if (dateInput.includes('T')) {
+                            return dateInput.split('T')[0]
+                        }
+                    }
+                    
+                    if (dateInput instanceof Date) {
+                        return dateInput.toISOString().split('T')[0]
+                    }
+                    
+                    return new Date().toISOString().split('T')[0]
+                }
                 
                 const eventData = {
                     title: event.title,
                     type: event.type,
-                    date: new Date(event.date),
+                    date: formatEventDate(event.date),
                     coverImage: event.coverImage,
                     gallery: event.gallery || []
                 }
                 
                 setFormData(eventData)
                 setOriginalData(eventData)
+                
+                if (event.coverImage){
+                    setOriginalCoverImage(event.coverImage)
+                    console.log('Imagen portada original: ', event.coverImage)
+                }
+
+                if (event.gallery && event.gallery.length > 0){
+                    const galleryUrls = event.gallery.map(img => img.url)
+                    setOriginalGalleryImages(galleryUrls)
+                    console.log('Galería original: ', galleryUrls.length, 'imágenes')
+                    galleryUrls.forEach((url, index) => {
+                        console.log(` ${index + 1}. ${url}`)
+                    })
+                }
+
                 setError('')
             } catch(err) {
                 setError('Error al cargar el evento: ' + err.message)
@@ -100,11 +137,26 @@ export default function EventEdit() {
         const file = event.target.files[0]
         if (!file) return
 
+        const previousImage = formData.coverImage
+        const previousTrackedImage = uploadedCoverImage
+
         try {
             setUploadingCover(true)
             setError('')
             const uploadedImage = await uploadService.uploadEventImage(file)
             handleInputChange('coverImage', uploadedImage.url)
+            setUploadedCoverImage(uploadedImage.url)
+
+            if (previousImage && previousTrackedImage && previousImage === previousTrackedImage && previousTrackedImage !== originalCoverImage){
+                try {
+                    await uploadService.deleteImageByUrl(previousImage)
+                } catch(deleteError) {
+                    console.warn('No se pudo eliminar imagen anterior: ', deleteError.message)
+                }
+            } else if (previousImage === originalCoverImage){
+                console.log('Imagen anterior es original - no se elimina')
+            }
+
         } catch(err) {
             setError('Error al subir imagen de portada: ' + err.message)
             console.error(err)
@@ -128,6 +180,9 @@ export default function EventEdit() {
             }))
 
             handleInputChange('gallery', [...formData.gallery, ...newGalleryImages])
+
+            const newUrls = uploadedGallery.images.map(img => img.url)
+            setUploadedGalleryImages(prev => [...prev, ...newUrls])
         } catch(err) {
             setError('Error al subir imágenes de galería: ' + err.message)
             console.error(err)
@@ -136,10 +191,57 @@ export default function EventEdit() {
         }
     }
 
-    const removeGalleryImage = (index) => {
+    const removeGalleryImage = async (index) => {
+        const imageToRemove = formData.gallery[index]
+
+        console.log('Eliminando imagen galería')
+        console.log('Índice: ', index)
+        console.log('Imagen a eliminar: ', imageToRemove.url)
+        console.log('Total en galería: ', formData.gallery.length)
+        console.log('Total trackeadas nuevas: ', uploadedGalleryImages.length)
+        console.log('Total originales: ', originalGalleryImages.length)
+
+        const isNewImage = uploadedGalleryImages.includes(imageToRemove.url)
+        const isOriginalImage = originalGalleryImages.includes(imageToRemove.url)
+
+        console.log('Es imagen nueva: ', isNewImage)
+        console.log('Es imagen original: ', isOriginalImage)
+
+        if (isNewImage){
+            try {
+                console.log('Eliminando imagen nueva de cloudinary: ', imageToRemove.url)
+                await uploadService.deleteImageByUrl(imageToRemove.url)
+                console.log('Imagen nueva eliminada de Cloudinary')
+
+                setUploadedGalleryImages(prev => {
+                    const filtered = prev.filter(url => url !== imageToRemove.url)
+                    console.log('Tracking nuevas actualizado: ', filtered.length, 'restantes')
+                    return filtered
+                })
+            } catch(error) {
+                console.warn('No se pudo eliminar imagen de Cloudinary: ', error.message)
+            }
+        } else if (isOriginalImage){
+            console.log('Imagen original - solo se remueve del formulario')
+
+            setRemovedOriginalImages(prev => {
+                if(!prev.includes(imageToRemove.url)){
+                    const updated = [...prev, imageToRemove.url]
+                    console.log('Originales eliminadas: ', updated.length)
+                    return updated
+                }
+                return prev
+            })
+
+            console.log('Se eliminará de Cloudinary al guardar cambios')
+        }
+
         const newGallery = formData.gallery.filter((_, i) => i !== index)
         const reorderedGallery = newGallery.map((img, i) => ({ ...img, order: i }))
         handleInputChange('gallery', reorderedGallery)
+
+        console.log('Nueva galería local: ', reorderedGallery.length, 'imágenes')
+        console.log('Fin eliminación galería\n')
     }
 
     const validateForm = () => {
@@ -163,11 +265,11 @@ export default function EventEdit() {
 
     const hasChanges = () => {
         if (!originalData) return false
-        
+
         return (
             formData.title !== originalData.title ||
             formData.type !== originalData.type ||
-            formData.date.getTime() !== originalData.date.getTime() ||
+            formData.date !== originalData.date ||
             formData.coverImage !== originalData.coverImage ||
             JSON.stringify(formData.gallery) !== JSON.stringify(originalData.gallery)
         )
@@ -182,13 +284,39 @@ export default function EventEdit() {
             setLoading(true)
             setError('')
 
+            console.log('Guardando cambios evento')
+            console.log('Imagenes originales eliminadas: ', removedOriginalImages.length)
+
             const eventData = {
                 ...formData,
                 title: formData.title.trim(),
-                date: formData.date.toISOString()
+            }
+
+            if (removedOriginalImages.length > 0){
+                console.log('Eliminando imágenes originales removidas...')
+                const deletePromises = removedOriginalImages.map(async (imageUrl) => {
+                    try {
+                        console.log('Eliminando imagen original: ', imageUrl)
+                        await uploadService.deleteImageByUrl(imageUrl)
+                        console.log('Imagen original eliminada: ', imageUrl)
+                    } catch(error) {
+                        console.warn('Error eliminando imagen original: ', imageUrl, error.message)
+                    }
+                })
+
+                await Promise.allSettled(deletePromises)
+                console.log('Proceso de eliminación de originales completado')
             }
 
             await eventService.updateEvent(eventId, eventData)
+
+            setUploadedCoverImage(null)
+            setUploadedGalleryImages([])
+            setOriginalCoverImage(null)
+            setOriginalGalleryImages([])
+            setRemovedOriginalImages([])
+
+            console.log('Guardado exitoso\n')
             
             navigate('/dashboard/eventos', { 
                 state: { 
@@ -202,6 +330,67 @@ export default function EventEdit() {
             setLoading(false)
         }
     }
+
+    const handleCancel = async () => {
+        console.log('Cancelando edición')
+        console.log('Imagen portada nueva: ', uploadedCoverImage)
+        console.log('Imagenes galería nuevas: ', uploadedGalleryImages.length)
+        console.log('Originales eliminadas (no se eliminarán): ', removedOriginalImages.length)
+
+        if (uploadedCoverImage && uploadedCoverImage !== originalCoverImage){
+            try {
+                console.log('Eliminando imagen portada nueva al cancelar: ', uploadedCoverImage)
+                await uploadService.deleteImageByUrl(uploadedCoverImage)
+                console.log('Imagen portada nueva eliminada')
+            } catch(error) {
+                console.warn('Error eliminando imagen portada: ', error.message)
+            }
+        }
+
+        if (uploadedGalleryImages.length > 0){
+            console.log('Eliminando imágenes galería nuevas al cancelar...')
+            const deletePromises = uploadedGalleryImages.map(async (imageUrl) => {
+                try {
+                    await uploadService.deleteImageByUrl(imageUrl)
+                    console.log('Imagen galería nueva eliminada: ', imageUrl)
+                } catch(error) {
+                    console.warn('Error elminando imagen galería: ', error.message)
+                }
+            })
+
+            await Promise.allSettled(deletePromises)
+        }
+
+        console.log('Imágenes originales eliminadas se restauran al cancelar')
+
+        console.log('Fin cancelación\n')
+        navigate('/dashboard/eventos')
+    }
+
+    React.useEffect(() => {
+        return () => {
+            const newImages = [
+                ...(uploadedCoverImage && uploadedCoverImage !== originalCoverImage ? [uploadedCoverImage] : []),
+                ...uploadedGalleryImages
+            ]
+
+            if (newImages.length > 0){
+                console.log('Limpieza al desmontar - imágenes nuevas: ', newImages.length)
+                newImages.forEach(async (imageUrl) => {
+                    try {
+                        await uploadService.deleteImageByUrl(imageUrl)
+                        console.log('Imagen nueva eliminada en cleanup: ', imageUrl)
+                    } catch(error) {
+                        console.warn('Error en cleanup: ', error.message)
+                    }
+                })
+            }
+
+            if (removedOriginalImages.length > 0){
+                console.log('Cleanup - No eliminado', removedOriginalImages.length, 'originales (solo al guardar)')
+            }
+        }
+    }, [uploadedCoverImage, originalCoverImage, uploadedGalleryImages, removedOriginalImages])
 
     if (loadingEvent) {
         return (
@@ -293,20 +482,19 @@ export default function EventEdit() {
                                         </FormControl>
                                     </Grid>
                                     
-                                    <Grid item xs={12} sm={6}>
-                                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
-                                            <DatePicker
-                                                label="Fecha del evento"
-                                                value={formData.date}
-                                                onChange={(newValue) => handleInputChange('date', newValue)}
-                                                slotProps={{
-                                                    textField: {
-                                                        fullWidth: true,
-                                                        required: true
-                                                    }
-                                                }}
-                                            />
-                                        </LocalizationProvider>
+                                    <Grid size={{ xs: 12, sm: 6 }}>
+                                        <TextField
+                                            fullWidth
+                                            label="Fecha del evento"
+                                            name="date"
+                                            type="date"
+                                            value={formData.date}
+                                            onChange={(e) => handleInputChange('date', e.target.value)}
+                                            required
+                                            InputLabelProps={{
+                                                shrink: true
+                                            }}
+                                        />
                                     </Grid>
                                 </Grid>
                             </CardContent>
@@ -442,7 +630,7 @@ export default function EventEdit() {
                             <Button
                                 variant="outlined"
                                 startIcon={<CancelIcon />}
-                                onClick={() => navigate('/dashboard/eventos')}
+                                onClick={handleCancel}
                                 disabled={loading}
                             >
                                 Cancelar
