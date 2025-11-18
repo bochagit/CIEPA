@@ -30,7 +30,7 @@ export default function QuienesSomos(){
     return(
         <SectionContainer sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', gap: 3 }}>
             <SectionTitle variant="h3" component="h2">
-                Quiénes somos
+                ¿Qué es el CIEPA?
             </SectionTitle>
             <Typography variant="body1" color="textPrimary" fontSize={'1rem'}>
                 Somos un Centro de Estudios de la Universidad de Buenos Aires integrado por docentes, investigadores, graduada/ os y estudiantes de diversas disciplinas que tenemos interés y/o trabajan en políticas ambientales.

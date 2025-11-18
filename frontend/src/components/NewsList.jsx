@@ -151,6 +151,59 @@ export default function NewsList() {
     }
   }, [dialogs, notifications, currentPage, itemsPerPage]);
 
+  const handleDeleteSelected = React.useCallback(async () => {
+    if (selected.length === 0) return
+
+    const confirmed = await dialogs.confirm(
+      `¿Estás seguro de que queres eliminar ${selected.length} ${selected.length === 1 ? 'noticia' : 'noticias'}?`,
+      'Esta acción no se puede deshacer.'
+    )
+
+    if (confirmed){
+      try {
+        setLoading(true)
+
+        notifications.show(`Eliminando ${selected.length} ${selected.length === 1 ? 'noticia...' : 'noticias...'}`, {
+          severity: 'info',
+          autoHideDuration: 3000
+        })
+
+        const deletePromises = selected.map(id => postService.deletePost(id))
+        const results = await Promise.allSettled(deletePromises)
+
+        const successful = results.filter(result => result.status === 'fulfilled').length
+        const failed = results.filter(result => result.status === 'rejected').length
+
+        setNews(prev => {
+          const successfulIds = selected.filter((_, index) => results[index].status === 'fulfilled')
+          const newNews = prev.filter(item => !successfulIds.includes(item.id))
+
+          const newTotalPages = Math.ceil(newNews.length / itemsPerPage)
+          if (currentPage > newTotalPages && newTotalPages > 0){
+            setCurrentPage(newTotalPages)
+          }
+
+          return newNews
+        })
+
+        setSelected([])
+
+        if (failed === 0){
+          notifications.show(`${successful} noticias eliminadas correctamente`, { severity: 'success' })
+        } else if (successful === 0){
+          notifications.show('Error al eliminar las noticias', { severity: 'error' })
+        } else {
+          notifications.show(`${successful} eliminadas correctamente, ${failed} con errores`, { severity: 'warning' })
+        }
+      } catch(err) {
+      console.error('Error en eliminación masiva: ', err)
+      notifications.show('Error al eliminar las noticias', { severity: 'error' })
+      } finally {
+        setLoading(false)
+      }
+    }
+  }, [selected, dialogs, notifications, currentPage, itemsPerPage])
+
   const handleCreate = () => navigate('/dashboard/news/new');
   const handleEdit = (id) => navigate(`/dashboard/news/${id}/edit`);
   const handleView = (id) => navigate(`/dashboard/news/${id}`);
@@ -213,6 +266,22 @@ export default function NewsList() {
           >
             Nueva Noticia
           </Button>
+
+          {selected.length > 0 && (
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<DeleteIcon />}
+              onClick={handleDeleteSelected}
+              disabled={loading}
+              sx={{
+                display: { xs: 'none', sm: 'flex' },
+                minWidth: 'auto'
+              }}
+            >
+              Eliminar ({selected.length})
+            </Button>
+          )}
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Typography variant="body2" color="text.secondary" sx={{ display: {xs: 'none', sm: 'block'} }}>
@@ -338,6 +407,19 @@ export default function NewsList() {
               <Typography variant="body2">
                 {selected.length} {(selected.length === 1) ? 'seleccionado' : 'seleccionados'}
               </Typography>
+
+              <Box sx={{ display: { xs: 'flex', sm: 'none' }, gap: 1, my: 2 }}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="error"
+                  startIcon={<DeleteIcon />}
+                  onClick={handleDeleteSelected}
+                  disabled={loading}
+                >
+                  Eliminar
+                </Button>
+              </Box>
             </Box>
           )
         }
