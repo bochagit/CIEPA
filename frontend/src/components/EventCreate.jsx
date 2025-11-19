@@ -541,7 +541,7 @@ export default function EventCreate(){
             </form>
 
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={uploadingCover || uploadingGallery}>
-                <Box sx={{ textAling: 'center' }}>
+                <Box sx={{ textAling: 'center', display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
                     <CircularProgress color="inherit" />
                     <Typography variant="h6" sx={{ mt: 2 }}>
                         {uploadingCover ? 'Subiendo imagen de portada...' : 'Subiendo galería...'}
