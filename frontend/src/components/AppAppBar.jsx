@@ -51,7 +51,7 @@ const menuData = {
   ],
   publicaciones: [
     { label: 'Notas', href: '/notas' },
-    { label: 'Informes', href: '/' },
+    { label: 'Informes', href: '/informes' },
     { label: 'Audiovisual', href: '/audiovisual' }
   ],
   actividades: [
