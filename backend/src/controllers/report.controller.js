@@ -77,7 +77,7 @@ export const getAllReports = async (req, res) => {
         const limitNumber = parseInt(limit)
         const skip = (pageNumber - 1) * limitNumber
 
-        let filter = { status }
+        let filter = {}
 
         if (search.trim()){
             filter.$text = { $search: search }

@@ -52,7 +52,7 @@ const reportSchema = new mongoose.Schema({
     timestamps: true
 })
 
-reportSchema.index({ title: 'text', introduction: 'text' })
+reportSchema.index({ title: 'text', introduction: 'text', 'authors.name': 'text' })
 reportSchema.index({ date: -1 })
 
 export default mongoose.model('Report', reportSchema)
