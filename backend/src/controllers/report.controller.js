@@ -52,14 +52,14 @@ export const createReport = async (req, res) => {
         if (error.name === 'ValidationError'){
             const errors = Object.values(error.errors).map(err => err.message)
             return res.status(400).json({
-                succes: false,
+                success: false,
                 message: 'Errores de validación',
                 errors
             })
         }
 
         res.status(500).json({
-            succes: false,
+            success: false,
             message: 'Error interno del servidor'
         })
     }
@@ -71,7 +71,6 @@ export const getAllReports = async (req, res) => {
             page = 1,
             limit = 12,
             search = '',
-            status = 'published'
         } = req.query
 
         const pageNumber = parseInt(page)

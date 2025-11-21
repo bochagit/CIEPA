@@ -349,14 +349,14 @@ export default function ReportCreate() {
                                 </Card>
                             ) : (
                                 <UploadBox component="label">
-                                    <uploadIconContainer>
+                                    <UploadIconContainer>
                                         <ImageIcon sx={{ fontSize: 28, color: 'primary.main' }} />
-                                    </uploadIconContainer>
+                                    </UploadIconContainer>
                                     <Typography variant="h6" sx={{ fontWeight: 500, mb: 1 }}>
                                         Subir imagen de portada
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                                        JGP, PNG o GIF hasta 5MB
+                                        JPG, PNG o GIF hasta 5MB
                                     </Typography>
                                     <Button
                                         variant="outlined"
@@ -429,9 +429,9 @@ export default function ReportCreate() {
                                 </Box>
                             ) : (
                                 <UploadBox component="label">
-                                    <uploadIconContainer>
+                                    <UploadIconContainer>
                                         <PdfIcon sx={{ fontSize: 28, color: 'primary.main' }} />
-                                    </uploadIconContainer>
+                                    </UploadIconContainer>
                                     <Typography variant="h6" sx={{ fontWeight: 500, mb: 1 }}>
                                         Subir archivo PDF
                                     </Typography>

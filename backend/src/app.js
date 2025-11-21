@@ -30,6 +30,6 @@ app.use("/upload", uploadRoutes)
 app.use("/categories", categoryRoutes)
 app.use("/youtube", youtubeRoutes)
 app.use("/eventos", eventRoutes)
-app.use('/api/reports', reportRoutes)
+app.use('/reports', reportRoutes)
 
 export default app
