@@ -1,4 +1,4 @@
-import Report from "../models/Report"
+import Report from "../models/Report.js"
 import { cloudinary } from '../config/cloudinary.js'
 
 export const createReport = async (req, res) => {
@@ -42,7 +42,7 @@ export const createReport = async (req, res) => {
         console.log('Fin creación\n')
 
         res.status(201).json({
-            succes: true,
+            success: true,
             report: savedReport,
             message: 'Informe creado exitosamente'
         })

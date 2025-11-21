@@ -20,6 +20,8 @@ import Conversatorios from './components/Conversatorios';
 import Formaciones from './components/Formaciones';
 import Jornadas from './components/Jornadas';
 import Actividades from './components/Actividades';
+import Informes from './components/Informes';
+import InformeShow from './components/InformeShow';
 
 export default function App() {
   return (
@@ -72,6 +74,16 @@ export default function App() {
         <Route path="/notas/:id" element={
           <Layout>
             <Note />
+          </Layout>
+        } />
+        <Route path="/informes" element={
+          <Layout>
+            <Informes />
+          </Layout>
+        } />
+        <Route path="/informes/:id" element={
+          <Layout>
+            <InformeShow />
           </Layout>
         } />
         <Route path="/audiovisual" element={

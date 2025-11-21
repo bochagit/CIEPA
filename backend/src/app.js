@@ -7,6 +7,7 @@ import uploadRoutes from './routes/upload.routes.js'
 import categoryRoutes from './routes/category.routes.js'
 import youtubeRoutes from './routes/youtube.routes.js'
 import eventRoutes from './routes/event.routes.js'
+import reportRoutes from './routes/report.routes.js'
 
 const app = express()
 
@@ -29,5 +30,6 @@ app.use("/upload", uploadRoutes)
 app.use("/categories", categoryRoutes)
 app.use("/youtube", youtubeRoutes)
 app.use("/eventos", eventRoutes)
+app.use('/api/reports', reportRoutes)
 
 export default app

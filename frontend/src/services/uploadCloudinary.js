@@ -108,12 +108,101 @@ export const uploadService = {
         }
     },
 
+    uploadReportImage: async (file) => {
+        try {
+            const formData = new FormData()
+            formData.append('image', file)
+
+            console.log('Subiendo imagen de informe...')
+
+            const response = await api.post('/upload/informe', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+
+            console.log('Imagen de informe subida: ', response.data.url)
+            return response.data
+        } catch(error) {
+            console.error('Error subiendo imagen de informe: ', error)
+            throw new Error(error.response?.data?.message || 'Error al subir la imagen')
+        }
+    },
+
+    uploadPDF: async (file, onProgress = null) => {
+        try {
+            console.log('Subiendo PDF')
+            console.log('Archivo: ', file.name, 'Tamaño: ', (file.size / 1024 / 1024).toFixed(2), 'MB')
+
+            if (file.type !== 'application/pdf'){
+                throw new Error('Solo se permiten archivos PDF')
+            }
+
+            const maxSize = 50 * 1024 * 1024
+            if (file.size > maxSize){
+                throw new Error('El archivo no puede pesar mas de 50MB')
+            }
+
+            const formData = new FormData()
+            formData.append('pdf', file)
+
+            const response = await api.post('/upload/pdf', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                onUploadProgress: (progressEvent) => {
+                    if (onProgress){
+                        const percentCompleted = Math.round(
+                            (progressEvent.loaded * 100) / progressEvent.total
+                        )
+                        onProgress(percentCompleted)
+                    }
+                }
+            })
+
+            console.log('PDF subido exitosamente')
+            console.log('URL: ', response.data.url)
+
+            return {
+                url: response.data.url,
+                publicId: response.data.publicId,
+                originalName: file.name,
+                size: file.size
+            }
+        } catch(error) {
+            console.error('Error subiendo PDF: ', error)
+            throw new Error(error.response?.data?.message || error.message || 'Error al subir PDF')
+        }
+    },
+
+    deleteFileByUrl: async (fileUrl) => {
+        try {
+            console.log('Eliminando archivo: ', fileUrl)
+
+            const publicId = extractPublicIdFromUrl(fileUrl)
+            if (!publicId) {
+                throw new Error('No se puede extraer el publicId de la URL')
+            }
+
+            console.log('Public ID extraído: ', publicId)
+
+            const encodedPublicId = encodeURIComponent(publicId)
+            const response = await api.delete(`/upload/file/${encodedPublicId}`)
+
+            console.log('Archivo eliminado del servidor')
+            return response.data
+        } catch(error) {
+            console.error('Error eliminando archivo: ', error)
+            throw error
+        }
+    },
+
     deleteImage: async (publicId) => {
         try {
             console.log('Eliminando imagen: ', publicId)
 
             const encodedPublicId = encodeURIComponent(publicId)
-            const response = await api.delete(`/upload/${encodedPublicId}`)
+            const response = await api.delete(`/upload/image/${encodedPublicId}`)
 
             console.log('Imagen eliminada')
             return response.data

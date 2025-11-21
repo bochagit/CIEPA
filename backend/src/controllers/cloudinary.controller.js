@@ -81,6 +81,87 @@ export const uploadEventGallery = async (req, res) => {
     }
 }
 
+export const uploadReportImage = async (req, res) => {
+    try {
+        if (!req.file){
+            return res.status(400).json({ message: 'No se subió ningún archivo' })
+        }
+
+        console.log('Imagen de informe subida: ', req.file.path)
+
+        res.json({
+            message: 'Imagen subida exitosamente',
+            url: req.file.path,
+            publicId: req.file.filename
+        })
+    } catch(error) {
+        console.error('Error subiendo imagen de informe: ', error)
+        res.status(500).json({ message: 'Error al subir la imagen' })
+    }
+}
+
+export const uploadPDFFile = async (req, res) => {
+    try {
+        if (!req.file){
+            return res.status(400).json({ message: 'No se subió ningún archivo PDF' })
+        }
+
+        console.log('PDF subido: ', req.file.path)
+
+        res.json({
+            message: 'PDF subido exitosamente',
+            url: req.file.path,
+            publicId: req.file.filename,
+            originalName: req.file.originalname,
+            size: req.file.size
+        })
+    } catch(error) {
+        console.error('Error subiendo PDF: ', error)
+        res.status(500).json({ message: 'Error al subir el PDF' })
+    }
+}
+
+export const deleteFile = async (req, res) => {
+    try {
+        const { publicId } = req.params
+        const { resourceType = 'image' } = req.body || req.query
+
+        let detectedResourceType = resourceType
+        if (!resourceType){
+            detectedResourceType = publicId.includes('pdf') ? 'raw' : 'image'
+        }
+
+        if (!publicId){
+            return res.status(400).json({
+                message: 'Public ID es requerido'
+            })
+        }
+
+        console.log('Eliminando archivo: ', publicId, 'Tipo: ', detectedResourceType)
+        
+        const result = await cloudinary.uploader.destroy(publicId, {
+            resource_type: detectedResourceType
+        })
+
+        if (result.result === 'ok'){
+            console.log('Archivo eliminado exitosamente')
+            res.json({
+                message: 'Archivo eliminado exitosamente'
+            })
+        } else {
+            console.warn('Archivo no encontrado o ya eliminado')
+            res.json({
+                message: 'Archivo no encontrado o ya eliminado'
+            })
+        }
+    } catch(error) {
+        console.error('Error eliminando archivo', error)
+        res.status(500).json({
+            message: 'Error eliminando archivo'
+        })
+    }
+}
+
 export const deleteImage = async (req, res) => {
     try {
 

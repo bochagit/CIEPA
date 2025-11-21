@@ -20,6 +20,10 @@ import {
   sidebarCustomizations,
   formInputCustomizations,
 } from './theme/customizations';
+import ReportCreate from './components/ReportCreate';
+import ReportsList from './components/ReportsList';
+import ReportShow from './components/ReportShow';
+import ReportEdit from './components/ReportEdit';
 
 const themeComponents = {
   ...dataGridCustomizations,
@@ -46,6 +50,10 @@ export default function CrudDashboard(props) {
               <Route path="/eventos/:eventId" element={<EventShow />} />
               <Route path="/eventos/new" element={<EventCreate />} />
               <Route path="/eventos/:eventId/edit" element={<EventEdit />} />
+              <Route path="/informes" element={<ReportsList />} />
+              <Route path="/informes/new" element={<ReportCreate />} />
+              <Route path="/informes/:reportId" element={<ReportShow />} />
+              <Route path="/informes/edit/:reportId" element={<ReportEdit />} />
             </Routes>
           </DashboardLayout>
         </DialogsProvider>

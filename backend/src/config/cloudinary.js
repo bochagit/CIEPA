@@ -67,6 +67,30 @@ const eventStorage = new CloudinaryStorage({
     }
 })
 
+const reportStorage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'ciepa/reports/covers',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        transformation: [
+            { width: 1200, height: 800, crop: 'limit' },
+            { quality: 'auto' },
+            { fetch_format: 'auto' }
+        ]
+    }
+})
+
+const pdfStorage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'ciepa/reports/pdfs',
+        allowed_formats: ['pdf'],
+        resource_type: 'raw',
+        use_filename: true,
+        unique_filename: true
+    }
+})
+
 export const uploadPost = multer({
     storage: storage,
     limits: {
@@ -94,5 +118,26 @@ export const uploadEventGallery = multer({
         fileSize: 5 * 1024 * 1024
     }
 }).array('images', 10)
+
+export const uploadReport = multer({
+    storage: reportStorage,
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    }
+}).single('image')
+
+export const uploadPDF = multer({
+    storage: pdfStorage,
+    limits: {
+        fileSize: 50 * 1024 * 1024
+    },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'application/pdf'){
+            cb(null, true)
+        } else {
+            cb(new Error('Solo se permiten archivos PDF'), false)
+        }
+    }
+}).single('pdf')
 
 export { cloudinary }

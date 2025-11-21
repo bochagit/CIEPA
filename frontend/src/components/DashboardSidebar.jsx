@@ -20,6 +20,7 @@ import {
   getDrawerSxTransitionMixin,
   getDrawerWidthTransitionMixin,
 } from '../mixins';
+import PictureAsPdf from '@mui/icons-material/PictureAsPdf';
 
 function DashboardSidebar({
   expanded = true,
@@ -157,6 +158,15 @@ function DashboardSidebar({
               icon={<EventIcon />}
               href="/dashboard/eventos"
               selected={!!matchPath('/dashboard/eventos', pathname)}
+            />
+            <DashboardSidebarDividerItem />
+            <DashboardSidebarHeaderItem>Informes</DashboardSidebarHeaderItem>
+            <DashboardSidebarPageItem
+              id="informes"
+              title="Gestionar informes"
+              icon={<PictureAsPdf />}
+              href="/dashboard/informes"
+              selected={!!matchPath('/dashboard/informes', pathname)}
             />
           </List>
         </Box>
