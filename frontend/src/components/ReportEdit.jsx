@@ -25,10 +25,6 @@ import {
     Person as PersonIcon,
     ArrowBack as ArrowBackIcon
 } from '@mui/icons-material'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
-import { es } from 'date-fns/locale'
 import { useNavigate, useParams } from 'react-router-dom'
 import { uploadService } from '../services/uploadCloudinary'
 import { reportService } from '../services/reportService'
@@ -75,13 +71,14 @@ const UploadIconContainer = styled(Box)(({ theme }) => ({
 export default function ReportEdit() {
     const navigate = useNavigate()
     const { reportId } = useParams()
+    const imageInputRef = React.useRef(null)
+    const pdfInputRef = React.useRef(null)
 
     const [formData, setFormData] = React.useState({
         title: '',
         introduction: '',
-        date: null,
+        date: new Date().toISOString().split('T')[0],
         authors: [{ name: '' }],
-        status: 'published'
     })
     const [originalData, setOriginalData] = React.useState(null)
     const [coverImage, setCoverImage] = React.useState(null)
@@ -103,36 +100,12 @@ export default function ReportEdit() {
         }
     }
 
-    const formatDateForEdit = (dateString) => {
-        if (!dateString) return ''
+    const triggerImageSelect = () => {
+        imageInputRef.current?.click()
+    }
 
-        console.log('Fecha original en lista: ', dateString)
-        try {
-        if (typeof dateString === 'string' && dateString.includes('T')){
-            const dateOnly = dateString.split('T')[0]
-            const [year, month, day] = dateOnly.split('-')
-            const formatted = `${day}/${month}/${year}`
-            console.log('Fecha formateada para mostrar: ', formatted)
-            return formatted
-        }
-
-        if (typeof dateString === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateString)){
-            const [year, month, day] = dateString.split('-')
-            return `${day}/${month}/${year}`
-        }
-
-        if (dateString instanceof Date){
-            const day = String(dateString.getDate()).padStart(2, '0')
-            const month = String(dateString.getMonth() + 1).padStart(2, '0')
-            const year = dateString.getFullYear();
-            return `${day}/${month}/${year}`
-        }
-
-        return dateString
-        } catch(error) {
-        console.warn('Error formateando fecha: ', error)
-        return dateString
-        }
+    const triggerPdfSelect = () => {
+        pdfInputRef.current?.click()
     }
 
     React.useEffect(() => {
@@ -141,14 +114,39 @@ export default function ReportEdit() {
                 setLoadingData(true)
                 
                 const report = await reportService.getReportById(reportId)
+
+                const formatDateSafely = (dateInput) => {
+                    if (!dateInput) return new Date().toISOString().split('T')[0]
+                    
+                    try {
+                        if (typeof dateInput === 'string'){
+                            if(/^\d{4}-\d{2}-\d{2}$/.test(dateInput)){
+                                return dateInput
+                            }
+                            
+                            if(dateInput.includes('T')){
+                                const dateOnly = dateInput.split('T')[0]
+                                return dateOnly
+                            }
+                        }
+
+                        if (dateInput instanceof Date){
+                            return dateInput.toISOString().split('T')[0]
+                        }
+                    } catch(error) {
+                        console.warn('Error parseando fecha: ', error)
+                        return new Date().toISOString().split('T')[0]
+                    }
+
+                    return new Date().toISOString().split('T')[0]
+                }
                 
                 setOriginalData(report)
                 setFormData({
                     title: report.title || '',
                     introduction: report.introduction || '',
-                    date: formatDateForEdit(report.date),
+                    date: formatDateSafely(report.date),
                     authors: report.authors?.length > 0 ? report.authors : [{ name: '' }],
-                    status: report.status || 'published'
                 })
                 
                 if (report.coverImage) {
@@ -173,10 +171,11 @@ export default function ReportEdit() {
         }
     }, [reportId, navigate])
 
-    const handleInputChange = (field, value) => {
-        setFormData(prev => ({ ...prev, [field]: value }))
-        if (errors[field]) {
-            setErrors(prev => ({ ...prev, [field]: '' }))
+    const handleInputChange = (event) => {
+        const { name, value, type, checked } = event.target
+        setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: '' }))
         }
     }
 
@@ -255,8 +254,6 @@ export default function ReportEdit() {
         setLoading(true)
 
         try {
-            showNotification('Actualizando informe...', { severity: 'info' })
-
             let finalCoverImage = originalData.coverImage
             let finalPdfFile = originalData.pdfFile
 
@@ -302,13 +299,11 @@ export default function ReportEdit() {
                 date: formData.date,
                 coverImage: finalCoverImage,
                 pdfFile: finalPdfFile,
-                status: formData.status
             }
 
             const response = await reportService.updateReport(reportId, updateData)
 
             if (response.success) {
-                showNotification('Informe actualizado exitosamente', { severity: 'success' })
                 navigate('/dashboard/informes')
             }
 
@@ -363,8 +358,9 @@ export default function ReportEdit() {
                             <TextField
                                 fullWidth
                                 label="Título del Informe"
+                                name="title"
                                 value={formData.title}
-                                onChange={(e) => handleInputChange('title', e.target.value)}
+                                onChange={handleInputChange}
                                 error={!!errors.title}
                                 helperText={errors.title}
                                 disabled={loading}
@@ -372,37 +368,21 @@ export default function ReportEdit() {
                         </Grid>
 
                         <Grid size={{ xs: 12, md: 6 }}>
-                            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
-                                <DatePicker
-                                    label="Fecha"
-                                    value={formData.date}
-                                    onChange={(date) => handleInputChange('date', date)}
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            fullWidth
-                                            error={!!errors.date}
-                                            helperText={errors.date}
-                                        />
-                                    )}
-                                    disabled={loading}
-                                />
-                            </LocalizationProvider>
-                        </Grid>
-
-                        <Grid size={{ xs: 12, md: 6 }}>
-                            <TextField
+                            <TextField 
                                 fullWidth
-                                select
-                                label="Estado"
-                                value={formData.status}
-                                onChange={(e) => handleInputChange('status', e.target.value)}
+                                label="Fecha"
+                                name="date"
+                                type="date"
+                                value={formData.date}
+                                onChange={handleInputChange}
+                                error={!!errors.date}
+                                helperText={errors.date}
                                 disabled={loading}
-                                SelectProps={{ native: true }}
-                            >
-                                <option value="published">Publicado</option>
-                                <option value="draft">Borrador</option>
-                            </TextField>
+                                required
+                                InputLabelProps={{
+                                    shrink: true
+                                }}
+                            />
                         </Grid>
 
                         <Grid size={{ xs: 12 }}>
@@ -464,10 +444,10 @@ export default function ReportEdit() {
                             <TextField
                                 fullWidth
                                 multiline
-                                rows={4}
                                 label="Introducción"
+                                name="introduction"
                                 value={formData.introduction}
-                                onChange={(e) => handleInputChange('introduction', e.target.value)}
+                                onChange={handleInputChange}
                                 error={!!errors.introduction}
                                 helperText={errors.introduction}
                                 disabled={loading}
@@ -490,24 +470,18 @@ export default function ReportEdit() {
                                     />
                                     <CardActions sx={{ justifyContent: 'center', py: 2 }}>
                                         <Button
-                                            component="label"
                                             variant="outlined"
                                             startIcon={<ImageIcon />}
                                             disabled={loading}
+                                            onClick={triggerImageSelect}
                                             sx={{ fontWeight: 500 }}
                                         >
                                             Cambiar Imagen
-                                            <input
-                                                type="file"
-                                                hidden
-                                                accept="image/*"
-                                                onChange={handleImageSelect}
-                                            />
                                         </Button>
                                     </CardActions>
                                 </Card>
                             ) : (
-                                <UploadBox component="label">
+                                <UploadBox onClick={triggerImageSelect}>
                                     <UploadIconContainer>
                                         <ImageIcon sx={{ fontSize: 28, color: 'primary.main' }} />
                                     </UploadIconContainer>
@@ -524,14 +498,15 @@ export default function ReportEdit() {
                                     >
                                         Seleccionar archivo
                                     </Button>
-                                    <input
-                                        type="file"
-                                        hidden
-                                        accept="image/*"
-                                        onChange={handleImageSelect}
-                                    />
                                 </UploadBox>
                             )}
+                            <input
+                                ref={imageInputRef}
+                                type="file"
+                                hidden
+                                accept="image/*"
+                                onChange={handleImageSelect}
+                            />
 
                             {errors.coverImage && (
                                 <Alert severity="error" sx={{ mt: 2 }}>
@@ -592,7 +567,7 @@ export default function ReportEdit() {
                                     border: '2px solid',
                                     borderColor: 'success.main',
                                     borderRadius: 2,
-                                    backgroundColor: 'success.main + "08"'
+                                    backgroundColor: 'action.hover'
                                 }}>
                                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                                         <PdfIcon sx={{ fontSize: 48, color: 'error.main', mr: 2 }} />
@@ -607,10 +582,10 @@ export default function ReportEdit() {
                                     </Box>
 
                                     <Button
-                                        component="label"
                                         variant="outlined"
                                         startIcon={<UploadIcon />}
                                         disabled={loading}
+                                        onClick={triggerPdfSelect}
                                         size="small"
                                     >
                                         Reemplazar PDF
@@ -623,7 +598,7 @@ export default function ReportEdit() {
                                     </Button>
                                 </Box>
                             ) : (
-                                <UploadBox component="label">
+                                <UploadBox onClick={triggerPdfSelect}>
                                     <UploadIconContainer>
                                         <PdfIcon sx={{ fontSize: 28, color: 'primary.main' }} />
                                     </UploadIconContainer>
@@ -640,14 +615,16 @@ export default function ReportEdit() {
                                     >
                                         Seleccionar archivo
                                     </Button>
-                                    <input
-                                        type="file"
-                                        hidden
-                                        accept=".pdf,application/pdf"
-                                        onChange={handlePdfSelect}
-                                    />
                                 </UploadBox>
                             )}
+
+                            <input
+                                ref={pdfInputRef}
+                                type="file"
+                                hidden
+                                accept=".pdf,application/pdf"
+                                onChange={handlePdfSelect}
+                            />
 
                             {errors.pdfFile && (
                                 <Alert severity="error" sx={{ mt: 2 }}>

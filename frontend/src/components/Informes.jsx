@@ -5,14 +5,10 @@ import {
     Typography,
     Grid,
     Card,
-    CardMedia,
     CardContent,
     CardActions,
-    Button,
     Skeleton,
     Alert,
-    Chip,
-    IconButton,
     styled
 } from '@mui/material'
 import {
@@ -44,34 +40,6 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
   }
 }));
 
-const ReportCard = styled(Card)(({ theme }) => ({
-  height: '100%',
-  cursor: 'pointer',
-  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
-  '&:hover': {
-    transform: 'translateY(-8px)',
-    boxShadow: theme.shadows[8],
-  },
-  position: 'relative',
-  overflow: 'hidden'
-}));
-
-const DocumentBadge = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  top: 12,
-  left: 12,
-  backgroundColor: 'rgba(0, 0, 0, 0.7)',
-  color: 'white',
-  padding: '4px 8px',
-  borderRadius: 4,
-  fontSize: '0.75rem',
-  fontWeight: 600,
-  display: 'flex',
-  alignItems: 'center',
-  gap: 4,
-  zIndex: 2
-}));
-
 export default function Informes(){
     const navigate = useNavigate()
     const [reports, setReports] = React.useState([])
@@ -81,13 +49,11 @@ export default function Informes(){
     const formatDateForDisplay = (dateString) => {
         if (!dateString) return ''
 
-        console.log('Fecha original en lista: ', dateString)
         try {
             if (typeof dateString === 'string' && dateString.includes('T')){
                 const dateOnly = dateString.split('T')[0]
                 const [year, month, day] = dateOnly.split('-')
                 const formatted = `${day}/${month}/${year}`
-                console.log('Fecha formateada para mostrar: ', formatted)
                 return formatted
             }
 
@@ -136,24 +102,6 @@ export default function Informes(){
     navigate(`/informes/${reportId}`)
   }
 
-  const handleDownload = async (e, report) => {
-    e.stopPropagation()
-
-    try {
-        await reportService.incrementDownloads(report._id)
-
-        const link = document.createElement('a')
-        link.href = report.pdfFile.url
-        link.download = report.pdfFile.originalName || `${report.title}.pdf`
-        link.target = '_blank'
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-    } catch(error) {
-        console.error('Error descargando archivo: ', error)
-    }
-  }
-
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
         <SectionTitle variant="h3" component="h2">
@@ -188,28 +136,74 @@ export default function Informes(){
             <Grid container spacing={3}>
                 {reports.map((report) => (
                     <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={report._id}>
-                        <ReportCard onClick={() => handleReportClick(report._id)}>
-                            <Box sx={{ position: 'relative' }}>
-                                <DocumentBadge>
-                                    DOCUMENTO
-                                </DocumentBadge>
-                                <CardMedia
-                                    component="img"
-                                    height="200"
-                                    image={report.coverImage}
-                                    alt={report.title}
-                                    sx={{ objectFit: 'cover' }}
-                                />
+                        <Box 
+                            onClick={() => handleReportClick(report._id)}
+                            sx={{
+                                position: 'relative',
+                                width: '100%',
+                                height: { xs: 280, md: 320 },
+                                overflow: 'hidden',
+                                boxShadow: 3,
+                                cursor: 'pointer',
+                                transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+                                '&:hover': {
+                                    transform: 'translateY(-8px)',
+                                    boxShadow: 6
+                                }
+                            }}
+                        >
+                            <Box sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                backgroundImage: `url(${report.coverImage})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat'
+                            }} />
+
+                            <Box sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                backgroundColor: 'rgba(0, 0, 0, 0.5)'
+                            }} />
+
+                            <Box sx={{
+                                position: 'absolute',
+                                top: 12,
+                                left: 12,
+                                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                color: 'white',
+                                padding: '4px 8px',
+                                fontSize: '0.75rem',
+                                fontWeight: 600,
+                                zIndex: 2
+                            }}>
+                                DOCUMENTO
                             </Box>
 
-                            <CardContent sx={{ flexGrow: 1, pb: 1 }}>
-                                <Typography
-                                    variant="h6"
-                                    component="h3"
-                                    gutterBottom
+                            <Box sx={{
+                                position: 'absolute',
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                p: { xs: 2, md: 3 },
+                                background: 'linear-gradient(transparent, rgba(0, 0, 0, 0.8))',
+                                color: 'white'
+                            }}>
+                                <Typography 
+                                    variant="h6" 
+                                    component="h3" 
+                                    gutterBottom 
                                     sx={{
-                                        fontSize: '1rem',
                                         fontWeight: 600,
+                                        mb: 1.5,
+                                        fontSize: { xs: '1rem', md: '1.1rem' },
                                         lineHeight: 1.3,
                                         display: '-webkit-box',
                                         WebkitLineClamp: 2,
@@ -220,19 +214,23 @@ export default function Informes(){
                                     {report.title}
                                 </Typography>
 
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: .5, mb: 1 }}>
-                                    <CalendarIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-                                    <Typography variant="caption" color="text.secondary">
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+                                    <CalendarIcon sx={{ fontSize: 14, opacity: 0.8 }} />
+                                    <Typography variant="caption" sx={{ 
+                                        opacity: 0.9,
+                                        fontSize: '0.75rem'
+                                    }}>
                                         {formatDateForDisplay(report.date)}
                                     </Typography>
                                 </Box>
-                                
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: .5, mb: 1 }}>
-                                    <PersonIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>
+                                    <PersonIcon sx={{ fontSize: 14, opacity: 0.8 }} />
                                     <Typography
                                         variant="caption"
-                                        color="text.secondary"
                                         sx={{
+                                            opacity: 0.9,
+                                            fontSize: '0.75rem',
                                             display: '-webkit-box',
                                             WebkitLineClamp: 1,
                                             WebkitBoxOrient: 'vertical',
@@ -245,48 +243,21 @@ export default function Informes(){
 
                                 <Typography
                                     variant="body2"
-                                    color="text.secondary"
                                     sx={{
+                                        opacity: 0.8,
+                                        fontSize: '0.8rem',
+                                        lineHeight: 1.4,
                                         display: '-webkit-box',
                                         WebkitLineClamp: 2,
                                         WebkitBoxOrient: 'vertical',
                                         overflow: 'hidden',
-                                        minHeight: '2.4rem'
+                                        mb: 1
                                     }}
                                 >
                                     {report.introduction}
                                 </Typography>
-                            </CardContent>
-
-                            <CardActions sx={{ justifyContent: 'space-between', px: 2, pb: 2 }}>
-                                <Button
-                                    size="small"
-                                    startIcon={<ViewIcon />}
-                                    variant="outlined"
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleReportClick(report._id)
-                                    }}
-                                >
-                                    Ver
-                                </Button>
-
-                                <IconButton
-                                    size="small"
-                                    color="primary"
-                                    onClick={(e) => handleDownload(e, report)}
-                                    sx={{
-                                        backgroundColor: 'action.hover',
-                                        '&:hover': {
-                                            backgroundColor: 'primary.main',
-                                            color: 'primary.contrastText'
-                                        }
-                                    }}
-                                >
-                                    <DownloadIcon />
-                                </IconButton>
-                            </CardActions>
-                        </ReportCard>
+                            </Box>
+                        </Box>
                     </Grid>
                 ))}
             </Grid>

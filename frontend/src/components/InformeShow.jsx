@@ -49,8 +49,8 @@ const HeroSection = styled(Box)(({ theme }) => ({
 const DocumentBadge = styled(Box)(({ theme }) => ({
     display: 'inline-flex',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    color: theme.palette.primary.main,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    color: theme.palette.primary,
     padding: '8px 16px',
     borderRadius: theme.spacing(1),
     fontSize: '0.875rem',
@@ -134,17 +134,29 @@ export default function InformeShow(){
         if (!report) return
 
         try {
-            await reportService.incrementDownloads(report._id)
+            const response = await fetch(report.pdfFile.url)
+            const blob = await response.blob()
+
+            const blobUrl = window.URL.createObjectURL(blob)
 
             const link = document.createElement('a')
-            link.href = report.pdfFile.url
+            link.href = blobUrl
             link.download = report.pdfFile.originalName || `${report.title}.pdf`
             link.target = '_blank'
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)
+
+            window.URL.revokeObjectURL(blobUrl)
+
+            try {
+                await reportService.incrementDownloads(report._id)
+            } catch(error) {
+                console.warn('Error incrementando descargas: ', error)
+            }
         } catch(error) {
             console.error('Error descargando archivo: ', error)
+            alert('Error al descargar el archivo. Por favor, intenta nuevamente.')
         }
     }
 
@@ -195,7 +207,7 @@ export default function InformeShow(){
             <HeroSection sx={{ backgroundImage: `url(${report.coverImage})` }}>
                 <Box sx={{ position: 'relative', zIndex: 2, textAlign: 'center', color: '#fff' }}>
                     <DocumentBadge>
-                        📄 DOCUMENTO
+                        📄 Documento
                     </DocumentBadge>
                     <Typography variant="h2" component="h1" gutterBottom sx={{
                         fontWeight: 700,

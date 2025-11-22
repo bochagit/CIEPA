@@ -34,13 +34,11 @@ export default function ReportsList() {
     const formatDateForDisplay = (dateString) => {
         if (!dateString) return ''
 
-        console.log('Fecha original en lista: ', dateString)
         try {
         if (typeof dateString === 'string' && dateString.includes('T')){
             const dateOnly = dateString.split('T')[0]
             const [year, month, day] = dateOnly.split('-')
             const formatted = `${day}/${month}/${year}`
-            console.log('Fecha formateada para mostrar: ', formatted)
             return formatted
         }
 
@@ -58,8 +56,8 @@ export default function ReportsList() {
 
         return dateString
         } catch(error) {
-        console.warn('Error formateando fecha: ', error)
-        return dateString
+            console.warn('Error formateando fecha: ', error)
+            return dateString
         }
     }
 
@@ -202,22 +200,37 @@ export default function ReportsList() {
     const handleView = (id) => navigate(`/dashboard/informes/${id}`);
 
     const handleDownload = async (report) => {
+    try {
+        const response = await fetch(report.pdfFile.url)
+        
+        if (!response.ok) {
+            throw new Error('Error al obtener el archivo')
+        }
+        
+        const blob = await response.blob()
+        const blobUrl = window.URL.createObjectURL(blob)
+
+        const link = document.createElement('a')
+        link.href = blobUrl
+        link.download = report.pdfFile.originalName || `${report.title}.pdf`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+
+        window.URL.revokeObjectURL(blobUrl)
+
         try {
             await reportService.incrementDownloads(report._id)
-
-            const link = document.createElement('a')
-            link.href = report.pdfFile.url
-            link.download = report.pdfFile.originalName || `${report.title}.pdf`
-            link.target = '_blank'
-            document.body.appendChild(link)
-            link.click()
-            document.body.removeChild(link)
-
-            notifications.show('Descarga iniciada', { severity: 'success' })
-        } catch(error) {
-            console.error('Error descargando archivo:', error)
-            notifications.show('Error al descargar archivo', { severity: 'error' })
+            notifications.show('Descarga completada', { severity: 'success' })
+        } catch (error) {
+            console.warn('Error incrementando descargas:', error)
+            notifications.show('Error al incrementar descargas', { severity: 'error' })
         }
+        
+    } catch (error) {
+        console.error('Error descargando archivo:', error)
+        notifications.show('Error al descargar archivo', { severity: 'error' })
+    }
     }
 
     const handleSelectAll = (event) => {
@@ -237,22 +250,6 @@ export default function ReportsList() {
     const handlePageChange = (event, value) => {
         setCurrentPage(value);
     }
-
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'published': return 'success';
-            case 'draft': return 'warning';
-            default: return 'default';
-        }
-    };
-
-    const getStatusLabel = (status) => {
-        switch (status) {
-            case 'published': return 'Publicado';
-            case 'draft': return 'Borrador';
-            default: return status;
-        }
-    };
 
     const currentPageSelected = currentReports.every(item => selected.includes(item._id));
     const currentPageIndeterminate = currentReports.some(item => selected.includes(item._id)) && !currentPageSelected;
@@ -354,7 +351,6 @@ export default function ReportsList() {
                                     <TableCell sx={{ minWidth: {xs: 120, md: 200} }}>Título</TableCell>
                                     <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Autores</TableCell>
                                     <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Fecha</TableCell>
-                                    <TableCell>Estado</TableCell>
                                     <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Descargas</TableCell>
                                     <TableCell align="center" sx={{ display: { xs: 'none', md:'table-cell' } }}>Acciones</TableCell>
                                 </TableRow>
@@ -406,13 +402,6 @@ export default function ReportsList() {
                                             <Typography variant="body2" noWrap>
                                                 {formatDateForDisplay(row.date)}
                                             </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Chip 
-                                                label={getStatusLabel(row.status)} 
-                                                color={getStatusColor(row.status)} 
-                                                size="small" 
-                                            />
                                         </TableCell>
                                         <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                                             <Typography variant="body2">

@@ -9,7 +9,6 @@ import {
     Grid,
     Alert,
     IconButton,
-    Chip,
     LinearProgress,
     Card,
     CardMedia,
@@ -24,14 +23,11 @@ import {
     Image as ImageIcon,
     Person as PersonIcon
 } from '@mui/icons-material'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
-import { es } from 'date-fns/locale'
 import { useNavigate } from 'react-router-dom'
 import { uploadService } from '../services/uploadCloudinary'
 import { reportService } from '../services/reportService'
 import useNotifications from '../hooks/useNotifications/useNotifications'
+import { format, parseISO } from 'date-fns'
 
 const UploadBox = styled(Box)(({ theme }) => ({
     border: `2px dashed ${theme.palette.divider}`,
@@ -40,7 +36,7 @@ const UploadBox = styled(Box)(({ theme }) => ({
     textAlign: 'center',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: 'transparent',
     position: 'relative',
     minHeight: 200,
     display: 'flex',
@@ -75,11 +71,13 @@ const UploadIconContainer = styled(Box)(({ theme }) => ({
 export default function ReportCreate() {
     const navigate = useNavigate()
     const notifications = useNotifications()
+    const imageInputRef = React.useRef(null)
+    const pdfInputRef = React.useRef(null)
 
     const [formData, setFormData] = React.useState({
         title: '',
         introduction: '',
-        date: null,
+        date: new Date().toISOString().split('T')[0],
         authors: [{ name: '' }]
     })
     const [coverImage, setCoverImage] = React.useState(null)
@@ -89,11 +87,27 @@ export default function ReportCreate() {
     const [uploadProgress, setUploadProgress] = React.useState({ image: 0, pdf: 0 })
     const [errors, setErrors] = React.useState({})
 
-    const handleInputChange = (field, value) => {
-        setFormData(prev => ({ ...prev, [field]: value }))
-        if (errors[field]) {
-            setErrors(prev => ({ ...prev, [field]: '' }))
-        }
+    const triggerImageSelect = () => {
+        imageInputRef.current?.click()
+    }
+
+    const triggerPdfSelect = () => {
+        pdfInputRef.current?.click()
+    }
+
+    const handleInputChange = (event) => {
+    const { name, value, type, checked } = event.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+    };
+
+    const handleFieldChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+    if (errors[field]) {
+        setErrors(prev => ({ ...prev, [field]: '' }))
+    }
     }
 
     const handleAuthorChange = (index, value) => {
@@ -161,6 +175,41 @@ export default function ReportCreate() {
 
         setLoading(true)
 
+        const formatDateSafely = (dateInput) => {
+            if (!dateInput) return format(new Date(), 'yyyy-MM-dd')
+
+            console.log('Procesando fecha original: ', dateInput)
+            
+            try {
+            if (typeof dateInput === 'string'){
+                if(/^\d{4}-\d{2}-\d{2}$/.test(dateInput)){
+                console.log('Fecha ya en formato correcto: ', dateInput)
+                return dateInput
+                }
+                
+                if(dateInput.includes('T')){
+                const dateOnly = dateInput.split('T')[0]
+                console.log('Fecha extraída sin conversión: ', dateOnly)
+                return dateOnly
+                }
+
+                console.log('Usando parseISO como último recurso')
+                const parsed = parseISO(dateInput)
+                return format(parsed, 'yyyy-MM-dd')
+            }
+
+                if (dateInput instanceof Date){
+                console.log('Formateando objeto Date')
+                return format(dateInput, 'yyyy-MM-dd')
+                }
+            } catch(error) {
+            console.warn('Error parseando fecha: ', error)
+            return format(new Date(), 'yyyy-MM-dd')
+            }
+
+            return format(new Date(), 'yyyy-MM-dd')
+        }
+
         try {
             notifications.show('Subiendo archivos...', { severity: 'info', autoHideDuration: null })
 
@@ -177,7 +226,7 @@ export default function ReportCreate() {
                 title: formData.title.trim(),
                 introduction: formData.introduction.trim(),
                 authors: validAuthors,
-                date: formData.date,
+                date: formatDateSafely(formData.date),
                 coverImage: imageResult.url,
                 pdfFile: {
                     url: pdfResult.url,
@@ -216,13 +265,14 @@ export default function ReportCreate() {
 
             <Paper sx={{ p: 4, borderRadius: 3, boxShadow: 3 }}>
                 <form onSubmit={handleSubmit}>
-                    <Grid container spacing={3}>
+                    <Grid container spacing={3} sx={{ alignItems: 'flex-start' }}>
                         <Grid size={{ xs: 12 }}>
                             <TextField
                                 fullWidth
+                                name="title"
                                 label="Título del Informe"
                                 value={formData.title}
-                                onChange={(e) => handleInputChange('title', e.target.value)}
+                                onChange={handleInputChange}
                                 error={!!errors.title}
                                 helperText={errors.title}
                                 disabled={loading}
@@ -230,22 +280,21 @@ export default function ReportCreate() {
                         </Grid>
 
                         <Grid size={{ xs: 12, md: 6 }}>
-                            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
-                                <DatePicker
-                                    label="Fecha"
-                                    value={formData.date}
-                                    onChange={(date) => handleInputChange('date', date)}
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            fullWidth
-                                            error={!!errors.date}
-                                            helperText={errors.date}
-                                        />
-                                    )}
-                                    disabled={loading}
-                                />
-                            </LocalizationProvider>
+                            <TextField
+                                fullWidth
+                                label="Fecha"
+                                name="date"
+                                type="date"
+                                value={formData.date}
+                                onChange={handleInputChange}
+                                error={!!errors.date}
+                                helperText={errors.date}
+                                disabled={loading}
+                                required
+                                InputLabelProps={{
+                                    shrink: true
+                                }}
+                            />
                         </Grid>
 
                         <Grid size={{ xs: 12 }}>
@@ -303,15 +352,17 @@ export default function ReportCreate() {
 
                         <Grid size={{ xs: 12 }}>
                             <TextField
-                                fullWidth
-                                multiline
-                                rows={4}
-                                label="Introducción"
-                                value={formData.introduction}
-                                onChange={(e) => handleInputChange('introduction', e.target.value)}
-                                error={!!errors.introduction}
-                                helperText={errors.introduction}
-                                disabled={loading}
+                              fullWidth
+                              multiline
+                              label="Introducción"
+                              name="introduction"
+                              placeholder="Escribí una introducción al infrome..."
+                              value={formData.introduction}
+                              onChange={handleInputChange}
+                              error={!!errors.introduction}
+                              helperText={errors.introduction || "Describí el informe."}
+                              disabled={loading}
+                              required
                             />
                         </Grid>
 
@@ -331,24 +382,18 @@ export default function ReportCreate() {
                                     />
                                     <CardActions sx={{ justifyContent: 'center', py: 2 }}>
                                         <Button
-                                            component="label"
                                             variant="outlined"
                                             startIcon={<ImageIcon />}
                                             disabled={loading}
+                                            onClick={triggerImageSelect}
                                             sx={{ fontWeight: 500 }}
                                         >
                                             Cambiar Imagen
-                                            <input
-                                                type="file"
-                                                hidden
-                                                accept="image/*"
-                                                onChange={handleImageSelect}
-                                            />
                                         </Button>
                                     </CardActions>
                                 </Card>
                             ) : (
-                                <UploadBox component="label">
+                                <UploadBox onClick={triggerImageSelect}>
                                     <UploadIconContainer>
                                         <ImageIcon sx={{ fontSize: 28, color: 'primary.main' }} />
                                     </UploadIconContainer>
@@ -361,18 +406,18 @@ export default function ReportCreate() {
                                     <Button
                                         variant="outlined"
                                         size="small"
-                                        sx={{ pointerEvents: 'none' }}
                                     >
                                         Seleccionar archivo
                                     </Button>
-                                    <input
-                                        type="file"
-                                        hidden
-                                        accept="image/*"
-                                        onChange={handleImageSelect}
-                                    />
                                 </UploadBox>
                             )}
+                            <input
+                                ref={imageInputRef}
+                                type="file"
+                                hidden
+                                accept="image/*"
+                                onChange={handleImageSelect}
+                            />
 
                             {errors.coverImage && (
                                 <Alert severity="error" sx={{ mt: 1 }}>
@@ -392,7 +437,7 @@ export default function ReportCreate() {
                                     border: '2px solid',
                                     borderColor: 'success.main',
                                     borderRadius: 2,
-                                    backgroundColor: 'success.main + "08"'
+                                    backgroundColor: 'action.hover'
                                 }}>
                                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                                         <PdfIcon sx={{ fontSize: 48, color: 'error.main', mr: 2 }} />
@@ -428,7 +473,7 @@ export default function ReportCreate() {
                                     )}
                                 </Box>
                             ) : (
-                                <UploadBox component="label">
+                                <UploadBox onClick={triggerPdfSelect}>
                                     <UploadIconContainer>
                                         <PdfIcon sx={{ fontSize: 28, color: 'primary.main' }} />
                                     </UploadIconContainer>
@@ -441,18 +486,18 @@ export default function ReportCreate() {
                                     <Button
                                         variant="outlined"
                                         size="small"
-                                        sx={{ pointerEvents: 'none' }}
                                     >
                                         Seleccionar archivo
                                     </Button>
-                                    <input
-                                        type="file"
-                                        hidden
-                                        accept=".pdf,application/pdf"
-                                        onChange={handlePdfSelect}
-                                    />
                                 </UploadBox>
                             )}
+                            <input
+                                ref={pdfInputRef}
+                                type="file"
+                                hidden
+                                accept=".pdf,application/pdf"
+                                onChange={handlePdfSelect}
+                            />
 
                             {errors.pdfFile && (
                                 <Alert severity="error" sx={{ mt: 1 }}>

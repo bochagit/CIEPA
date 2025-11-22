@@ -30,13 +30,11 @@ export default function ReportShow() {
       const formatDateForDisplay = (dateString) => {
         if (!dateString) return ''
 
-        console.log('Fecha original en lista: ', dateString)
         try {
         if (typeof dateString === 'string' && dateString.includes('T')){
             const dateOnly = dateString.split('T')[0]
             const [year, month, day] = dateOnly.split('-')
             const formatted = `${day}/${month}/${year}`
-            console.log('Fecha formateada para mostrar: ', formatted)
             return formatted
         }
 
@@ -54,8 +52,8 @@ export default function ReportShow() {
 
         return dateString
         } catch(error) {
-        console.warn('Error formateando fecha: ', error)
-        return dateString
+            console.warn('Error formateando fecha: ', error)
+            return dateString
         }
     }
 
@@ -90,38 +88,37 @@ export default function ReportShow() {
         if (!reportData) return
 
         try {
-            await reportService.incrementDownloads(reportData._id)
+            const response = await fetch(reportData.pdfFile.url)
+
+            if (!response.ok){
+                throw new Error('Error al obtener el archivo')
+            }
+
+            const blob = await response.blob()
+            const blobUrl = window.URL.createObjectURL(blob)
             
             const link = document.createElement('a')
-            link.href = reportData.pdfFile.url
+            link.href = blobUrl
             link.download = reportData.pdfFile.originalName || `${reportData.title}.pdf`
             link.target = '_blank'
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)
 
-            notifications.show('Descarga iniciada', { severity: 'success' })
+            window.URL.revokeObjectURL(blobUrl)
+
+            try {
+                await reportService.incrementDownloads(reportData._id)
+                notifications.show('Descarga completada', { severity: 'success' })
+            } catch(error) {
+                console.warn('Error incrementando descargas: ', error)
+                notifications.show('Descarga completada', { severity: 'error' })
+            }
         } catch(error) {
             console.error('Error descargando archivo:', error)
             notifications.show('Error al descargar archivo', { severity: 'error' })
         }
     }
-
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'published': return 'success';
-            case 'draft': return 'warning';
-            default: return 'default';
-        }
-    };
-
-    const getStatusLabel = (status) => {
-        switch (status) {
-            case 'published': return 'Publicado';
-            case 'draft': return 'Borrador';
-            default: return status;
-        }
-    };
 
     if (loading) {
         return (
@@ -194,11 +191,6 @@ export default function ReportShow() {
                                 </Typography>
                                 
                                 <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                                    <Chip 
-                                        label={getStatusLabel(reportData.status)} 
-                                        size="small" 
-                                        color={getStatusColor(reportData.status)} 
-                                    />
                                     <Chip 
                                         icon={<PictureAsPdfIcon />}
                                         label="Documento PDF" 

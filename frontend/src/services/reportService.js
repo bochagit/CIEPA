@@ -36,7 +36,7 @@ export const reportService = {
     },
 
     async incrementDownloads(id){
-        const response = await api.patch(`/reports/${id}/downloads`)
+        const response = await api.patch(`/reports/${id}/download`)
         return response.data
     }
 }
