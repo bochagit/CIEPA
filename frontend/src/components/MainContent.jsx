@@ -564,7 +564,6 @@ export default function MainContent() {
             </Box>
           ) : actividades.length > 0 ? (
             <Box sx={{ position: 'relative', height: {xs: 400, lg: 350}, borderRadius: 3, overflow: 'hidden', mb: 4, boxShadow: 3 }} >
-              {/* ✅ IMAGEN DE FONDO */}
               <Box sx={{
                 position: 'absolute',
                 top: 0,
@@ -579,7 +578,6 @@ export default function MainContent() {
                 transition: 'opacity .5s ease-in-out'
               }} />
 
-              {/* ✅ OVERLAY OSCURO */}
               <Box sx={{
                 position: 'absolute',
                 top: 0,
@@ -589,29 +587,6 @@ export default function MainContent() {
                 backgroundColor: 'rgba(0, 0, 0, .5)'
               }} />
 
-              {/* ✅ CHIP TIPO DE EVENTO - Arriba izquierda */}
-              <Box sx={{
-                position: 'absolute',
-                top: 16,
-                left: 16,
-                zIndex: 2,
-                opacity: isTransitioningActividad ? 0 : 1,
-                transition: 'opacity .5s ease-in-out'
-              }}>
-                <Chip
-                  label={getEventTypeLabel(actividades[currentActividad].tipo)}
-                  color={getEventTypeColor(actividades[currentActividad].tipo)}
-                  size="small"
-                  sx={{
-                    fontWeight: 600,
-                    fontSize: { xs: '.75rem', lg: '.7rem' },
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    backdropFilter: 'blur(10px)'
-                  }}
-                />
-              </Box>
-
-              {/* ✅ CONTENIDO ABAJO */}
               <Box sx={{
                 position: 'absolute',
                 bottom: 0,
@@ -623,7 +598,6 @@ export default function MainContent() {
                 opacity: isTransitioningActividad ? 0 : 1,
                 transition: 'opacity .5s ease-in-out'
               }}>
-                {/* ✅ TÍTULO */}
                 <Typography
                   variant="h4"
                   component="h3"
@@ -637,7 +611,6 @@ export default function MainContent() {
                   {actividades[currentActividad].titulo}
                 </Typography>
 
-                {/* ✅ DESCRIPCIÓN DEL TIPO */}
                 <Typography
                   variant="body1"
                   sx={{
@@ -651,14 +624,12 @@ export default function MainContent() {
                   {actividades[currentActividad].descripcion}
                 </Typography>
 
-                {/* ✅ FECHA */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, flexWrap: 'wrap', mb: 2 }}>
                   <Typography variant="body2" sx={{ opacity: .9, fontSize: { xs: '0.875rem', lg: '0.75rem' } }}>
-                    📅 {formatDateForDisplay(actividades[currentActividad].fecha)}
+                    {formatDateForDisplay(actividades[currentActividad].fecha)}
                   </Typography>
                 </Box>
 
-                {/* ✅ BOTÓN VER */}
                 <Button
                   variant="contained"
                   color="primary"
@@ -678,7 +649,6 @@ export default function MainContent() {
                 </Button>
               </Box>
 
-              {/* ✅ DOTS NAVEGACIÓN */}
               <Box sx={{
                 position: 'absolute',
                 bottom: 20,
