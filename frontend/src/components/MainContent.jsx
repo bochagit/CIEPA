@@ -77,6 +77,8 @@ export default function MainContent() {
   const [errorActividades, setErrorActividades] = React.useState('')
   const [currentPublicacion, setCurrentPublicacion] = React.useState(0)
   const [isTransitioning, setIsTransitioning] = React.useState(false)
+  const [currentActividad, setCurrentActividad] = React.useState(0)
+  const [isTransitioningActividad, setIsTransitioningActividad] = React.useState(false)
 
   const navigate = useNavigate()
 
@@ -210,6 +212,37 @@ export default function MainContent() {
   }, [])
 
   React.useEffect(() => {
+    if (actividades.length === 0) return
+
+    const interval = setInterval(() => {
+      handleNextActividad()
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [currentActividad, actividades.length])
+
+  const handleNextActividad = () => {
+    if (actividades.length <= 1) return
+
+    setIsTransitioningActividad(true)
+    setTimeout(() => {
+      setCurrentActividad((prev) => (prev + 1) % actividades.length)
+      setIsTransitioningActividad(false)
+    }, 300)
+  }
+
+  const handleActividadClick = (index) => {
+    if (index !== currentActividad){
+      setIsTransitioningActividad(true)
+
+      setTimeout(() => {
+        setCurrentActividad(index)
+        setIsTransitioningActividad(false)
+      }, 300)
+    }
+  }
+
+  React.useEffect(() => {
     if (publicaciones.length === 0) return
     
     const interval = setInterval(() => {
@@ -247,8 +280,11 @@ export default function MainContent() {
     }
   }
 
-  const handleVerActividad = (actividadId) => {
-    navigate(`/actividades/${actividadId}`)
+  const handleVerActividad = () => {
+    if(actividades.length > 0){
+      const currentEvent = actividades[currentActividad]
+      navigate(`/actividades/${currentEvent.id}`)
+    }
   }
 
   return (
@@ -523,123 +559,179 @@ export default function MainContent() {
           )}
 
           {loadingActividades ? (
-            <Box sx={{ 
-              display: 'grid', 
-              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: '1fr 1fr' },
-              gap: 2
-            }}>
-              {[1, 2, 3, 4].map((item) => (
-                <Box key={item} sx={{
-                  height: { xs: 250, lg: 180 }
-                }}>
-                  <Skeleton variant="rectangular" width="100%" height="100%" sx={{ borderRadius: 3 }} />
-                </Box>
-              ))}
+            <Box sx={{ position: 'relative', height: {xs: 400, lg: 350}, borderRadius: 3, overflow: 'hidden', mb: 4 }}>
+              <Skeleton variant="rectangular" width="100%" height="100%" />
             </Box>
           ) : actividades.length > 0 ? (
-            <Box sx={{ 
-              display: 'grid', 
-              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: '1fr 1fr' },
-              gap: 2
-            }}>
-              {actividades.map((actividad) => (
-                <Box key={actividad.id} onClick={() => handleVerActividad(actividad.id)} sx={{
-                position: 'relative',
-                height: { xs: 250, lg: 180 },
-                borderRadius: 3,
-                overflow: 'hidden',
-                boxShadow: 3,
-                cursor: 'pointer',
-                transition: 'transform .3s ease-in-out, box-shadow .3s ease-in-out',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: 6
-                  }
-                }} 
-              >
-                <Box sx={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  backgroundImage: `url(${actividad.imagen})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat'
-                }} />
-                <Box sx={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  backgroundColor: 'rgba(0, 0, 0, .5)'
-                }} />
-                <Box sx={{
-                  position: 'absolute',
-                  top: 8,
-                  left: 8,
-                  zIndex: 2
-                }} >
-                  <Chip
-                    label={getEventTypeLabel(actividad.tipo)}
-                    color={getEventTypeColor(actividad.tipo)}
-                    size="small"
+            <Box sx={{ position: 'relative', height: {xs: 400, lg: 350}, borderRadius: 3, overflow: 'hidden', mb: 4, boxShadow: 3 }} >
+              {/* ✅ IMAGEN DE FONDO */}
+              <Box sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${actividades[currentActividad].imagen})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                opacity: isTransitioningActividad ? 0 : 1,
+                transition: 'opacity .5s ease-in-out'
+              }} />
+
+              {/* ✅ OVERLAY OSCURO */}
+              <Box sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(0, 0, 0, .5)'
+              }} />
+
+              {/* ✅ CHIP TIPO DE EVENTO - Arriba izquierda */}
+              <Box sx={{
+                position: 'absolute',
+                top: 16,
+                left: 16,
+                zIndex: 2,
+                opacity: isTransitioningActividad ? 0 : 1,
+                transition: 'opacity .5s ease-in-out'
+              }}>
+                <Chip
+                  label={getEventTypeLabel(actividades[currentActividad].tipo)}
+                  color={getEventTypeColor(actividades[currentActividad].tipo)}
+                  size="small"
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: { xs: '.75rem', lg: '.7rem' },
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                />
+              </Box>
+
+              {/* ✅ CONTENIDO ABAJO */}
+              <Box sx={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                p: { xs: 3, lg: 3 },
+                background: 'linear-gradient(transparent, rgba(0, 0, 0, .8))',
+                color: 'white',
+                opacity: isTransitioningActividad ? 0 : 1,
+                transition: 'opacity .5s ease-in-out'
+              }}>
+                {/* ✅ TÍTULO */}
+                <Typography
+                  variant="h4"
+                  component="h3"
+                  gutterBottom
+                  sx={{
+                    fontWeight: 700,
+                    mb: 2,
+                    fontSize: { xs: '1.5rem', lg: '1.25rem' }
+                  }}
+                >
+                  {actividades[currentActividad].titulo}
+                </Typography>
+
+                {/* ✅ DESCRIPCIÓN DEL TIPO */}
+                <Typography
+                  variant="body1"
+                  sx={{
+                    mb: 3,
+                    maxWidth: '800px',
+                    fontSize: { xs: '.9rem', lg: '0.85rem' },
+                    lineHeight: 1.6,
+                    opacity: 0.9
+                  }}
+                >
+                  {actividades[currentActividad].descripcion}
+                </Typography>
+
+                {/* ✅ FECHA */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, flexWrap: 'wrap', mb: 2 }}>
+                  <Typography variant="body2" sx={{ opacity: .9, fontSize: { xs: '0.875rem', lg: '0.75rem' } }}>
+                    📅 {formatDateForDisplay(actividades[currentActividad].fecha)}
+                  </Typography>
+                </Box>
+
+                {/* ✅ BOTÓN VER */}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleVerActividad}
+                  size={window.innerWidth >= 1200 ? 'small' : 'medium'}
+                  sx={{
+                    backgroundColor: 'rgba(255, 255, 255, .2)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, .3)',
+                    fontSize: { xs: '0.875rem', lg: '0.75rem' },
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, .3)'
+                    }
+                  }}
+                >
+                  Ver actividad
+                </Button>
+              </Box>
+
+              {/* ✅ DOTS NAVEGACIÓN */}
+              <Box sx={{
+                position: 'absolute',
+                bottom: 20,
+                right: 20,
+                display: 'flex',
+                gap: 1
+              }}>
+                {actividades.map((_, index) => (
+                  <Box
+                    key={index}
+                    onClick={() => handleActividadClick(index)}
                     sx={{
-                      fontWeight: 600,
-                      fontSize: { xs: '.7rem', lg: '.65rem' }
+                      width: { xs: 10, lg: 8 },
+                      height: { xs: 10, lg: 8 },
+                      borderRadius: '50%',
+                      backgroundColor: index === currentActividad ? 'white' : alpha('#fff', .5),
+                      cursor: 'pointer',
+                      transition: 'all .3s ease',
+                      '&:hover': {
+                        backgroundColor: 'white',
+                        transform: 'scale(1.2)'
+                      }
                     }}
                   />
-                </Box>
-                <Box sx={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  p: { xs: 2, lg: 1.5 },
-                  background: 'linear-gradient(transparent, rgba(0, 0, 0, .8))',
-                  color: '#fff'
-                }}>
-                  <Typography variant="h6" component="h3" gutterBottom sx={{
-                    fontWeight: 600,
-                    mb: 0.5,
-                    fontSize: { xs: '1rem', lg: '0.875rem' },
-                    lineHeight: 1.2,
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden'
-                  }}>
-                    {actividad.titulo}
-                  </Typography>
-                  <Typography variant="caption" sx={{
-                    opacity: .8,
-                    fontSize: { xs: '.75rem', lg: '.65rem' }
-                  }}>
-                    {formatDateForDisplay(actividad.fecha)}
-                  </Typography>
-                </Box>
+                ))}
               </Box>
-              ))}
             </Box>
-            ) : (
-              <Box sx={{
-                textAlign: 'center',
-                py: 6,
-                backgroundColor: 'background.paper',
-                borderRadius: 3,
-                border: `1px solid ${alpha(brand.main, .1)}`
-              }}>
-                <Typography variant="h6" color="text.secondary" gutterBottom>
-                  No hay actividades recientes
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                  Pronto publicaremos nuevas actividades.
-                </Typography>
-              </Box>
-            )}
-          </Box>
+          ) : (
+            <Box sx={{
+              textAlign: 'center',
+              py: 6,
+              backgroundColor: 'background.paper',
+              borderRadius: 3,
+              border: `1px solid ${alpha(brand.main, .1)}`
+            }}>
+              <Typography variant="h6" color="text.secondary" gutterBottom>
+                No hay actividades recientes
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                Pronto publicaremos nuevas actividades.
+              </Typography>
+              <Button
+                variant="outlined"
+                color="primary"
+                size="small"
+                onClick={() => navigate('/conversatorios')}
+                sx={{ mt: 1 }}
+              >
+                Ver todas las actividades
+              </Button>
+            </Box>
+          )}
+        </Box>
       </Box>
 
       <Divider sx={{ my: 6 }} />
