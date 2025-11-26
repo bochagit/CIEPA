@@ -321,283 +321,326 @@ export default function MainContent() {
 
       <Divider sx={{ my: 6 }} />
 
-      <SectionContainer>
-        <SectionTitle variant="h3" component="h2">
-          Últimas Publicaciones
-        </SectionTitle>
+      <Box sx={{ 
+        display: { xs: 'block', lg: 'flex' }, 
+        gap: { lg: 4 },
+        alignItems: 'flex-start'
+      }}>
+        
+        <Box sx={{ 
+          width: { xs: '100%', lg: '50%' },
+          mb: { xs: 6, lg: 0 }
+        }}>
+          <SectionTitle variant="h3" component="h2" sx={{ 
+            fontSize: { xs: '2rem', lg: '1.75rem' }
+          }}>
+            Últimas Publicaciones
+          </SectionTitle>
 
-        {errorPublicaciones && (
-          <Alert severity="error" sx={{ mb: 4 }}>
-            {errorPublicaciones}
-          </Alert>
-        )}
+          {errorPublicaciones && (
+            <Alert severity="error" sx={{ mb: 4 }}>
+              {errorPublicaciones}
+            </Alert>
+          )}
 
-        {loadingPublicaciones ? (
-          <Box sx={{ position: 'relative', height: {xs: 400, md: 500}, borderRadius: 3, overflow: 'hidden', mb: 4 }}>
-            <Skeleton variant="rectangular" width="100%" height="100%" />
-          </Box>
-        ) : publicaciones.length > 0 ? (
-        <Box sx={{ position: 'relative', height: {xs: 400, md: 500}, borderRadius: 3, overflow: 'hidden', mb: 4, boxShadow: 3 }} >
-          <Box sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundImage: `url(${publicaciones[currentPublicacion].imagen})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            opacity: isTransitioning ? 0 : 1,
-            transition: 'opacity .5s ease-in-out'
-          }} />
-          <Box sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, .4)'
-          }} />
-          <Box sx={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            p: { xs: 3, md: 5 },
-            background: 'linear-gradient(transparent, rgba(0, 0, 0, .8))',
-            color: 'white',
-            opacity: isTransitioning ? 0 : 1,
-            transition: 'opacity .5s ease-in-out'
-          }}
-          >
-          <Typography
-            variant="h4"
-            component="h3"
-            gutterBottom
-            sx={{
-              fontWeight: 700,
-              mb: 2,
-              fontSize: { xs: '.5rem', md: '2.1rem' }
+          {loadingPublicaciones ? (
+            <Box sx={{ position: 'relative', height: {xs: 400, lg: 350}, borderRadius: 3, overflow: 'hidden', mb: 4 }}>
+              <Skeleton variant="rectangular" width="100%" height="100%" />
+            </Box>
+          ) : publicaciones.length > 0 ? (
+          <Box sx={{ position: 'relative', height: {xs: 400, lg: 350}, borderRadius: 3, overflow: 'hidden', mb: 4, boxShadow: 3 }} >
+            <Box sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundImage: `url(${publicaciones[currentPublicacion].imagen})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              opacity: isTransitioning ? 0 : 1,
+              transition: 'opacity .5s ease-in-out'
+            }} />
+            <Box sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'rgba(0, 0, 0, .4)'
+            }} />
+            <Box sx={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              p: { xs: 3, lg: 3 },
+              background: 'linear-gradient(transparent, rgba(0, 0, 0, .8))',
+              color: 'white',
+              opacity: isTransitioning ? 0 : 1,
+              transition: 'opacity .5s ease-in-out'
             }}
             >
-              {publicaciones[currentPublicacion].titulo}
-            </Typography>
             <Typography
-              variant="body1"
+              variant="h4"
+              component="h3"
+              gutterBottom
               sx={{
-                mb: 3,
-                maxWidth: '800px',
-                fontSize: { xs: '.9rem', md: '1rem' },
-                lineHeight: 1.6
+                fontWeight: 700,
+                mb: 2,
+                fontSize: { xs: '1.5rem', lg: '1.25rem' }
               }}
               >
-                {publicaciones[currentPublicacion].descripcion}
+                {publicaciones[currentPublicacion].titulo}
               </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                  <Typography variant="body2" sx={{ opacity: .9 }}>
-                    Por {publicaciones[currentPublicacion].autor}
-                  </Typography>
-                  <Typography variant="body2" sx={{ opacity: .9 }}>
-                    {formatDateForDisplay(publicaciones[currentPublicacion].fecha)}
-                  </Typography>
-                </Box>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleVerPublicacion}
-                  sx={{
-                    backgroundColor: 'rgba(255, 255, 255, .2)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, .3)',
-                    mt: 2,
-                    '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, .3)'
-                    }
-                  }}
-                >
-                  Leer más
-                </Button>
-              </Box>
-              <Box sx={{
-                position: 'absolute',
-                bottom: 20,
-                right: 20,
-                display: 'flex',
-                gap: 1
-                }}
-              >
-              {publicaciones.map((_, index) => (
-                <Box
-                  key={index}
-                  onClick={() => handlePublicacionClick(index)}
-                  sx={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: '50%',
-                    backgroundColor: index === currentPublicacion ? 'white' : alpha('#fff', .5),
-                    cursor: 'pointer',
-                    transition: 'all .3s ease',
-                    '&:hover': {
-                      backgroundColor: 'white',
-                      transform: 'scale(1.2)'
-                    }
-                  }}
-                />
-              ))}
-            </Box>
-          </Box>
-        ) : (
-          <Box sx={{
-            textAlign: 'center',
-            py: 8,
-            backgroundColor: 'background.paper',
-            borderRadius: 3,
-            border: `1px solid ${alpha(brand.main, .1)}`
-          }}>
-            <Typography variant="h5" color="text.secondary" gutterBottom>
-              No hay publicaciones destacadas
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Actualmente no tenemos publicaciones marcadas como destacadas.
-            </Typography>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => navigate('/notas')}
-              sx={{ mt: 1 }}
-            >
-              Ver todas las notas
-            </Button>
-          </Box>
-        )}
-      </SectionContainer>
-
-      <Divider sx={{ my: 6 }} />
-
-      <SectionContainer>
-        <SectionTitle variant="h3" component="h2">
-          Últimas Actividades
-        </SectionTitle>
-
-        {errorActividades && (
-          <Alert severity="error" sx={{ mb: 4 }}>
-            {errorActividades}
-          </Alert>
-        )}
-
-        {loadingActividades ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, flexWrap: { xs: 'wrap', md: 'nowrap' } }}>
-            {[1, 2, 3, 4].map((item) => (
-              <Box key={item} sx={{
-                width: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(25% - 12px)' },
-                height: { xs: 250, md: 300 }
-              }}>
-                <Skeleton variant="rectangular" width="100%" height="100%" sx={{ borderRadius: 3 }} />
-              </Box>
-            ))}
-          </Box>
-        ) : actividades.length > 0 ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, flexWrap: { xs: 'wrap', md: 'nowrap' } }}>
-            {actividades.map((actividad) => (
-              <Box key={actividad.id} onClick={() => handleVerActividad(actividad.id)} sx={{
-              position: 'relative',
-              width: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(25% - 12px)' },
-              height: { xs: 250, md: 300 },
-              borderRadius: 3,
-              overflow: 'hidden',
-              boxShadow: 3,
-              cursor: 'pointer',
-              transition: 'transform .3s ease-in-out, box-shadow .3s ease-in-out',
-              '&:hover': {
-                transform: 'translateY(-8px)',
-                boxShadow: 6
-                }
-              }} 
-            >
-              <Box sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                backgroundImage: `url(${actividad.imagen})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat'
-              }} />
-              <Box sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'rgba(0, 0, 0, .5)'
-              }} />
-              <Box sx={{
-                position: 'absolute',
-                top: 12,
-                left: 12,
-                zIndex: 2
-              }} >
-                <Chip
-                  label={getEventTypeLabel(actividad.tipo)}
-                  color={getEventTypeColor(actividad.tipo)}
-                  size="small"
-                  sx={{
-                    fontWeight: 600,
-                    fontSize: '.7rem'
-                  }}
-                />
-              </Box>
-              <Box sx={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                p: { xs: 2, md: 3 },
-                background: 'linear-gradient(transparent, rgba(0, 0, 0, .8))',
-                color: '#fff'
-              }}>
-                <Typography variant="h6" component="h3" gutterBottom sx={{
-                  fontWeight: 600,
-                  mb: 1,
-                  fontSize: { xs: '1rem', md: '1.25rem' },
-                  lineHeight: 1.3,
+              <Typography
+                variant="body1"
+                sx={{
+                  mb: 3,
+                  maxWidth: '800px',
+                  fontSize: { xs: '.9rem', lg: '0.85rem' },
+                  lineHeight: 1.6,
                   display: '-webkit-box',
-                  WebkitLineClamp: 2,
+                  WebkitLineClamp: { xs: 4, lg: 3 },
                   WebkitBoxOrient: 'vertical',
                   overflow: 'hidden'
-                }}>
-                  {actividad.titulo}
+                }}
+                >
+                  {publicaciones[currentPublicacion].descripcion}
                 </Typography>
-                <Typography variant="caption" sx={{
-                  opacity: .8,
-                  fontSize: '.75rem'
-                }}>
-                  {formatDateForDisplay(actividad.fecha)}
-                </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, flexWrap: 'wrap' }}>
+                    <Typography variant="body2" sx={{ opacity: .9, fontSize: { xs: '0.875rem', lg: '0.75rem' } }}>
+                      Por {publicaciones[currentPublicacion].autor}
+                    </Typography>
+                    <Typography variant="body2" sx={{ opacity: .9, fontSize: { xs: '0.875rem', lg: '0.75rem' } }}>
+                      {formatDateForDisplay(publicaciones[currentPublicacion].fecha)}
+                    </Typography>
+                  </Box>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleVerPublicacion}
+                    size={window.innerWidth >= 1200 ? 'small' : 'medium'}
+                    sx={{
+                      backgroundColor: 'rgba(255, 255, 255, .2)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, .3)',
+                      mt: 2,
+                      fontSize: { xs: '0.875rem', lg: '0.75rem' },
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, .3)'
+                      }
+                    }}
+                  >
+                    Leer más
+                  </Button>
+                </Box>
+                <Box sx={{
+                  position: 'absolute',
+                  bottom: 20,
+                  right: 20,
+                  display: 'flex',
+                  gap: 1
+                  }}
+                >
+                {publicaciones.map((_, index) => (
+                  <Box
+                    key={index}
+                    onClick={() => handlePublicacionClick(index)}
+                    sx={{
+                      width: { xs: 10, lg: 8 },
+                      height: { xs: 10, lg: 8 },
+                      borderRadius: '50%',
+                      backgroundColor: index === currentPublicacion ? 'white' : alpha('#fff', .5),
+                      cursor: 'pointer',
+                      transition: 'all .3s ease',
+                      '&:hover': {
+                        backgroundColor: 'white',
+                        transform: 'scale(1.2)'
+                      }
+                    }}
+                  />
+                ))}
               </Box>
-            </Box>
-            ))}
             </Box>
           ) : (
             <Box sx={{
               textAlign: 'center',
-              py: 8,
+              py: 6,
               backgroundColor: 'background.paper',
               borderRadius: 3,
               border: `1px solid ${alpha(brand.main, .1)}`
             }}>
-              <Typography variant="h5" color="text.secondary" gutterBottom>
-                No hay actividiades recientes
+              <Typography variant="h6" color="text.secondary" gutterBottom>
+                No hay publicaciones destacadas
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                Pronto publicaremos nuevas actividades.
+                Actualmente no tenemos publicaciones marcadas como destacadas.
               </Typography>
+              <Button
+                variant="outlined"
+                color="primary"
+                size="small"
+                onClick={() => navigate('/notas')}
+                sx={{ mt: 1 }}
+              >
+                Ver todas las notas
+              </Button>
             </Box>
           )}
-        </SectionContainer>
+        </Box>
+
+        <Divider 
+          orientation="vertical" 
+          flexItem 
+          sx={{ 
+            display: { xs: 'none', lg: 'block' },
+            mx: 2,
+            borderColor: alpha(brand.main, 0.3),
+            borderWidth: 1
+          }} 
+        />
+
+        <Divider sx={{ 
+          display: { xs: 'block', lg: 'none' },
+          my: 6 
+        }} />
+
+        <Box sx={{ 
+          width: { xs: '100%', lg: '50%' }
+        }}>
+          <SectionTitle variant="h3" component="h2" sx={{ 
+            fontSize: { xs: '2rem', lg: '1.75rem' }
+          }}>
+            Últimas Actividades
+          </SectionTitle>
+
+          {errorActividades && (
+            <Alert severity="error" sx={{ mb: 4 }}>
+              {errorActividades}
+            </Alert>
+          )}
+
+          {loadingActividades ? (
+            <Box sx={{ 
+              display: 'grid', 
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: '1fr 1fr' },
+              gap: 2
+            }}>
+              {[1, 2, 3, 4].map((item) => (
+                <Box key={item} sx={{
+                  height: { xs: 250, lg: 180 }
+                }}>
+                  <Skeleton variant="rectangular" width="100%" height="100%" sx={{ borderRadius: 3 }} />
+                </Box>
+              ))}
+            </Box>
+          ) : actividades.length > 0 ? (
+            <Box sx={{ 
+              display: 'grid', 
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: '1fr 1fr' },
+              gap: 2
+            }}>
+              {actividades.map((actividad) => (
+                <Box key={actividad.id} onClick={() => handleVerActividad(actividad.id)} sx={{
+                position: 'relative',
+                height: { xs: 250, lg: 180 },
+                borderRadius: 3,
+                overflow: 'hidden',
+                boxShadow: 3,
+                cursor: 'pointer',
+                transition: 'transform .3s ease-in-out, box-shadow .3s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 6
+                  }
+                }} 
+              >
+                <Box sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundImage: `url(${actividad.imagen})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat'
+                }} />
+                <Box sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'rgba(0, 0, 0, .5)'
+                }} />
+                <Box sx={{
+                  position: 'absolute',
+                  top: 8,
+                  left: 8,
+                  zIndex: 2
+                }} >
+                  <Chip
+                    label={getEventTypeLabel(actividad.tipo)}
+                    color={getEventTypeColor(actividad.tipo)}
+                    size="small"
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: { xs: '.7rem', lg: '.65rem' }
+                    }}
+                  />
+                </Box>
+                <Box sx={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  p: { xs: 2, lg: 1.5 },
+                  background: 'linear-gradient(transparent, rgba(0, 0, 0, .8))',
+                  color: '#fff'
+                }}>
+                  <Typography variant="h6" component="h3" gutterBottom sx={{
+                    fontWeight: 600,
+                    mb: 0.5,
+                    fontSize: { xs: '1rem', lg: '0.875rem' },
+                    lineHeight: 1.2,
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden'
+                  }}>
+                    {actividad.titulo}
+                  </Typography>
+                  <Typography variant="caption" sx={{
+                    opacity: .8,
+                    fontSize: { xs: '.75rem', lg: '.65rem' }
+                  }}>
+                    {formatDateForDisplay(actividad.fecha)}
+                  </Typography>
+                </Box>
+              </Box>
+              ))}
+            </Box>
+            ) : (
+              <Box sx={{
+                textAlign: 'center',
+                py: 6,
+                backgroundColor: 'background.paper',
+                borderRadius: 3,
+                border: `1px solid ${alpha(brand.main, .1)}`
+              }}>
+                <Typography variant="h6" color="text.secondary" gutterBottom>
+                  No hay actividades recientes
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  Pronto publicaremos nuevas actividades.
+                </Typography>
+              </Box>
+            )}
+          </Box>
+      </Box>
 
       <Divider sx={{ my: 6 }} />
 
