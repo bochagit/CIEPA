@@ -101,13 +101,11 @@ export default function MainContent() {
   const formatDateForDisplay = (dateString) => {
     if (!dateString) return ''
 
-    console.log('Fecha original en lista: ', dateString)
     try {
       if (typeof dateString === 'string' && dateString.includes('T')){
         const dateOnly = dateString.split('T')[0]
         const [year, month, day] = dateOnly.split('-')
         const formatted = `${day}/${month}/${year}`
-        console.log('Fecha formateada para mostrar: ', formatted)
         return formatted
       }
 
@@ -194,7 +192,6 @@ export default function MainContent() {
               descripcion: getEventTypeLabel(event.type)
             }))
 
-            console.log('Actividades formateadas: ', actividadesFormateadas)
             setActividades(actividadesFormateadas)
         } else {
           console.log('No se encontraron eventos')

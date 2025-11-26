@@ -9,26 +9,23 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 export default function ThemeSwitcher() {
   const theme = useTheme();
 
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const preferredMode = prefersDarkMode ? 'dark' : 'light';
-
   const { mode, setMode } = useColorScheme();
 
-  const paletteMode = !mode || mode === 'system' ? preferredMode : mode;
+  const currentMode = mode || 'light'
 
   const toggleMode = React.useCallback(() => {
-    setMode(paletteMode === 'dark' ? 'light' : 'dark');
-  }, [setMode, paletteMode]);
+    setMode(currentMode === 'dark' ? 'light' : 'dark');
+  }, [setMode, currentMode]);
 
   return (
     <Tooltip
-      title={`${paletteMode === 'dark' ? 'Light' : 'Dark'} mode`}
+      title={`${currentMode === 'dark' ? 'Light' : 'Dark'} mode`}
       enterDelay={1000}
     >
       <div>
         <IconButton
           size="small"
-          aria-label={`Switch to ${paletteMode === 'dark' ? 'light' : 'dark'} mode`}
+          aria-label={`Switch to ${currentMode === 'dark' ? 'light' : 'dark'} mode`}
           onClick={toggleMode}
         >
           {theme.getColorSchemeSelector ? (

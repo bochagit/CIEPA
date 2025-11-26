@@ -74,9 +74,6 @@ export default function ColorModeIconDropdown(props) {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem selected={mode === 'system'} onClick={handleMode('system')}>
-          Sistema
-        </MenuItem>
         <MenuItem selected={mode === 'light'} onClick={handleMode('light')}>
           Claro
         </MenuItem>

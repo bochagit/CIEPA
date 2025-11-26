@@ -18,6 +18,7 @@ function AppTheme(props) {
           cssVariables: {
             colorSchemeSelector: 'data-mui-color-scheme',
             cssVarPrefix: 'template',
+            defaultScheme: 'light'
           },
           colorSchemes,
           typography,
@@ -33,6 +34,16 @@ function AppTheme(props) {
           },
         });
   }, [disableCustomTheme, themeComponents]);
+
+  React.useEffect(() => {
+    const savedMode = localStorage.getItem('mui-mode')
+    if (!savedMode || savedMode === 'system') {
+    localStorage.setItem('mui-mode', 'light');
+    document.documentElement.setAttribute('data-mui-color-scheme', 'light');
+  } else if (savedMode === 'light' || savedMode === 'dark') {
+    document.documentElement.setAttribute('data-mui-color-scheme', savedMode);
+  }
+}, []);
 
   if (disableCustomTheme) {
     return <React.Fragment>{children}</React.Fragment>;

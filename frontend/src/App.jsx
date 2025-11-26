@@ -22,108 +22,113 @@ import Jornadas from './components/Jornadas';
 import Actividades from './components/Actividades';
 import Informes from './components/Informes';
 import InformeShow from './components/InformeShow';
+import AppTheme from '../shared-theme/AppTheme';
+import { CssBaseline } from '@mui/material';
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={
-        <Layout>
-          <MainContent />
-        </Layout>
-        } />
-        <Route path="/quienes-somos" element={
+    <AppTheme>
+      <CssBaseline enableColorScheme />
+      <Routes>
+        <Route path="/" element={
           <Layout>
-            <QuienesSomos />
+            <MainContent />
           </Layout>
-        } />
-        <Route path="/principios" element={
-          <Layout>
-            <Principios />
-          </Layout>
-        } />
-        <Route path="/objetivos" element={
-          <Layout>
-            <Objetivos />
-          </Layout>
-        } />
-        <Route path="/integrantes" element={
-          <Layout>
-            <Integrantes />
-          </Layout>
-        } />
-        <Route path="/que-hacemos" element={
-          <Layout>
-            <QueHacemos />
-          </Layout>
-        } />
-        <Route path="/ejes" element={
-          <Layout>
-            <EjesTrabajo />
-          </Layout>
-        } />
-        <Route path="/asesoramiento" element={
-          <Layout>
-            <Asesoramiento />
-          </Layout>
-        } />
-        <Route path="/notas" element={
-          <Layout>
-            <Notas />
-          </Layout>
-        } />
-        <Route path="/notas/:id" element={
-          <Layout>
-            <Note />
-          </Layout>
-        } />
-        <Route path="/informes" element={
-          <Layout>
-            <Informes />
-          </Layout>
-        } />
-        <Route path="/informes/:id" element={
-          <Layout>
-            <InformeShow />
-          </Layout>
-        } />
-        <Route path="/audiovisual" element={
-          <Layout>
-            <Audiovisual />
-          </Layout>
-        } />
-        <Route path="/conversatorios" element={
-          <Layout>
-            <Conversatorios />
-          </Layout>
-        } />
-        <Route path="/formaciones" element={
-          <Layout>
-            <Formaciones />
-          </Layout>
-        } />
-        <Route path="/jornadas" element={
-          <Layout>
-            <Jornadas />
-          </Layout>
-        } />
-        <Route path="/actividades/:id" element={
-          <Layout>
-            <Actividades />
-          </Layout>
-        } />
-        <Route path="/contacto" element={
-          <Layout>
-            <Contacto />
-          </Layout>
-        } />
-        
-      <Route path="/signin" element={<SignIn />} />
-      <Route path="/dashboard/*" element={
-        <ProtectedRoute>
-          <CrudDashboard />
-        </ProtectedRoute>
-      }
-      />
-    </Routes>
+          } />
+          <Route path="/quienes-somos" element={
+            <Layout>
+              <QuienesSomos />
+            </Layout>
+          } />
+          <Route path="/principios" element={
+            <Layout>
+              <Principios />
+            </Layout>
+          } />
+          <Route path="/objetivos" element={
+            <Layout>
+              <Objetivos />
+            </Layout>
+          } />
+          <Route path="/integrantes" element={
+            <Layout>
+              <Integrantes />
+            </Layout>
+          } />
+          <Route path="/que-hacemos" element={
+            <Layout>
+              <QueHacemos />
+            </Layout>
+          } />
+          <Route path="/ejes" element={
+            <Layout>
+              <EjesTrabajo />
+            </Layout>
+          } />
+          <Route path="/asesoramiento" element={
+            <Layout>
+              <Asesoramiento />
+            </Layout>
+          } />
+          <Route path="/notas" element={
+            <Layout>
+              <Notas />
+            </Layout>
+          } />
+          <Route path="/notas/:id" element={
+            <Layout>
+              <Note />
+            </Layout>
+          } />
+          <Route path="/informes" element={
+            <Layout>
+              <Informes />
+            </Layout>
+          } />
+          <Route path="/informes/:id" element={
+            <Layout>
+              <InformeShow />
+            </Layout>
+          } />
+          <Route path="/audiovisual" element={
+            <Layout>
+              <Audiovisual />
+            </Layout>
+          } />
+          <Route path="/conversatorios" element={
+            <Layout>
+              <Conversatorios />
+            </Layout>
+          } />
+          <Route path="/formaciones" element={
+            <Layout>
+              <Formaciones />
+            </Layout>
+          } />
+          <Route path="/jornadas" element={
+            <Layout>
+              <Jornadas />
+            </Layout>
+          } />
+          <Route path="/actividades/:id" element={
+            <Layout>
+              <Actividades />
+            </Layout>
+          } />
+          <Route path="/contacto" element={
+            <Layout>
+              <Contacto />
+            </Layout>
+          } />
+          
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/dashboard/*" element={
+          <ProtectedRoute>
+            <CrudDashboard />
+          </ProtectedRoute>
+        }
+        />
+      </Routes>
+    </AppTheme>
   );
 }

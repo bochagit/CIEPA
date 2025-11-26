@@ -16,6 +16,25 @@ console.error = (...args) => {
   originalError(...args);
 };
 
+const initializeTheme = () => {
+  const currentMode = localStorage.getItem('mui-mode');
+  
+  if (!currentMode || currentMode === 'system') {
+    localStorage.setItem('mui-mode', 'light');
+    document.documentElement.setAttribute('data-mui-color-scheme', 'light');
+  } else if (currentMode === 'dark') {
+    document.documentElement.setAttribute('data-mui-color-scheme', 'dark');
+  } else {
+    localStorage.setItem('mui-mode', 'light');
+    document.documentElement.setAttribute('data-mui-color-scheme', 'light');
+  }
+
+  localStorage.removeItem('mui-color-scheme');
+  document.documentElement.style.colorScheme = localStorage.getItem('mui-mode') || 'light';
+};
+
+initializeTheme();
+
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 
