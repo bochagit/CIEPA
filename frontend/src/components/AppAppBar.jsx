@@ -78,6 +78,34 @@ export default function AppAppBar() {
   const { isAuthenticated, user, logout } = useAuth()
   const [activeSubmenu, setActiveSubmenu] = React.useState(null);
 
+  const [isSticky, setIsSticky] = React.useState(false)
+  const [originalTop, setOriginalTop] = React.useState(0)
+  const [appBarHeight, setAppBarHeight] = React.useState(0)
+  const appBarRef = React.useRef(null)
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      if (!appBarRef.current) return;
+
+      const rect = appBarRef.current.getBoundingClientRect();
+      const targetPosition = 40;
+
+      if (appBarHeight === 0){
+        setAppBarHeight(rect.height)
+      }
+
+      if (!isSticky && rect.top <= targetPosition) {
+        setOriginalTop(window.pageYOffset + rect.top);
+        setIsSticky(true);
+      } else if (isSticky && window.pageYOffset < originalTop - targetPosition) {
+        setIsSticky(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isSticky, originalTop]);
+
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
     if(!newOpen){
@@ -250,150 +278,158 @@ export default function AppAppBar() {
   }
 
   return (
-    <AppBar
-      position="sticky"
-      enableColorOnDark
-      sx={{
-        top: '2.5rem',
-        boxShadow: 0,
-        bgcolor: 'transparent',
-        backgroundImage: 'none',
-        mt: 'calc(var(--template-frame-height, 0px) + 28px)',
-      }}
-    >
-      <Container maxWidth="lg">
-        <StyledToolbar variant="dense" disableGutters sx={{ boxShadow: 'none' }}>
-            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-              <CiepaLogo />
-            </Box>
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'space-evenly', px: 0, gap: '1rem' }}>
-              <MenuButton 
-              menuKey="acerca" 
-              label="Acerca del CIEPA" 
-              items={menuData.acerca} 
-              />
-              <MenuButton 
-                menuKey="trabajo" 
-                label="Nuestro trabajo" 
-                items={menuData.trabajo} 
-              />
-              <MenuButton 
-                menuKey="publicaciones" 
-                label="Publicaciones" 
-                items={menuData.publicaciones} 
-              />
-              <MenuButton 
-                menuKey="actividades" 
-                label="Actividades" 
-                items={menuData.actividades} 
-              />
-              <MenuButton 
-                menuKey="formacion" 
-                label="Formación" 
-                items={menuData.formacion} 
-              />
-              <Button
-                variant="text"
-                color="info"
-                size="medium"
-                onClick={() => navigate('/contacto')}
-                sx={{
-                  color: '#222',
-                  display: { xs: 'none', md: 'flex' },
-                  '&:hover': {
-                    backgroundColor: alpha(brand.main, .1)
+    <>
+      {isSticky && (
+        <Box sx={{ height: appBarHeight }} />
+      )}
+      <Box
+        ref={appBarRef}
+        sx={{
+          position: isSticky ? 'fixed' : 'static',
+          top: isSticky ? '40px' : 'auto',
+          left: 0,
+          right: 0,
+          zIndex: 1200,
+          transition: 'all 0.2s ease-out',
+          backdropFilter: isSticky ? 'blur(10px)' : 'none',
+          width: '100vw',
+          maxWidth: '100vw'
+        }}
+      >
+        <Container maxWidth="lg">
+          <StyledToolbar variant="dense" disableGutters sx={{ boxShadow: 'none' }}>
+              <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+                <CiepaLogo />
+              </Box>
+              <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'space-evenly', px: 0, gap: '1rem' }}>
+                <MenuButton 
+                menuKey="acerca" 
+                label="Acerca del CIEPA" 
+                items={menuData.acerca} 
+                />
+                <MenuButton 
+                  menuKey="trabajo" 
+                  label="Nuestro trabajo" 
+                  items={menuData.trabajo} 
+                />
+                <MenuButton 
+                  menuKey="publicaciones" 
+                  label="Publicaciones" 
+                  items={menuData.publicaciones} 
+                />
+                <MenuButton 
+                  menuKey="actividades" 
+                  label="Actividades" 
+                  items={menuData.actividades} 
+                />
+                <MenuButton 
+                  menuKey="formacion" 
+                  label="Formación" 
+                  items={menuData.formacion} 
+                />
+                <Button
+                  variant="text"
+                  color="info"
+                  size="medium"
+                  onClick={() => navigate('/contacto')}
+                  sx={{
+                    color: '#222',
+                    display: { xs: 'none', md: 'flex' },
+                    '&:hover': {
+                      backgroundColor: alpha(brand.main, .1)
+                    }
+                  }}
+                >
+                  Contacto
+                </Button>
+              </Box>
+            <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
+              <ColorModeIconDropdown size="medium" />
+              <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
+                <MenuIcon />
+              </IconButton>
+              <Drawer
+                anchor="top"
+                open={open}
+                onClose={toggleDrawer(false)}
+                slotProps={{
+                  paper: {
+                    sx: {
+                      top: 'var(--template-frame-height, 0px)',
+                    }
                   }
                 }}
               >
-                Contacto
-              </Button>
-            </Box>
-          <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
-            <ColorModeIconDropdown size="medium" />
-            <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
-              <MenuIcon />
-            </IconButton>
-            <Drawer
-              anchor="top"
-              open={open}
-              onClose={toggleDrawer(false)}
-              slotProps={{
-                paper: {
-                  sx: {
-                    top: 'var(--template-frame-height, 0px)',
-                  }
-                }
-              }}
-            >
-              <Box sx={{ p: 2, backgroundColor: 'background.default' }}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    mb: 1
-                  }}
-                >
-                  {activeSubmenu && (
-                    <IconButton onClick={handleBackToMain} aria-label="Volver">
-                      <ArrowBackIcon />
+                <Box sx={{ p: 2, backgroundColor: 'background.default' }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      mb: 1
+                    }}
+                  >
+                    {activeSubmenu && (
+                      <IconButton onClick={handleBackToMain} aria-label="Volver">
+                        <ArrowBackIcon />
+                      </IconButton>
+                    )}
+                    {activeSubmenu && (
+                      <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', mr: 6 }}>
+                        {menuLabels[activeSubmenu]}
+                      </Typography>
+                    )}
+                    
+                    <IconButton onClick={toggleDrawer(false)}>
+                      <CloseRoundedIcon />
                     </IconButton>
-                  )}
-                  {activeSubmenu && (
-                    <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', mr: 6 }}>
-                      {menuLabels[activeSubmenu]}
-                    </Typography>
-                  )}
-                  
-                  <IconButton onClick={toggleDrawer(false)}>
-                    <CloseRoundedIcon />
-                  </IconButton>
-                </Box>
-                {!activeSubmenu ? (
-                  <>
-                    {Object.entries(menuLabels).map(([key, label]) => (
-                      <MenuItem key={key} onClick={() => handleMainMenuClick(key)}>
-                        {label}...
-                      </MenuItem>
+                  </Box>
+                  {!activeSubmenu ? (
+                    <>
+                      {Object.entries(menuLabels).map(([key, label]) => (
+                        <MenuItem key={key} onClick={() => handleMainMenuClick(key)}>
+                          {label}...
+                        </MenuItem>
+                        ))}
+                        <MenuItem onClick={() => handleNavigate('/contacto')}>
+                          Contacto
+                        </MenuItem>
+                        <Divider sx={{ my: 3 }} />
+                        <MenuItem>
+                          {isAuthenticated ? (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Typography variant="body2">
+                                Hola, {user?.name}
+                              </Typography>
+                              <Button color="primary" variant="outlined" size="small" onClick={handleDashboardClick}>
+                                Dashboard
+                              </Button>
+                              <Button color="primary" variant="outlined" size="small" onClick={handleLogout}>
+                                Cerrar sesión
+                              </Button>
+                            </Box>
+                          ) : (
+                            <Button color="primary" variant="contained" size="small" onClick={handleSignInClick}>
+                              Sign In
+                            </Button>
+                          )}
+                        </MenuItem>
+                    </>
+                  ) : (
+                    <>
+                      {menuData[activeSubmenu].map((item, index) => (
+                        <MenuItem key={index} onClick={() => handleNavigate(item.href)}>
+                          {item.label}
+                        </MenuItem>
                       ))}
-                      <MenuItem onClick={() => handleNavigate('/contacto')}>
-                        Contacto
-                      </MenuItem>
-                      <Divider sx={{ my: 3 }} />
-                      <MenuItem>
-                        {isAuthenticated ? (
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Typography variant="body2">
-                              Hola, {user?.name}
-                            </Typography>
-                            <Button color="primary" variant="outlined" size="small" onClick={handleDashboardClick}>
-                              Dashboard
-                            </Button>
-                            <Button color="primary" variant="outlined" size="small" onClick={handleLogout}>
-                              Cerrar sesión
-                            </Button>
-                          </Box>
-                        ) : (
-                          <Button color="primary" variant="contained" size="small" onClick={handleSignInClick}>
-                            Sign In
-                          </Button>
-                        )}
-                      </MenuItem>
-                  </>
-                ) : (
-                  <>
-                    {menuData[activeSubmenu].map((item, index) => (
-                      <MenuItem key={index} onClick={() => handleNavigate(item.href)}>
-                        {item.label}
-                      </MenuItem>
-                    ))}
-                  </>
-                )}
-              </Box>
-            </Drawer>
-          </Box>
-        </StyledToolbar>
-      </Container>
-    </AppBar>
+                    </>
+                  )}
+                </Box>
+              </Drawer>
+            </Box>
+          </StyledToolbar>
+        </Container>
+      </Box>
+    </>
   );
 }

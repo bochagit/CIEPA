@@ -22,14 +22,34 @@ export default function Layout({ children, ...props }) {
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <TopBar />
-      <Box sx={{width: '100%', height: 'auto', display: {xs: 'none', md: 'flex'}, alignItems: 'center', marginTop: '2rem' }}>
-        <CiepaLogoGrande />
-      </Box>
+        <Box sx={{
+          width: '100%',
+          height: 'auto',
+          display: { xs: 'none', md: 'flex' },
+          alignItems: 'center',
+          py: 2,
+          px: 2
+        }}>
+          <CiepaLogoGrande />
+        </Box>
+
+      <Box sx={{
+        height: { xs: '2.5rem', md: 0 },
+        display: { xs: 'block', md: 'none' }
+      }} />
+
       <AppAppBar />
+
       <Container
         maxWidth="lg"
         component="main"
-        sx={{ display: 'flex', flexDirection: 'column', my: 10, gap: 4 }}
+        sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          mt: 4, 
+          mb: 10, 
+          gap: 4, 
+        }}
       >
         {children}
       </Container>
