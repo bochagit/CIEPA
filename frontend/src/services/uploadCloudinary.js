@@ -186,10 +186,19 @@ export const uploadService = {
 
             console.log('Public ID extraído: ', publicId)
 
-            const encodedPublicId = encodeURIComponent(publicId)
-            const response = await api.delete(`/upload/file/${encodedPublicId}`)
+            const isPDF = fileUrl.includes('/pdfs/') || publicId.includes('/pdfs') || fileUrl.toLowerCase().includes('.pdf')
+            const resourceType = isPDF ? 'raw' : 'image'
 
-            console.log('Archivo eliminado del servidor')
+            const encodedPublicId = encodeURIComponent(publicId)
+            const response = await api.delete(`/upload/file/${encodedPublicId}?resourceType=${resourceType}`)
+
+            console.log('Respuesta del servidor:', response.data)
+
+            if (!response.data || response.data.message?.includes('Error')) {
+                throw new Error(response.data?.message || 'Error al eliminar archivo')
+            }
+
+            console.log('✅ Archivo eliminado exitosamente del servidor')
             return response.data
         } catch(error) {
             console.error('Error eliminando archivo: ', error)

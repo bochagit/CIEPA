@@ -354,6 +354,8 @@ export default function ReportCreate() {
                             <TextField
                               fullWidth
                               multiline
+                              minRows={3}
+                              maxRows={10}
                               label="Introducción"
                               name="introduction"
                               placeholder="Escribí una introducción al infrome..."
@@ -363,6 +365,24 @@ export default function ReportCreate() {
                               helperText={errors.introduction || "Describí el informe."}
                               disabled={loading}
                               required
+                              sx={{
+                                '& .MuiInputBase-root': {
+                                    alignItems: 'flex-start',
+                                    height: 'auto',
+                                    minHeight: 'auto',
+                                    padding: '12px',
+                                },
+                                '& .MuiInputBase-input': {
+                                    height: 'auto !important',
+                                    overflow: 'auto !important',
+                                    whiteSpace: 'pre-wrap',
+                                    wordWrap: 'break-word'
+                                },
+                                '& textarea': {
+                                    resize: 'none',
+                                    lineHeight: 1.5
+                                }
+                                }}
                             />
                         </Grid>
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Button, IconButton, Stack, Tooltip, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, Typography, Pagination, alpha } from '@mui/material'
+import { Box, Button, IconButton, Stack, Tooltip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, Typography, Pagination, alpha, FormControl, OutlinedInput, InputAdornment } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import EditIcon from '@mui/icons-material/Edit';
@@ -14,6 +14,58 @@ import PageContainer from './PageContainer';
 import { brand } from '../../shared-theme/themePrimitives'
 import { useTheme, useMediaQuery } from '@mui/material'
 import { reportService } from '../services/reportService';
+import { SearchRounded as SearchRoundedIcon } from '@mui/icons-material';
+
+export function Search({ onSearch, searchTerm }) {
+  const [localSearchTerm, setLocalSearchTerm] = React.useState(searchTerm || '')
+
+  const handleInputChange = (event) => {
+    setLocalSearchTerm(event.target.value)
+  }
+
+  const executeSearch = () => {
+    onSearch(localSearchTerm.trim())
+  }
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter'){
+      executeSearch()
+    }
+  }
+
+  React.useEffect(() => {
+    setLocalSearchTerm(searchTerm || '')
+  }, [searchTerm])
+
+  return (
+    <FormControl sx={{ width: '25ch' }} variant="outlined">
+      <OutlinedInput
+        size="small"
+        id="search"
+        placeholder="Buscar..."
+        value={localSearchTerm}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyPress}
+        sx={{ flexGrow: 1 }}
+        startAdornment={
+          <InputAdornment position="start" sx={{ color: 'text.primary' }}>
+            <IconButton
+              onClick={executeSearch}
+              edge="start"
+              size="small"
+              sx={{ backgroundColor: 'transparent !important', border: 'none', '&:hover': { color: 'primary.main', backgroundColor: 'transparent' } }}
+            >
+              <SearchRoundedIcon fontSize="small" />
+            </IconButton>
+          </InputAdornment>
+        }
+        inputProps={{
+          'aria-label': 'search',
+        }}
+      />
+    </FormControl>
+  );
+}
 
 export default function ReportsList() {
     const navigate = useNavigate();
@@ -28,6 +80,7 @@ export default function ReportsList() {
     const [error, setError] = React.useState(null);
     const [selected, setSelected] = React.useState([]);
     const [currentPage, setCurrentPage] = React.useState(1);
+    const [searchTerm, setSearchTerm] = React.useState('')
 
     const itemsPerPage = isMobile ? 5 : 10;
 
@@ -85,10 +138,34 @@ export default function ReportsList() {
         fetchReports();
     }, [fetchReports])
 
-    const totalPages = Math.ceil(reports.length / itemsPerPage);
+    const filteredReports = React.useMemo(() => {
+        if (!searchTerm.trim()){
+          return reports
+        }
+    
+        const searchLower = searchTerm.toLowerCase()
+        return reports.filter(item => {
+            const titleMatch = item.title?.toLowerCase().includes(searchLower)
+            
+            const authorsMatch = item.authors?.some(author => 
+            author.name?.toLowerCase().includes(searchLower)
+            )
+            
+            const summaryMatch = item.summary?.toLowerCase().includes(searchLower)
+            
+            return titleMatch || authorsMatch || summaryMatch
+        })
+    }, [reports, searchTerm])
+
+    const totalPages = Math.ceil(filteredReports.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const currentReports = reports.slice(startIndex, endIndex);
+    const currentReports = filteredReports.slice(startIndex, endIndex);
+
+    const handleSearch = (search) => {
+        setSearchTerm(search)
+        setCurrentPage(1)
+    }
 
     const handleRowClick = (id, event) => {
         if (event.target.type === 'checkbox' || event.target.closest('[role="checkbox"]')) {
@@ -273,6 +350,18 @@ export default function ReportsList() {
                         Nuevo Informe
                     </Button>
 
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            gap: 1,
+                            width: 'fit-content',
+                            overflow: 'auto',
+                        }}
+                        >
+                        <Search onSearch={handleSearch} searchTerm={searchTerm} />
+                        </Box>
+
                     {selected.length > 0 && (
                         <Button
                             variant="outlined"
@@ -291,11 +380,11 @@ export default function ReportsList() {
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <Typography variant="body2" color="text.secondary" sx={{ display: {xs: 'none', sm: 'block'} }}>
-                            Mostrando {startIndex + 1} - {Math.min(endIndex, reports.length)} de {reports.length}
+                            Mostrando {startIndex + 1} - {Math.min(endIndex, filteredReports.length)} de {filteredReports.length}
                         </Typography>
 
                         <Typography variant="body2" color="text.secondary" sx={{ display: { xs: 'block', sm: 'none' } }}>
-                            {startIndex + 1}-{Math.min(endIndex, reports.length)} de {reports.length}
+                            {startIndex + 1}-{Math.min(endIndex, filteredReports.length)} de {filteredReports.length}
                         </Typography>
                     
                         <Tooltip title="Actualizar lista">

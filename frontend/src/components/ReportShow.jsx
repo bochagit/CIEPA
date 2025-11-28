@@ -81,7 +81,7 @@ export default function ReportShow() {
     };
 
     const handleEdit = () => {
-        navigate(`/dashboard/informes/editar/${reportId}`);
+        navigate(`/dashboard/informes/edit/${reportId}`);
     };
 
     const handleDownload = async () => {
@@ -246,7 +246,9 @@ export default function ReportShow() {
                                     variant="body1" 
                                     sx={{ 
                                         lineHeight: 1.7,
-                                        textAlign: 'justify'
+                                        textAlign: 'justify',
+                                        whiteSpace: 'pre-wrap',
+                                        wordBreak: 'break-word'
                                     }}
                                 >
                                     {reportData.introduction}

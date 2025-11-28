@@ -396,7 +396,7 @@ export default function Notas() {
                 <Typography gutterBottom variant="h6" component="div" sx={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden', textOverflow: 'ellipsis', minHeight: '3em' }}>
                   {post.title}
                 </Typography>
-                <StyledTypography variant="body2" color="text.secondary" gutterBottom sx={{ WebkitLineClamp: 3, minHeight: '4.5em' }}>
+                <StyledTypography variant="body2" color="text.secondary" gutterBottom sx={{ WebkitLineClamp: 3, minHeight: '4.5em', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                   {post.summary || getPlainTextFromHtml(post.content)}
                 </StyledTypography>
               </StyledCardContent>

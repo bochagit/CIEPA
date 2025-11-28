@@ -204,7 +204,7 @@ export default function NewsShow() {
 
               {newsData.excerpt && (
                 <Box sx={{ bgcolor: 'transparent', p: 2, borderRadius: 1 }}>
-                  <Typography variant="subtitle1" color="text.secondary" fontStyle="italic">
+                  <Typography variant="subtitle1" color="text.secondary" fontStyle="italic" sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                     {newsData.excerpt}
                   </Typography>
                 </Box>

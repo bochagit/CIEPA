@@ -173,7 +173,9 @@ export default function ReportEdit() {
 
     const handleInputChange = (event) => {
         const { name, value, type, checked } = event.target
-        setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
+        setFormData(prev => ({ 
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value }))
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: '' }))
         }
@@ -271,7 +273,7 @@ export default function ReportEdit() {
             }
 
             if (pdfFile) {
-                if (originalData.pdfFile?.url) {
+                if (originalData.pdfFile?.publicId) {
                     try {
                         await uploadService.deleteFileByUrl(originalData.pdfFile.url)
                     } catch (error) {
@@ -444,6 +446,8 @@ export default function ReportEdit() {
                             <TextField
                                 fullWidth
                                 multiline
+                                minRows={3}
+                                maxRows={10}
                                 label="Introducción"
                                 name="introduction"
                                 value={formData.introduction}
@@ -451,6 +455,24 @@ export default function ReportEdit() {
                                 error={!!errors.introduction}
                                 helperText={errors.introduction}
                                 disabled={loading}
+                                sx={{
+                                '& .MuiInputBase-root': {
+                                    alignItems: 'flex-start',
+                                    height: 'auto',
+                                    minHeight: 'auto',
+                                    padding: '12px',
+                                },
+                                '& .MuiInputBase-input': {
+                                    height: 'auto !important',
+                                    overflow: 'auto !important',
+                                    whiteSpace: 'pre-wrap',
+                                    wordWrap: 'break-word'
+                                },
+                                '& textarea': {
+                                    resize: 'none',
+                                    lineHeight: 1.5
+                                }
+                                }}
                             />
                         </Grid>
 

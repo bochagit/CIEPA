@@ -216,7 +216,7 @@ export default function Note(){
                         {post.title}
                     </Typography>
                     {post.summary && (
-                        <Typography variant="h6" sx={{ opacity: .9, fontWeight: 400 }}>
+                        <Typography variant="h6" sx={{ opacity: .9, fontWeight: 400, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                             {post.summary}
                         </Typography>
                     )}

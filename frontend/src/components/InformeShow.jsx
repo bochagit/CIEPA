@@ -269,7 +269,9 @@ export default function InformeShow(){
                     sx={{
                         lineHeight: 1.7,
                         textAlign: 'justify',
-                        fontSize: '1.1rem'
+                        fontSize: '1.1rem',
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word'
                     }}
                 >
                     {report.introduction}

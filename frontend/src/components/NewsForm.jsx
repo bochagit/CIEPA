@@ -343,15 +343,34 @@ function NewsForm(props) {
             />
           </FormControl>
 
-          <FormControl>
+          <FormControl fullWidth>
             <FormLabel htmlFor="summary">Resumen/Extracto</FormLabel>
             <TextField
               id="summary"
               name="summary"
               multiline
+              minRows={3}
+              maxRows={10}
               value={formData.summary}
               onChange={handleInputChange}
               placeholder="Breve resumen de la noticia..."
+              fullWidth
+              sx={{
+                '& .MuiInputBase-root': {
+                  alignItems: 'flex-start',
+                  height: 'auto',
+                  minHeight: 'auto'
+                },
+                '& .MuiInputBase-input': {
+                  height: 'auto !important',
+                  overflow: 'auto !important',
+                  whiteSpace: 'pre-wrap',
+                  wordWrap: 'break-word'
+                },
+                '& textarea': {
+                  lineHeight: 1.5
+                }
+              }}
             />
           </FormControl>
 

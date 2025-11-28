@@ -251,7 +251,9 @@ export default function Informes(){
                                         WebkitLineClamp: 2,
                                         WebkitBoxOrient: 'vertical',
                                         overflow: 'hidden',
-                                        mb: 1
+                                        mb: 1,
+                                        whiteSpace: 'pre-wrap',
+                                        wordBreak: 'break-word'
                                     }}
                                 >
                                     {report.introduction}

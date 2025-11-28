@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Button, IconButton, Stack, Tooltip, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, Typography, Pagination, alpha } from '@mui/material'
+import { Box, Button, IconButton, Stack, Tooltip, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, Typography, Pagination, alpha, FormControl, OutlinedInput, InputAdornment } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import EditIcon from '@mui/icons-material/Edit';
@@ -12,6 +12,58 @@ import PageContainer from './PageContainer';
 import { brand } from '../../shared-theme/themePrimitives'
 import { useTheme, useMediaQuery } from '@mui/material'
 import { postService } from '../services/postService';
+import { SearchRounded as SearchRoundedIcon } from '@mui/icons-material';
+
+export function Search({ onSearch, searchTerm }) {
+  const [localSearchTerm, setLocalSearchTerm] = React.useState(searchTerm || '')
+
+  const handleInputChange = (event) => {
+    setLocalSearchTerm(event.target.value)
+  }
+
+  const executeSearch = () => {
+    onSearch(localSearchTerm.trim())
+  }
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter'){
+      executeSearch()
+    }
+  }
+
+  React.useEffect(() => {
+    setLocalSearchTerm(searchTerm || '')
+  }, [searchTerm])
+
+  return (
+    <FormControl sx={{ width: '25ch' }} variant="outlined">
+      <OutlinedInput
+        size="small"
+        id="search"
+        placeholder="Buscar..."
+        value={localSearchTerm}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyPress}
+        sx={{ flexGrow: 1 }}
+        startAdornment={
+          <InputAdornment position="start" sx={{ color: 'text.primary' }}>
+            <IconButton
+              onClick={executeSearch}
+              edge="start"
+              size="small"
+              sx={{ backgroundColor: 'transparent !important', border: 'none', '&:hover': { color: 'primary.main', backgroundColor: 'transparent' } }}
+            >
+              <SearchRoundedIcon fontSize="small" />
+            </IconButton>
+          </InputAdornment>
+        }
+        inputProps={{
+          'aria-label': 'search',
+        }}
+      />
+    </FormControl>
+  );
+}
 
 export default function NewsList() {
   const navigate = useNavigate();
@@ -26,6 +78,7 @@ export default function NewsList() {
   const [error, setError] = React.useState(null);
   const [selected, setSelected] = React.useState([]);
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [searchTerm, setSearchTerm] = React.useState('')
 
   const itemsPerPage = isMobile ? 5 : 10;
 
@@ -95,10 +148,24 @@ export default function NewsList() {
     fetchPosts();
   }, [fetchPosts])
 
-  const totalPages = Math.ceil(news.length / itemsPerPage);
+  const filteredNews = React.useMemo(() => {
+    if (!searchTerm.trim()){
+      return news
+    }
+
+    const searchLower = searchTerm.toLowerCase()
+    return news.filter(item =>
+      item.title.toLowerCase().includes(searchLower) ||
+      item.author.toLowerCase().includes(searchLower) ||
+      item.category.toLowerCase().includes(searchLower) ||
+      (item.summary && item.summary.toLowerCase().includes(searchLower))
+    )
+  }, [news, searchTerm])
+
+  const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentNews = news.slice(startIndex, endIndex);
+  const currentNews = filteredNews.slice(startIndex, endIndex);
 
   const handleRowClick = (id, event) => {
     if (event.target.type === 'checkbox' || event.target.closest('[role="checkbox"]')) {
@@ -244,6 +311,11 @@ export default function NewsList() {
     }
   };
 
+  const handleSearch = (search) => {
+    setSearchTerm(search)
+    setCurrentPage(1)
+  }
+
   const currentPageSelected = currentNews.every(item => selected.includes(item.id));
   const currentPageIndeterminate = currentNews.some(item => selected.includes(item.id)) && !currentPageSelected;
 
@@ -267,6 +339,18 @@ export default function NewsList() {
             Nueva Noticia
           </Button>
 
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 1,
+              width: 'fit-content',
+              overflow: 'auto',
+            }}
+          >
+            <Search onSearch={handleSearch} searchTerm={searchTerm} />
+          </Box>
+
           {selected.length > 0 && (
             <Button
               variant="outlined"
@@ -285,11 +369,11 @@ export default function NewsList() {
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Typography variant="body2" color="text.secondary" sx={{ display: {xs: 'none', sm: 'block'} }}>
-              Mostrando {startIndex + 1} - {Math.min(endIndex, news.length)} de {news.length}
+              Mostrando {startIndex + 1} - {Math.min(endIndex, filteredNews.length)} de {filteredNews.length}
             </Typography>
 
             <Typography variant="body2" color="text.secondary" sx={{ display: { xs: 'block', sm: 'none' } }}>
-              {startIndex + 1}-{Math.min(endIndex, news.length)} de {news.length}
+              {startIndex + 1}-{Math.min(endIndex, filteredNews.length)} de {filteredNews.length}
             </Typography>
           
             <Tooltip title="Actualizar lista">

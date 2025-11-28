@@ -11,7 +11,6 @@ export default function NewsCreate() {
 
   const handleSubmit = async (formData) => {
     try {
-      // En una app real, aquí se haría una llamada a la API
       const newPost = await postService.createPost(formData);
       console.log('Nueva noticia creada:', newPost);
       
