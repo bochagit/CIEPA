@@ -84,7 +84,6 @@ export default function Contacto(){
                     width: { xs: '100%', sm: '60%' },
                     height: 300,
                     backgroundColor: alpha(brand.main, 0.1),
-                    border: `2px solid ${brand.main}`,
                     borderRadius: 2,
                     p: 3,
                     display: 'flex',
@@ -159,7 +158,7 @@ export default function Contacto(){
                         target='_blank'
                         rel='noopener noreferrer'
                         aria-label="Instagram"
-                        sx={{ alignSelf: 'center', borderRadius: '50%', transition: 'transform .3s ease-in-out, box-shadow .3s ease-in-out, border-radius .3s ease-in-out', '&:hover': { transform: 'translateY(-4px)', boxShadow: 3, borderRadius: 2 } }}
+                        sx={{ alignSelf: 'center', borderRadius: '50%', transition: 'transform .2s ease-in-out, box-shadow .2s ease-in-out, border-radius .2s ease-in-out', '&:hover': { transform: 'translateY(-4px)', boxShadow: 3, borderRadius: 2 } }}
                         >
                             <InstagramIcon />
                         </IconButton>
@@ -170,7 +169,7 @@ export default function Contacto(){
                         target='_blank'
                         rel='noopener noreferrer'
                         aria-label="YouTube"
-                        sx={{ alignSelf: 'center', borderRadius: '50%', transition: 'transform .3s ease-in-out, box-shadow .3s ease-in-out, border-radius .3s ease-in-out', '&:hover': { transform: 'translateY(-4px)', boxShadow: 3, borderRadius: 2 } }}
+                        sx={{ alignSelf: 'center', borderRadius: '50%', transition: 'transform .2s ease-in-out, box-shadow .2s ease-in-out, border-radius .2s ease-in-out', '&:hover': { transform: 'translateY(-4px)', boxShadow: 3, borderRadius: 2 } }}
                         >
                             <YouTubeIcon />
                         </IconButton>
@@ -185,10 +184,10 @@ export default function Contacto(){
                         target='_blank'
                         rel='noopener noreferrer'
                         aria-label="Email"
-                        sx={{ alignSelf: 'center', borderRadius: '50%', transition: 'transform .3s ease-in-out, box-shadow .3s ease-in-out, border-radius .3s ease-in-out', '&:hover': { transform: 'translateY(-4px)', boxShadow: 3, borderRadius: 2 }, '&::before': { content: '"ciepa@agro.uba.ar"', position: 'absolute', fontSize: '.8rem', color: 'text.secondary', top: 40, fontWeight: 200 } }}
-                        >
-                            <EmailIcon />
-                        </IconButton>
+                        sx={{ alignSelf: 'center', borderRadius: '50%', transition: 'transform .2s ease-in-out, box-shadow .2s ease-in-out, border-radius .2s ease-in-out', '&:hover': { transform: 'translateY(-4px)', boxShadow: 3, borderRadius: 2 }, '&::before': { content: '"ciepa@agro.uba.ar"', position: 'absolute', fontSize: '.8rem', color: 'text.secondary', top: 40, fontWeight: 200 } }}
+                    >
+                        <EmailIcon />
+                    </IconButton>
                 </Box>
             </Box>
         </SectionContainer>

@@ -125,7 +125,7 @@ h1, h2, h3, h4, h5, h6 {
 .ql-editor .ql-indent-3 { padding-left: 9em; }
 
 body {
-    background-image: linear-gradient(to top, #EBF7ED, #EBF7ED);
+    background-image: linear-gradient(to top, #fff, #fff);
 }
 
 [data-mui-color-scheme="dark"] body {

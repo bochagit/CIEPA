@@ -20,6 +20,7 @@ import PublicIcon from '@mui/icons-material/Public';
 import { useNavigate } from 'react-router-dom';
 import { postService } from '../services/postService';
 import { eventService } from '../services/eventService';
+import heroImage from '../assets/images/static-photos/1.jpg'
 
 const SectionContainer = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(6),
@@ -302,7 +303,17 @@ export default function MainContent() {
               Conocenos
             </Button>
         </HeroSection>
-        <Box sx={{ width: { xs: '100%', lg: '60%' }, height: 500, backgroundImage: 'url("https://cdn.prod.website-files.com/605baba32d94435376625d33/6514274293b790a99214bbd6_63d7a17b0c095a3d11423d53_team-celebration-ideas.webp")', backgroundPosition: 'center', backgroundSize: 'cover' , backgroundRepeat: 'no-repeat', borderRadius: { xs: '1.5rem', lg: '0 1.5rem 1.5rem 0' } }} />
+        <Box 
+          sx={{ 
+            width: { xs: '100%', lg: '60%' }, 
+            height: 500, 
+            backgroundImage: `url(${heroImage})`, 
+            backgroundPosition: 'center', 
+            backgroundSize: 'cover', 
+            backgroundRepeat: 'no-repeat', 
+            borderRadius: { xs: '1.5rem', lg: '0 1.5rem 1.5rem 0' } 
+          }}
+        />
       </Box>
       <SectionContainer>
         <SectionTitle variant="h3" component="h2">
@@ -370,7 +381,7 @@ export default function MainContent() {
           <SectionTitle variant="h3" component="h2" sx={{ 
             fontSize: { xs: '2rem', lg: '1.75rem' }
           }}>
-            Últimas Publicaciones
+            Publicaciones recientes
           </SectionTitle>
 
           {errorPublicaciones && (
@@ -549,7 +560,7 @@ export default function MainContent() {
           <SectionTitle variant="h3" component="h2" sx={{ 
             fontSize: { xs: '2rem', lg: '1.75rem' }
           }}>
-            Últimas Actividades
+            Actividades recientes
           </SectionTitle>
 
           {errorActividades && (
@@ -708,7 +719,7 @@ export default function MainContent() {
 
       <SectionContainer>
         <SectionTitle variant="h3" component="h2">
-          ¡Contactate con nosotras/os!
+          ¡Contactanos!
         </SectionTitle>
         <Box sx={{ width: 300, height: 150, m: 'auto', mt: '4rem', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: 2, border: `1px solid ${brand.main}` }} >
           <Button variant="contained" color="primary" onClick={() => navigate("/contacto")} sx={{ height: 50, '&:hover': { boxShadow: 4, backgroundColor: alpha(brand.main, 1), border: `1px solid ${brand.main}` } }} >

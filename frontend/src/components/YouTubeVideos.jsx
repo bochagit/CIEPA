@@ -74,10 +74,11 @@ const YouTubeVideos = ({ maxVideos = 6 }) => {
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        backgroundColor: 'rgba(255, 0, 0, .9) !important',
+                        backgroundColor: 'rgba(255, 0, 0, .7) !important',
                         color: '#fff',
-                        width: 60,
-                        height: 60,
+                        width: 50,
+                        height: 30,
+                        border: 'none',
                         '&:hover': {
                             backgroundColor: 'rgba(255, 0, 0, 1) !important',
                             transform: 'translate(-50%, -50%) scale(1.1)'

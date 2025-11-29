@@ -38,7 +38,6 @@ export default function Footer() {
           gap: { xs: 4, sm: 8 },
           py: { xs: 8, sm: 10 },
           textAlign: 'left',
-          backdropFilter: 'blur(10px)',
           minWidth: '100%'
         }}
       >
@@ -98,10 +97,10 @@ export default function Footer() {
               Links
             </Typography>
             <Link color="text.secondary" variant="body2" onClick={() => navigate("/quienes-somos")} sx={{ '&:hover': { cursor: 'pointer' } }}>
-              Quienes somos
+              ¿Qué es el CIEPA?
             </Link>
             <Link color="text.secondary" variant="body2" onClick={() => navigate("/que-hacemos")} sx={{ '&:hover': { cursor: 'pointer' } }}>
-              Qué hacemos
+              Nuestro trabajo
             </Link>
             <Link color="text.secondary" variant="body2" onClick={() => navigate("/notas")} sx={{ '&:hover': { cursor: 'pointer' } }}>
               Notas

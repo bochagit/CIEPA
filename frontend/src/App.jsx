@@ -7,11 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import MainContent from './components/MainContent';
 import QuienesSomos from './components/QuienesSomos';
 import Principios from './components/Principios';
-import Objetivos from './components/Objetivos';
-import Integrantes from './components/Integrantes';
 import QueHacemos from './components/QueHacemos';
-import EjesTrabajo from './components/EjesTrabajo';
-import Asesoramiento from './components/Asesoramiento';
 import Notas from './components/Notas';
 import Contacto from './components/Contacto';
 import Note from './components/Note';
@@ -24,6 +20,8 @@ import Informes from './components/Informes';
 import InformeShow from './components/InformeShow';
 import AppTheme from '../shared-theme/AppTheme';
 import { CssBaseline } from '@mui/material';
+import Proyectos from './components/Proyectos';
+import Lineas from './components/LineasTrabajo';
 
 export default function App() {
   return (
@@ -45,29 +43,19 @@ export default function App() {
               <Principios />
             </Layout>
           } />
-          <Route path="/objetivos" element={
-            <Layout>
-              <Objetivos />
-            </Layout>
-          } />
-          <Route path="/integrantes" element={
-            <Layout>
-              <Integrantes />
-            </Layout>
-          } />
           <Route path="/que-hacemos" element={
             <Layout>
               <QueHacemos />
             </Layout>
           } />
-          <Route path="/ejes" element={
+          <Route path="/lineas-trabajo" element={
             <Layout>
-              <EjesTrabajo />
+              <Lineas />
             </Layout>
           } />
-          <Route path="/asesoramiento" element={
+          <Route path="/proyectos" element={
             <Layout>
-              <Asesoramiento />
+              <Proyectos />
             </Layout>
           } />
           <Route path="/notas" element={
