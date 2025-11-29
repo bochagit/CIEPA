@@ -21,6 +21,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import Menu from '@mui/material/Menu';
 import { useAuth } from '../context/AuthContext';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+
 
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -302,6 +304,9 @@ export default function AppAppBar() {
                 <CiepaLogo />
               </Box>
               <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'space-evenly', px: 0, gap: '1rem' }}>
+                <IconButton aria-label="home" size="medium" onClick={() => handleNavigate('/')} sx={{ bgcolor: 'transparent !important', border: 'none', '&:hover': { backgroundColor: `${alpha(brand.main, .2)} !important` } }}>
+                  <HomeOutlinedIcon />
+                </IconButton>
                 <MenuButton 
                 menuKey="acerca" 
                 label="Acerca del CIEPA" 
@@ -336,7 +341,7 @@ export default function AppAppBar() {
                     color: '#222',
                     display: { xs: 'none', md: 'flex' },
                     '&:hover': {
-                      backgroundColor: alpha(brand.main, .1)
+                      backgroundColor: alpha(brand.main, .2)
                     }
                   }}
                 >
@@ -393,6 +398,9 @@ export default function AppAppBar() {
                         ))}
                         <MenuItem onClick={() => handleNavigate('/contacto')}>
                           Contacto
+                        </MenuItem>
+                        <MenuItem onClick={() => handleNavigate('/')}>
+                          Volver al inicio
                         </MenuItem>
                         <Divider sx={{ my: 3 }} />
                         <MenuItem>
