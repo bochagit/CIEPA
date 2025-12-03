@@ -11,6 +11,7 @@ export const createReport = async (req, res) => {
             introduction,
             authors,
             date,
+            category,
             coverImage,
             pdfFile,
         } = req.body
@@ -29,6 +30,7 @@ export const createReport = async (req, res) => {
                 name: author.name.trim()
             })),
             date,
+            category,
             coverImage,
             pdfFile
         }
@@ -81,6 +83,10 @@ export const getAllReports = async (req, res) => {
 
         if (search.trim()){
             filter.$text = { $search: search }
+        }
+
+        if (category.trim()){
+            filter.category = category
         }
 
         const reports = await Report.find(filter)
