@@ -13,7 +13,6 @@ export default function Mapa(){
                 width: 300,
                 height: 300,
                 backgroundColor: alpha(brand.main, 0.1),
-                border: `2px solid ${brand.main}`,
                 borderRadius: 2,
                 p: 3,
                 position: 'relative',
@@ -60,10 +59,12 @@ export default function Mapa(){
                 <Box
                 component="iframe"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3284.3203710553043!2d-58.482668399999994!3d-34.596059499999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb619b429179f%3A0x54ed9c2042a608ae!2sFacultad%20de%20Agronom%C3%ADa%20-%20UBA!5e0!3m2!1ses-419!2sar!4v1760828510550!5m2!1ses-419!2sar" 
-                sx={{ border: `2px solid ${brand.main}`,
-                borderRadius: 2,
-                width: 'auto',
-                height: 300 }}
+                sx={{
+                  border: 'none',
+                  borderRadius: 2,
+                  width: 'auto',
+                  height: 300 
+                }}
                 allowFullScreen="" 
                 loading="lazy" 
                 referrerPolicy="no-referrer-when-downgrade" >

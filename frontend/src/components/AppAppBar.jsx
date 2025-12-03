@@ -2,7 +2,6 @@ import * as React from 'react';
 import { alpha, styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
-import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -22,6 +21,8 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import Menu from '@mui/material/Menu';
 import { useAuth } from '../context/AuthContext';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+
 
 
 
@@ -30,48 +31,36 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'space-between',
   flexShrink: 0,
-  borderRadius: `calc(${theme.shape.borderRadius}px + 8px)`,
   backdropFilter: 'blur(24px)',
-  border: '1px solid',
-  borderColor: (theme.vars || theme).palette.divider,
-  backgroundColor: alpha(brand.main, 0.4),
   boxShadow: (theme.vars || theme).shadows[1],
-  padding: '8px 12px',
+  padding: '8px 12px'
 }));
 
 const menuData = {
   acerca: [
     { label: '¿Qué es el CIEPA?', href: '/quienes-somos' },
     { label: 'Principios', href: '/principios' },
-    { label: 'Objetivos', href: '/objetivos' },
-    { label: 'Integrantes', href: '/integrantes' }
+    { label: 'Nuestro trabajo', href: '/que-hacemos' },
   ],
-  trabajo: [
-    { label: 'Qué hacemos', href: '/que-hacemos' },
-    { label: 'Ejes de trabajo', href: '/ejes' },
-    { label: 'Asesoramiento técnico', href: '/asesoramiento' }
+  consultoria: [
+    { label: 'Líneas de trabajo', href: '/lineas-trabajo' },
+    { label: 'Proyectos ejecutados', href: '/proyectos' }
   ],
   publicaciones: [
     { label: 'Notas', href: '/notas' },
     { label: 'Informes', href: '/informes' },
     { label: 'Audiovisual', href: '/audiovisual' }
   ],
-  actividades: [
-    { label: 'Conversatorios', href: '/conversatorios' },
-    { label: 'Ciclo de formaciones', href: '/formaciones' },
-    { label: 'Jornadas', href: '/jornadas' }
-  ],
   formacion: [
-    { label: 'Materia Energías y Transición energética', href: '/' }
+    { label: 'Materia Energías y Transición energética', href: '/cursos' }
   ]
 }
 
 const menuLabels = {
   acerca: 'Acerca del CIEPA',
-  trabajo: 'Nuestro trabajo',
+  consultoria: 'Consultoría y Asesoramiento Técnico',
   publicaciones: 'Publicaciones',
-  actividades: 'Actividades',
-  formacion: 'Formación'
+  formacion: 'Cursos y Formación Académica'
 }
 
 export default function AppAppBar() {
@@ -224,13 +213,12 @@ export default function AppAppBar() {
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
           variant="text" 
-          color="info" 
           size="medium" 
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={handleClick}
           endIcon={open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          sx={{ color: '#222', display: { xs: 'none', md: 'flex' } }}>
+          sx={{ color: '#fff', display: { xs: 'none', md: 'flex' } }}>
             {label}
         </Button>
 
@@ -245,20 +233,20 @@ export default function AppAppBar() {
           transformOrigin={{ vertical: 'top', horizontal: 'center' }}
           slotProps={{
             paper: {
-              elevation: 3,
+              elevation: 4,
               onMouseEnter: handleMenuMouseEnter,
               onMouseLeave: handleMenuMouseLeave,
               sx: {
                 mt: .5,
                 minWidth: 200,
                 borderRadius: 2,
-                backgroundColor: '#ebf7ed',
+                backgroundColor: '#fff',
                 '& .MuiMenuItem-root': {
                   px: 2,
                   py: 1,
                   height: 50,
                   '&:hover': {
-                    backgroundColor: alpha(brand.main, .4)
+                    backgroundColor: alpha(brand.main, .8)
                   },
                 },
               }
@@ -293,43 +281,52 @@ export default function AppAppBar() {
           right: 0,
           zIndex: 1200,
           transition: 'all 0.2s ease-out',
-          backdropFilter: isSticky ? 'blur(10px)' : 'none',
           width: '100vw',
-          maxWidth: '100vw'
+          maxWidth: '100vw',
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="false" sx={{ backgroundColor: alpha(brand.main, .8) }}>
           <StyledToolbar variant="dense" disableGutters sx={{ boxShadow: 'none' }}>
               <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
                 <CiepaLogo />
               </Box>
               <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'space-evenly', px: 0, gap: '1rem' }}>
-                <IconButton aria-label="home" size="medium" onClick={() => handleNavigate('/')} sx={{ bgcolor: 'transparent !important', border: 'none', '&:hover': { backgroundColor: `${alpha(brand.main, .2)} !important` } }}>
+                <IconButton aria-label="home" size="medium" onClick={() => handleNavigate('/')} sx={{ color: '#fff', bgcolor: 'transparent !important', border: 'none', '&:hover': { backgroundColor: `${alpha(brand.main, .2)} !important` } }}>
                   <HomeOutlinedIcon />
                 </IconButton>
                 <MenuButton 
-                menuKey="acerca" 
-                label="Acerca del CIEPA" 
-                items={menuData.acerca} 
+                  menuKey="acerca" 
+                  label="Acerca del CIEPA" 
+                  items={menuData.acerca} 
                 />
-                <MenuButton 
-                  menuKey="trabajo" 
-                  label="Nuestro trabajo" 
-                  items={menuData.trabajo} 
+                <MenuButton
+                  menuKey="consultoria"
+                  label="Consultoría y Asesoramiento Técnico"
+                  items={menuData.consultoria}
                 />
                 <MenuButton 
                   menuKey="publicaciones" 
                   label="Publicaciones" 
                   items={menuData.publicaciones} 
                 />
-                <MenuButton 
-                  menuKey="actividades" 
-                  label="Actividades" 
-                  items={menuData.actividades} 
-                />
+                <Button
+                  variant="text"
+                  color="info"
+                  size="medium"
+                  onClick={() => navigate('/actividades')}
+                  sx={{
+                    color: '#fff',
+                    display: { xs: 'none', md: 'flex' },
+                    '&:hover': {
+                      backgroundColor: alpha(brand.main, .2)
+                    }
+                  }}
+                >
+                  Actividades
+                </Button>
                 <MenuButton 
                   menuKey="formacion" 
-                  label="Formación" 
+                  label="Cursos y Formación Académica" 
                   items={menuData.formacion} 
                 />
                 <Button
@@ -338,7 +335,7 @@ export default function AppAppBar() {
                   size="medium"
                   onClick={() => navigate('/contacto')}
                   sx={{
-                    color: '#222',
+                    color: '#fff',
                     display: { xs: 'none', md: 'flex' },
                     '&:hover': {
                       backgroundColor: alpha(brand.main, .2)
@@ -347,6 +344,9 @@ export default function AppAppBar() {
                 >
                   Contacto
                 </Button>
+                <IconButton aria-label="search" size="medium" sx={{ color: '#fff', bgcolor: 'transparent !important', border: 'none', '&:hover': { backgroundColor: `${alpha(brand.main, .2)} !important` } }}>
+                  <SearchOutlinedIcon />
+                </IconButton>
               </Box>
             <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
               <ColorModeIconDropdown size="medium" />
@@ -396,8 +396,14 @@ export default function AppAppBar() {
                           {label}...
                         </MenuItem>
                         ))}
+                        <MenuItem onClick={() => handleNavigate('/actividades')}>
+                          Actividades
+                        </MenuItem>
                         <MenuItem onClick={() => handleNavigate('/contacto')}>
                           Contacto
+                        </MenuItem>
+                        <MenuItem>
+                          Buscar
                         </MenuItem>
                         <MenuItem onClick={() => handleNavigate('/')}>
                           Volver al inicio

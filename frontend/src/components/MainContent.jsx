@@ -10,17 +10,19 @@ import {
   Avatar,
   Skeleton,
   Alert,
-  Chip
+  IconButton
 } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import { brand } from '../../shared-theme/themePrimitives';
+import { secondary } from '../../shared-theme/themePrimitives';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import SchoolIcon from '@mui/icons-material/School';
 import PublicIcon from '@mui/icons-material/Public';
 import { useNavigate } from 'react-router-dom';
 import { postService } from '../services/postService';
 import { eventService } from '../services/eventService';
-
+import heroImage from '../assets/images/static-photos/1.jpg'
+import { Email as EmailIcon } from '@mui/icons-material';
 const SectionContainer = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(6),
   padding: theme.spacing(4, 0),
@@ -51,10 +53,12 @@ const StyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',
   marginTop: 10,
   flexDirection: 'column',
+  padding: 20,
   transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
   '&:hover': {
     transform: 'translateY(-4px)',
     boxShadow: theme.shadows[8],
+    cursor: 'pointer'
   },
   borderRadius: theme.spacing(2),
   border: `1px solid ${alpha(brand.main, 0.1)}`,
@@ -182,7 +186,16 @@ export default function MainContent() {
         console.log('Eventos obtenidos: ', response)
 
         if (response.events && response.events.length > 0){
-          const actividadesFormateadas = response.events
+          const today = new Date()
+          today.setHours(0, 0, 0, 0)
+
+          const actividadesPasadas = response.events.filter(event => {
+            const eventDate = new Date(event.date)
+            eventDate.setHours(0, 0, 0, 0)
+            return eventDate < today
+          })
+
+          const actividadesFormateadas = actividadesPasadas
             .sort((a, b) => new Date(b.date) - new Date(a.date))
             .slice(0, 4)
             .map(event => ({
@@ -288,7 +301,58 @@ export default function MainContent() {
   }
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{
+        '& .MuiTypography-body1, & .MuiTypography-body2': {
+          textAlign: 'justify'
+        }
+      }}
+    >
+      <IconButton
+        color="inherit"
+        size="large"
+        href="mailto:ciepa@agro.uba.ar"
+        target='_blank'
+        rel='noopener noreferrer'
+        aria-label="Email"
+        sx={{
+            position: 'fixed',
+            bottom: 40,
+            right: 50,
+            alignSelf: 'center', 
+            borderRadius: '50%', 
+            borderColor: secondary.variant,
+            transition: 'transform .2s ease-in-out, box-shadow .2s ease-in-out, border-radius .2s ease-in-out', 
+            backgroundColor: secondary.main,
+            zIndex: 1000,
+            '&:hover': 
+                { 
+                    transform: 'translateY(-4px)', 
+                    boxShadow: 3,
+                    backgroundColor: secondary.variant,
+                    borderColor: secondary.main
+                }, 
+            '&::before':
+                {
+                    content: { xs: '""', lg: '"Contactate"' }, 
+                    position: 'absolute', 
+                    fontSize: '.8rem',
+                    color: 'text.primary', 
+                    top: -22,
+                    fontWeight: 500
+                },
+            '&::after': 
+                { 
+                    content: { xs: '""', lg: '"ciepa@agro.uba.ar"' }, 
+                    position: 'absolute', 
+                    fontSize: '.8rem', 
+                    color: 'text.primary', 
+                    top: 50, 
+                    fontWeight: 500 
+                }
+        }}
+    >
+        <EmailIcon sx={{ color: '#fff' }} />
+    </IconButton>
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' } }}>
         <HeroSection sx={{ width: { xs: '100%', lg: '40%' }, height: { xs: 'auto', lg: 500 }, borderRadius: { xs: '1.5rem', lg: '1.5rem 0 0 1.5rem' } }}>
             <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
@@ -302,53 +366,63 @@ export default function MainContent() {
               Conocenos
             </Button>
         </HeroSection>
-        <Box sx={{ width: { xs: '100%', lg: '60%' }, height: 500, backgroundImage: 'url("https://cdn.prod.website-files.com/605baba32d94435376625d33/6514274293b790a99214bbd6_63d7a17b0c095a3d11423d53_team-celebration-ideas.webp")', backgroundPosition: 'center', backgroundSize: 'cover' , backgroundRepeat: 'no-repeat', borderRadius: { xs: '1.5rem', lg: '0 1.5rem 1.5rem 0' } }} />
+        <Box 
+          sx={{ 
+            width: { xs: '100%', lg: '60%' }, 
+            height: 500, 
+            backgroundImage: `url(${heroImage})`, 
+            backgroundPosition: 'center', 
+            backgroundSize: 'cover', 
+            backgroundRepeat: 'no-repeat', 
+            borderRadius: { xs: '1.5rem', lg: '0 1.5rem 1.5rem 0' } 
+          }}
+        />
       </Box>
       <SectionContainer>
         <SectionTitle variant="h3" component="h2">
           Nuestro Trabajo
         </SectionTitle>
-        <StyledCard>
-            <CardContent sx={{ textAlign: 'start', p: 2, display: 'flex', flexDirection: {xs: 'column', md: 'row'}, justifyContent: 'space-evenly', alignItems: 'center' }}>
+        <StyledCard onClick={() => navigate('/informes')}>
+            <CardContent sx={{ display: 'flex', flexDirection: {xs: 'column', md: 'row'}, justifyContent: 'space-evenly', alignItems: 'center' }}>
                 <Box>
                     <Avatar sx={{ bgcolor: alpha(brand.main, 0.1), color: brand.main, width: 64, height: 64, margin: 'auto' }}>
                         <AnalyticsIcon fontSize="large" />
                     </Avatar>
-                    <Typography variant="h5" component="h3" gutterBottom fontWeight={600}>
+                    <Typography variant="h5" component="h3" fontWeight={600}>
                         Análisis
                     </Typography>
                 </Box>
-                <Typography variant="body2" color="text.primary" sx={{ width: '80%' }}>
+                <Typography variant="body2" color="text.primary" sx={{ width: '80%', fontSize: '1rem' }}>
                 Estudiamos y producimos conocimiento científico-técnico crítico sobre las políticas ambientales implementadas a nivel local, nacional y regional. Desde un enfoque interdisciplinario realizamos análisis, diagnósticos y prospección de políticas ambientales.
                 </Typography>
             </CardContent>
         </StyledCard>
-        <StyledCard>
-            <CardContent sx={{ textAlign: 'start', p: 2, display: 'flex', flexDirection: {xs: 'column', md: 'row'}, justifyContent: 'space-evenly', alignItems: 'center' }}>
+        <StyledCard onClick={() => navigate('/cursos')}>
+            <CardContent sx={{ display: 'flex', flexDirection: {xs: 'column', md: 'row'}, justifyContent: 'space-evenly', alignItems: 'center' }}>
                 <Box>
                     <Avatar sx={{ bgcolor: alpha(brand.main, 0.1), color: brand.main, width: 64, height: 64, margin: 'auto' }}>
                         <SchoolIcon fontSize="large" />
                     </Avatar>
-                    <Typography variant="h5" component="h3" gutterBottom fontWeight={600}>
+                    <Typography variant="h5" component="h3" fontWeight={600}>
                         Formación
                     </Typography>
                 </Box>
-                <Typography variant="body2" color="text.primary" sx={{ width: '80%' }}>
+                <Typography variant="body2" color="text.primary" sx={{ width: '80%', fontSize: '1rem' }}>
                 Trabajamos la formación de profesionales y contribuimos a la democratización del conocimiento ambiental, promoviendo su acceso y difusión. Generamos espacios de intercambio, debate y aprendizaje que fortalecen capacidades y fomentan la construcción colectiva de soluciones frente a los desafíos ambientales.
                 </Typography>
             </CardContent>
         </StyledCard>
-        <StyledCard>
-            <CardContent sx={{ textAlign: 'start', p: 2, display: 'flex', flexDirection: {xs: 'column', md: 'row'}, gap: 1, justifyContent: 'space-evenly', alignItems: 'center' }}>
+        <StyledCard onClick={() => navigate('/lineas-trabajo')}>
+            <CardContent sx={{ display: 'flex', flexDirection: {xs: 'column', md: 'row'}, gap: 1, justifyContent: 'space-evenly', alignItems: 'center' }}>
                 <Box>
                     <Avatar sx={{ bgcolor: alpha(brand.main, 0.1), color: brand.main, width: 64, height: 64, margin: 'auto' }}>
                         <PublicIcon fontSize="large" />
                     </Avatar>
-                    <Typography variant="h5" component="h3" gutterBottom fontWeight={600}>
+                    <Typography variant="h5" component="h3" fontWeight={600}>
                         Asesoramiento
                     </Typography>
                 </Box>
-                <Typography variant="body2" color="text.primary" sx={{ width: '80%' }}>
+                <Typography variant="body2" color="text.primary" sx={{ width: '80%', fontSize: '1rem' }}>
                 Estudiamos y asistimos técnicamente a la formulación, planificación e implementación de políticas públicas ambientales. Nuestro acompañamiento busca fortalecer la gestión ambiental, favorecer la toma de decisiones informada y promover políticas más efectivas.
                 </Typography>
             </CardContent>
@@ -370,7 +444,7 @@ export default function MainContent() {
           <SectionTitle variant="h3" component="h2" sx={{ 
             fontSize: { xs: '2rem', lg: '1.75rem' }
           }}>
-            Últimas Publicaciones
+            Publicaciones recientes
           </SectionTitle>
 
           {errorPublicaciones && (
@@ -511,7 +585,7 @@ export default function MainContent() {
               <Typography variant="h6" color="text.secondary" gutterBottom>
                 No hay publicaciones destacadas
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3, textAlign: 'center !important' }}>
                 Actualmente no tenemos publicaciones marcadas como destacadas.
               </Typography>
               <Button
@@ -549,7 +623,7 @@ export default function MainContent() {
           <SectionTitle variant="h3" component="h2" sx={{ 
             fontSize: { xs: '2rem', lg: '1.75rem' }
           }}>
-            Últimas Actividades
+            Actividades recientes
           </SectionTitle>
 
           {errorActividades && (
@@ -687,7 +761,7 @@ export default function MainContent() {
               <Typography variant="h6" color="text.secondary" gutterBottom>
                 No hay actividades recientes
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3, textAlign: 'center !important' }}>
                 Pronto publicaremos nuevas actividades.
               </Typography>
               <Button
@@ -707,13 +781,28 @@ export default function MainContent() {
       <Divider sx={{ my: 6 }} />
 
       <SectionContainer>
-        <SectionTitle variant="h3" component="h2">
-          ¡Contactate con nosotras/os!
-        </SectionTitle>
-        <Box sx={{ width: 300, height: 150, m: 'auto', mt: '4rem', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: 2, border: `1px solid ${brand.main}` }} >
-          <Button variant="contained" color="primary" onClick={() => navigate("/contacto")} sx={{ height: 50, '&:hover': { boxShadow: 4, backgroundColor: alpha(brand.main, 1), border: `1px solid ${brand.main}` } }} >
-            Contacto
-          </Button>
+        <Box 
+        component="ul" 
+        sx={{ 
+            listStyle: 'none',
+            fontSize: '1rem',
+            border: `1px solid ${brand.main}`,
+            borderRadius: 2,
+            backgroundColor: alpha(brand.main, .1),
+            boxShadow: 2,
+            p: 2,
+            marginTop: 7,
+            textAlign: 'center',
+            transition: 'transform .2s ease-in-out, box-shadow .2s ease-in-out',
+            '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: 1
+            }
+        }}>
+            <Typography variant="h6" color="primary">¡Contactanos!</Typography>
+            <Button variant="contained" color="primary" onClick={() => navigate("/contacto")} sx={{ marginTop: 2 }}>
+              Contacto
+            </Button>
         </Box>
       </SectionContainer>
     </Container>

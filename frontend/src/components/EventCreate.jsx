@@ -18,10 +18,6 @@ import {
     CircularProgress,
     Backdrop
 } from '@mui/material'
-import { DatePicker } from '@mui/x-date-pickers'
-import { LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
-import { es } from 'date-fns/locale'
 import {
     CloudUpload as UploadIcon,
     Delete as DeleteIcon,
@@ -37,7 +33,7 @@ export default function EventCreate(){
     const [formData, setFormData] = React.useState({
         title: '',
         type: '',
-        date: new Date(),
+        date: new Date().toISOString().split('T')[0],
         coverImage: '',
         gallery: []
     })
@@ -380,19 +376,18 @@ export default function EventCreate(){
                                     </Grid>
 
                                     <Grid size={{ xs: 12, sm: 6 }}>
-                                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
-                                            <DatePicker
-                                                label="Fecha del evento"
-                                                value={formData.date}
-                                                onChange={(newValue) => handleInputChange('date', newValue)}
-                                                slotProps={{
-                                                    textField: {
-                                                        fullWidth: true,
-                                                        required: true
-                                                    }
-                                                }}
-                                            />
-                                        </LocalizationProvider>
+                                        <TextField
+                                            fullWidth
+                                            label="Fecha del evento"
+                                            name="date"
+                                            type="date"
+                                            value={formData.date}
+                                            onChange={(e) => handleInputChange('date', e.target.value)}
+                                            required
+                                            InputLabelProps={{
+                                                shrink: true
+                                            }}
+                                        />
                                     </Grid>
                                 </Grid>
                             </CardContent>
