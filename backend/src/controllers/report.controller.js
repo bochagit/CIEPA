@@ -73,6 +73,7 @@ export const getAllReports = async (req, res) => {
             page = 1,
             limit = 12,
             search = '',
+            category = ''
         } = req.query
 
         const pageNumber = parseInt(page)
