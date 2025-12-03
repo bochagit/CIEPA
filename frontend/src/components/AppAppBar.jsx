@@ -51,13 +51,8 @@ const menuData = {
     { label: 'Informes', href: '/informes' },
     { label: 'Audiovisual', href: '/audiovisual' }
   ],
-  actividades: [
-    { label: 'Conversatorios', href: '/conversatorios' },
-    { label: 'Ciclo de formaciones', href: '/formaciones' },
-    { label: 'Jornadas', href: '/jornadas' }
-  ],
   formacion: [
-    { label: 'Materia Energías y Transición energética', href: '/' }
+    { label: 'Materia Energías y Transición energética', href: '/cursos' }
   ]
 }
 
@@ -65,7 +60,6 @@ const menuLabels = {
   acerca: 'Acerca del CIEPA',
   consultoria: 'Consultoría y Asesoramiento Técnico',
   publicaciones: 'Publicaciones',
-  actividades: 'Actividades',
   formacion: 'Cursos y Formación Académica'
 }
 
@@ -315,11 +309,21 @@ export default function AppAppBar() {
                   label="Publicaciones" 
                   items={menuData.publicaciones} 
                 />
-                <MenuButton 
-                  menuKey="actividades" 
-                  label="Actividades" 
-                  items={menuData.actividades} 
-                />
+                <Button
+                  variant="text"
+                  color="info"
+                  size="medium"
+                  onClick={() => navigate('/actividades')}
+                  sx={{
+                    color: '#fff',
+                    display: { xs: 'none', md: 'flex' },
+                    '&:hover': {
+                      backgroundColor: alpha(brand.main, .2)
+                    }
+                  }}
+                >
+                  Actividades
+                </Button>
                 <MenuButton 
                   menuKey="formacion" 
                   label="Cursos y Formación Académica" 
@@ -392,6 +396,9 @@ export default function AppAppBar() {
                           {label}...
                         </MenuItem>
                         ))}
+                        <MenuItem onClick={() => handleNavigate('/actividades')}>
+                          Actividades
+                        </MenuItem>
                         <MenuItem onClick={() => handleNavigate('/contacto')}>
                           Contacto
                         </MenuItem>

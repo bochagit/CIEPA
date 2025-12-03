@@ -12,16 +12,15 @@ import Notas from './components/Notas';
 import Contacto from './components/Contacto';
 import Note from './components/Note';
 import Audiovisual from './components/Audiovisual';
-import Conversatorios from './components/Conversatorios';
-import Formaciones from './components/Formaciones';
-import Jornadas from './components/Jornadas';
 import Actividades from './components/Actividades';
+import ActividadDetalle from './components/ActividadDetalle';
 import Informes from './components/Informes';
 import InformeShow from './components/InformeShow';
 import AppTheme from '../shared-theme/AppTheme';
 import { CssBaseline } from '@mui/material';
 import Proyectos from './components/Proyectos';
 import Lineas from './components/LineasTrabajo';
+import MateriaEnergias from './components/MateriaEnergias';
 
 export default function App() {
   return (
@@ -83,24 +82,19 @@ export default function App() {
               <Audiovisual />
             </Layout>
           } />
-          <Route path="/conversatorios" element={
+          <Route path="/actividades" element={
             <Layout>
-              <Conversatorios />
-            </Layout>
-          } />
-          <Route path="/formaciones" element={
-            <Layout>
-              <Formaciones />
-            </Layout>
-          } />
-          <Route path="/jornadas" element={
-            <Layout>
-              <Jornadas />
+              <Actividades />
             </Layout>
           } />
           <Route path="/actividades/:id" element={
             <Layout>
-              <Actividades />
+              <ActividadDetalle />
+            </Layout>
+          } />
+          <Route path="/cursos" element={
+            <Layout>
+              <MateriaEnergias />
             </Layout>
           } />
           <Route path="/contacto" element={

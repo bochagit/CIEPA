@@ -14,7 +14,11 @@ import {
     CardMedia,
     CardActions,
     styled,
-    Stack
+    Stack,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel
 } from '@mui/material'
 import {
     Add as AddIcon,
@@ -79,7 +83,9 @@ export default function ReportEdit() {
         introduction: '',
         date: new Date().toISOString().split('T')[0],
         authors: [{ name: '' }],
+        category: ''
     })
+    const [categories, setCategories] = React.useState([])
     const [originalData, setOriginalData] = React.useState(null)
     const [coverImage, setCoverImage] = React.useState(null)
     const [coverPreview, setCoverPreview] = React.useState('')
@@ -89,6 +95,19 @@ export default function ReportEdit() {
     const [loadingData, setLoadingData] = React.useState(true)
     const [uploadProgress, setUploadProgress] = React.useState({ image: 0, pdf: 0 })
     const [errors, setErrors] = React.useState({})
+
+    React.useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const categoriesData = await categoryService.getAllCategories()
+                setCategories(categoriesData)
+            } catch(error) {
+                console.error("Error cargando categorías: ", error)
+            }
+        }
+
+        fetchCategories()
+    }, [])
 
     const showNotification = (message, options = {}) => {
         if (options.severity === 'error') {
@@ -147,6 +166,7 @@ export default function ReportEdit() {
                     introduction: report.introduction || '',
                     date: formatDateSafely(report.date),
                     authors: report.authors?.length > 0 ? report.authors : [{ name: '' }],
+                    category: report.category || ''
                 })
                 
                 if (report.coverImage) {
@@ -227,6 +247,7 @@ export default function ReportEdit() {
         if (!formData.title.trim()) newErrors.title = 'El título es requerido'
         if (!formData.introduction.trim()) newErrors.introduction = 'La introducción es requerida'
         if (!formData.date) newErrors.date = 'La fecha es requerida'
+        if (!formData.category) newErrors.category = 'La categoría es requerida'
         
         if (!coverImage && !coverPreview) {
             newErrors.coverImage = 'La imagen de portada es requerida'
@@ -299,6 +320,7 @@ export default function ReportEdit() {
                 introduction: formData.introduction.trim(),
                 authors: validAuthors,
                 date: formData.date,
+                category: formData.category,
                 coverImage: finalCoverImage,
                 pdfFile: finalPdfFile,
             }
@@ -385,6 +407,32 @@ export default function ReportEdit() {
                                     shrink: true
                                 }}
                             />
+                        </Grid>
+
+                        <Grid size={{ xs: 12, md: 6 }}>
+                            <FormControl fullWidth error={!!errors.category}>
+                                <InputLabel id="category-label">Categoría</InputLabel>
+                                <Select
+                                    labelId="category-label"
+                                    id="category"
+                                    name="category"
+                                    value={formData.category}
+                                    label="Categoría"
+                                    onChange={handleInputChange}
+                                    disabled={loading}
+                                >
+                                    {categories.map((category) => (
+                                        <MenuItem key={category._id} value={category.name}>
+                                            {category.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                {errors.category && (
+                                    <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.5 }}>
+                                        {errors.category}
+                                    </Typography>
+                                )}
+                            </FormControl>
                         </Grid>
 
                         <Grid size={{ xs: 12 }}>

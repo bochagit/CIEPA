@@ -28,6 +28,9 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 const SectionContainer = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(4),
   padding: theme.spacing(4, 0),
+  '& .MuiTypography-body1, & .MuiTypography-body2': {
+    textAlign: 'justify'
+  }
 }));
 
 export default function Contacto(){

@@ -1,11 +1,14 @@
 import * as React from 'react'
 import { Box, Typography, styled, Button, IconButton } from '@mui/material'
-import { brand } from '../../shared-theme/themePrimitives'
+import { brand, secondary } from '../../shared-theme/themePrimitives'
 import { Email as EmailIcon } from '@mui/icons-material';
 
 const SectionContainer = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(2),
   padding: theme.spacing(4, 0),
+  '& .MuiTypography-body1, & .MuiTypography-body2': {
+    textAlign: 'justify'
+  }
 }));
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
@@ -44,33 +47,37 @@ export default function Lineas(){
                     right: 50,
                     alignSelf: 'center', 
                     borderRadius: '50%', 
+                    borderColor: secondary.variant,
                     transition: 'transform .2s ease-in-out, box-shadow .2s ease-in-out, border-radius .2s ease-in-out', 
+                    backgroundColor: secondary.main,
                     '&:hover': 
                         { 
                             transform: 'translateY(-4px)', 
-                            boxShadow: 3
+                            boxShadow: 3,
+                            backgroundColor: secondary.variant,
+                            borderColor: secondary.main
                         }, 
                     '&::before':
                         {
                             content: { xs: '""', lg: '"Contactate"' }, 
                             position: 'absolute', 
                             fontSize: '.8rem',
-                            color: 'text.secondary', 
+                            color: 'text.primary', 
                             top: -22,
-                            fontWeight: 400 
+                            fontWeight: 500
                         },
                     '&::after': 
                         { 
                             content: { xs: '""', lg: '"ciepa@agro.uba.ar"' }, 
                             position: 'absolute', 
                             fontSize: '.8rem', 
-                            color: 'text.secondary', 
+                            color: 'text.primary', 
                             top: 50, 
-                            fontWeight: 400 
+                            fontWeight: 500 
                         }
                 }}
             >
-                <EmailIcon />
+                <EmailIcon sx={{ color: '#fff' }} />
             </IconButton>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 5 }}>
                 <Typography variant="body1" color="textPrimary" fontSize='1rem'>
@@ -89,7 +96,7 @@ export default function Lineas(){
                 <Typography variant="body1" color="textPrimary" fontSize='1rem'>
                     Esta línea busca acompañar a los gobiernos locales en la formulación de su plan estratégico ambiental, entendido como una hoja de ruta para el desarrollo de políticas públicas que pongan en consideración las necesidades actuales y las demandas futuras. El trabajo puede incluir las siguientes etapas:
                 </Typography>
-                <Box component="ul" sx={{ listStyle: 'none', '& li::before': { content: '"- "' }, px: 2, fontSize: '1rem' }}>
+                <Box component="ul" sx={{ listStyle: 'none', '& li::before': { content: '"- "' }, px: 2, fontSize: '1rem', textAlign: 'justify' }}>
                     <li>
                         Una etapa de diagnóstico participativo junto al equipo municipal y otros actores locales, junto a la definición de los ejes temáticos a trabajar.
                     </li>
@@ -117,7 +124,7 @@ export default function Lineas(){
                 <Typography variant="body1" color="textPrimary" fontSize='1rem'>
                     Entre otras iniciativas, puede ofrecer:
                 </Typography>
-                <Box component="ul" sx={{ listStyle: 'none', '& li::before': { content: '"- "' }, px: 2, fontSize: '1rem' }}>
+                <Box component="ul" sx={{ listStyle: 'none', '& li::before': { content: '"- "' }, px: 2, fontSize: '1rem', textAlign: 'justify' }}>
                     <li>
                         Censos de arbolado mediante herramientas digitales.
                     </li>
@@ -135,7 +142,7 @@ export default function Lineas(){
                 <Typography variant="body1" color="textPrimary" fontSize='1rem'>
                     El trabajo se estructura en dos fases principales, que combinan el diagnóstico con la planificación de acciones estratégicas:
                 </Typography>
-                <Box component="ul" sx={{ px: 2, fontSize: '1rem' }}>
+                <Box component="ul" sx={{ px: 2, fontSize: '1rem', textAlign: 'justify' }}>
                     <li>
                         <strong>Fase de Mitigación (Inventario GEI):</strong> Se realiza un inventario municipal de Gases de Efecto Invernadero (GEI) para identificar las principales fuentes de emisión. A partir de este diagnóstico, se definen metas claras de reducción y se proyectan acciones concretas para alcanzarlas, fomentando la transición energética local.
                     </li>

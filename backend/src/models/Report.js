@@ -22,6 +22,11 @@ const reportSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    category: {
+        type: String,
+        required: true,
+        trim: true
+    },
     coverImage: {
         type: String,
         required: true
@@ -52,7 +57,8 @@ const reportSchema = new mongoose.Schema({
     timestamps: true
 })
 
-reportSchema.index({ title: 'text', introduction: 'text', 'authors.name': 'text' })
+reportSchema.index({ title: 'text', introduction: 'text', 'authors.name': 'text', category: 'text' })
 reportSchema.index({ date: -1 })
+reportSchema.index({ category: 1 })
 
 export default mongoose.model('Report', reportSchema)

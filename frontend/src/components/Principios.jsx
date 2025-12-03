@@ -1,6 +1,8 @@
 import * as React from 'react'
-import { styled, Typography, Box } from '@mui/material';
+import { styled, Typography, Box, IconButton } from '@mui/material';
+import { Email as EmailIcon } from '@mui/icons-material';
 import { brand } from '../../shared-theme/themePrimitives';
+import { secondary } from '../../shared-theme/themePrimitives';
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(3),
@@ -24,11 +26,60 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 const SectionContainer = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(6),
   padding: theme.spacing(2, 0),
+  '& .MuiTypography-body1, & .MuiTypography-body2': {
+    textAlign: 'justify'
+  }
 }));
 
 export default function Principios(){
     return(
         <SectionContainer sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', gap: 2 }}>
+            <IconButton
+                color="inherit"
+                size="large"
+                href="mailto:ciepa@agro.uba.ar"
+                target='_blank'
+                rel='noopener noreferrer'
+                aria-label="Email"
+                sx={{
+                    position: 'fixed',
+                    bottom: 40,
+                    right: 50,
+                    alignSelf: 'center', 
+                    borderRadius: '50%', 
+                    borderColor: secondary.variant,
+                    transition: 'transform .2s ease-in-out, box-shadow .2s ease-in-out, border-radius .2s ease-in-out', 
+                    backgroundColor: secondary.main,
+                    zIndex: 1000,
+                    '&:hover': 
+                        { 
+                            transform: 'translateY(-4px)', 
+                            boxShadow: 3,
+                            backgroundColor: secondary.variant,
+                            borderColor: secondary.main
+                        }, 
+                    '&::before':
+                        {
+                            content: { xs: '""', lg: '"Contactate"' }, 
+                            position: 'absolute', 
+                            fontSize: '.8rem',
+                            color: 'text.primary', 
+                            top: -22,
+                            fontWeight: 500
+                        },
+                    '&::after': 
+                        { 
+                            content: { xs: '""', lg: '"ciepa@agro.uba.ar"' }, 
+                            position: 'absolute', 
+                            fontSize: '.8rem', 
+                            color: 'text.primary', 
+                            top: 50, 
+                            fontWeight: 500 
+                        }
+                }}
+            >
+                <EmailIcon sx={{ color: '#fff' }} />
+            </IconButton>
             <SectionTitle variant="h3" component="h2">
                 Principios
             </SectionTitle>

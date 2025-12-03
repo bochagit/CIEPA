@@ -1,6 +1,8 @@
 import * as React from 'react'
-import { Box, Typography, styled, alpha, Button } from '@mui/material'
+import { Box, Typography, styled, IconButton } from '@mui/material'
 import { brand } from '../../shared-theme/themePrimitives'
+import { secondary } from '../../shared-theme/themePrimitives';
+import { Email as EmailIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import proyectosImage6 from '../assets/images/static-photos/6.jpg'
 import proyectosImage7 from '../assets/images/static-photos/7.jpg'
@@ -9,6 +11,9 @@ import proyectosImage8 from '../assets/images/static-photos/8.jpg'
 const SectionContainer = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(2),
   padding: theme.spacing(4, 0),
+  '& .MuiTypography-body1, & .MuiTypography-body2': {
+    textAlign: 'justify'
+  }
 }));
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
@@ -68,63 +73,74 @@ export default function Proyectos(){
 
     return(
         <SectionContainer>
-            <SectionTitle variant="h3" component="h2">Asesoramiento técnico</SectionTitle>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 5 }}>
-                <Typography variant="body1" color="textPrimary" fontSize="1rem">
-                    Desde el CIEPA prestamos servicios de consultoría y asesoramiento personalizado para apoyar la formulación, planificación e implementación de políticas ambientales. Nuestro trabajo combina conocimiento científico-técnico con una perspectiva interdisciplinaria, articulando esfuerzos entre distintos actores académicos, estatales y de la sociedad civil.
-                </Typography>
-                <Typography variant="body1" color="textPrimary" fontSize="1rem">
-                    A través de este acompañamiento, buscamos contribuir a la mejora de la toma de decisiones en distintos niveles de gestión, elaborando estudios, informes, diagnósticos y recomendaciones que apoyan la implementación de políticas más efectivas.
-                </Typography>
-                <Typography variant="body1" color="textPrimary" fontSize="1rem">
-                    Asimismo, promovemos la construcción de capacidades, generando espacios de formación e  intercambio que fortalecen el diseño de alternativas frente a los desafíos ambientales locales, nacionales y regionales.
-                </Typography>
-            </Box>
-            <Box 
-            component="ul" 
-            sx={{ 
-                listStyle: 'none',
-                fontSize: '1rem',
-                border: `1px solid ${brand.main}`,
-                borderRadius: 2,
-                backgroundColor: alpha(brand.main, .1),
-                boxShadow: 2,
-                p: 2,
-                marginTop: 7,
-                textAlign: 'center',
-                transition: 'transform .2s ease-in-out, box-shadow .2s ease-in-out',
-                '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: 1
-                }
-            }}>
-                <Typography variant="h6" color="primary">¿Te interesa? ¡Contactanos!</Typography>
-                <Button variant="contained" color="primary" onClick={() => navigate("/contacto")} sx={{ marginTop: 2 }}>
-                  contacto
-                </Button>
-            </Box>
-            <SectionTitle variant="h3" component="h2" sx={{ marginTop: 5 }}>Proyectos ejecutados</SectionTitle>
-            <Typography variant="h4" color="primary">Asistencia técnica para la formulación, desarrollo y seguimiento de políticas ambientales en el Municipio de Mercedes, Provincia de Buenos Aires.</Typography>
-            <Typography variant="subtitle1" color="primary">Período: 2025.</Typography>
-            <Typography variant="body1" color="textPrimary" sx={{ fontSize: '1rem', marginBlock: 2 }}>Se ejecutó un proyecto de asistencia técnica para la elaboración, desarrollo y seguimiento de la política ambiental del municipio de Mercedes, Provincia de Buenos Aires.<br />
-            La asistencia técnica tuvo como objetivo conformar una estrategia integral que identifique y aborde los principales desafíos ambientales del municipio, acompañe la elaboración e implementación de iniciativas y proyectos relacionados, promueva la participación comunitaria y mejore la calidad de vida de los y las vecinas del municipio.
-            </Typography>
-            <Box sx={{ position: 'relative', height: {xs: 400, md: 600}, borderRadius: 3, overflow: 'hidden', mt: 6, boxShadow: 3 }}>
-                <Box 
-                sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    backgroundImage: `url(${fotosConsultoria[currentFoto].imagen})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                    opacity: isTransitioning ? 0 : 1,
-                    transition: 'opacity .5s ease-in-out'
-                }} />
-            </Box>
+          <IconButton
+            color="inherit"
+            size="large"
+            href="mailto:ciepa@agro.uba.ar"
+            target='_blank'
+            rel='noopener noreferrer'
+            aria-label="Email"
+            sx={{
+                position: 'fixed',
+                bottom: 40,
+                right: 50,
+                alignSelf: 'center', 
+                borderRadius: '50%', 
+                borderColor: secondary.variant,
+                transition: 'transform .2s ease-in-out, box-shadow .2s ease-in-out, border-radius .2s ease-in-out', 
+                backgroundColor: secondary.main,
+                zIndex: 1000,
+                '&:hover': 
+                    { 
+                        transform: 'translateY(-4px)', 
+                        boxShadow: 3,
+                        backgroundColor: secondary.variant,
+                        borderColor: secondary.main
+                    }, 
+                '&::before':
+                    {
+                        content: { xs: '""', lg: '"Contactate"' }, 
+                        position: 'absolute', 
+                        fontSize: '.8rem',
+                        color: 'text.primary', 
+                        top: -22,
+                        fontWeight: 500
+                    },
+                '&::after': 
+                    { 
+                        content: { xs: '""', lg: '"ciepa@agro.uba.ar"' }, 
+                        position: 'absolute', 
+                        fontSize: '.8rem', 
+                        color: 'text.primary', 
+                        top: 50, 
+                        fontWeight: 500 
+                    }
+            }}
+          >
+            <EmailIcon sx={{ color: '#fff' }} />
+          </IconButton>
+          <SectionTitle variant="h3" component="h2" sx={{ marginBottom: 5 }}>Proyectos ejecutados</SectionTitle>
+          <Typography variant="h4" color="primary">Asistencia técnica para la formulación, desarrollo y seguimiento de políticas ambientales en el Municipio de Mercedes, Provincia de Buenos Aires.</Typography>
+          <Typography variant="subtitle1" color="primary">Período: 2025.</Typography>
+          <Typography variant="body1" color="textPrimary" sx={{ fontSize: '1rem', marginBlock: 2 }}>Se ejecutó un proyecto de asistencia técnica para la elaboración, desarrollo y seguimiento de la política ambiental del municipio de Mercedes, Provincia de Buenos Aires.<br />
+          La asistencia técnica tuvo como objetivo conformar una estrategia integral que identifique y aborde los principales desafíos ambientales del municipio, acompañe la elaboración e implementación de iniciativas y proyectos relacionados, promueva la participación comunitaria y mejore la calidad de vida de los y las vecinas del municipio.
+          </Typography>
+          <Box sx={{ position: 'relative', height: {xs: 400, md: 600}, borderRadius: 3, overflow: 'hidden', mt: 6, boxShadow: 3 }}>
+              <Box 
+              sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundImage: `url(${fotosConsultoria[currentFoto].imagen})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  opacity: isTransitioning ? 0 : 1,
+                  transition: 'opacity .5s ease-in-out'
+              }} />
+          </Box>
         </SectionContainer>
     )
 }

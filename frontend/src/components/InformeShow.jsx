@@ -9,7 +9,6 @@ import {
     Chip,
     Paper,
     Divider,
-    IconButton,
     styled
 } from '@mui/material'
 import {
@@ -230,6 +229,20 @@ export default function InformeShow(){
                             {formatDateForDisplay(report.date)}
                         </Typography>
                     </Box>
+
+                    {report.category && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                                Categoría:
+                            </Typography>
+                            <Chip 
+                                label={report.category}
+                                color="primary"
+                                size="small"
+                                variant="outlined"
+                            />
+                        </Box>
+                    )}
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <PersonIcon sx={{ color: brand.main }} />

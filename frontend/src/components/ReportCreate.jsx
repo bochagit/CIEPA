@@ -13,7 +13,11 @@ import {
     Card,
     CardMedia,
     CardActions,
-    styled
+    styled,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel
 } from '@mui/material'
 import {
     Add as AddIcon,
@@ -26,6 +30,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { uploadService } from '../services/uploadCloudinary'
 import { reportService } from '../services/reportService'
+import { categoryService } from '../services/categoryService'
 import useNotifications from '../hooks/useNotifications/useNotifications'
 import { format, parseISO } from 'date-fns'
 
@@ -78,14 +83,30 @@ export default function ReportCreate() {
         title: '',
         introduction: '',
         date: new Date().toISOString().split('T')[0],
-        authors: [{ name: '' }]
+        authors: [{ name: '' }],
+        category: ''
     })
+    const [categories, setCategories] = React.useState([])
     const [coverImage, setCoverImage] = React.useState(null)
     const [coverPreview, setCoverPreview] = React.useState('')
     const [pdfFile, setPdfFile] = React.useState(null)
     const [loading, setLoading] = React.useState(false)
     const [uploadProgress, setUploadProgress] = React.useState({ image: 0, pdf: 0 })
     const [errors, setErrors] = React.useState({})
+
+    React.useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const categoriesData = await categoryService.getAllCategories()
+                setCategories(categoriesData)
+            } catch(error) {
+                console.error("Error cargando categorías: ", error)
+                notifications.show('Error al cargar categorías', { severity: 'error' })
+            }
+        }
+
+        fetchCategories()
+    }, [notifications])
 
     const triggerImageSelect = () => {
         imageInputRef.current?.click()
@@ -155,6 +176,7 @@ export default function ReportCreate() {
         if (!formData.title.trim()) newErrors.title = 'El título es requerido'
         if (!formData.introduction.trim()) newErrors.introduction = 'La introducción es requerida'
         if (!formData.date) newErrors.date = 'La fecha es requerida'
+        if (!formData.category) newErrors.category = 'La categoría es requerida'
         if (!coverImage) newErrors.coverImage = 'La imagen de portada es requerida'
         if (!pdfFile) newErrors.pdfFile = 'El archivo PDF es requerido'
         
@@ -227,6 +249,7 @@ export default function ReportCreate() {
                 introduction: formData.introduction.trim(),
                 authors: validAuthors,
                 date: formatDateSafely(formData.date),
+                category: formData.category,
                 coverImage: imageResult.url,
                 pdfFile: {
                     url: pdfResult.url,
@@ -295,6 +318,37 @@ export default function ReportCreate() {
                                     shrink: true
                                 }}
                             />
+                        </Grid>
+
+                        <Grid size={{ xs: 12, md: 6 }}>
+                            <FormControl fullWidth error={!!errors.category}>
+                                <InputLabel id="category-label">Categoría</InputLabel>
+                                <Select
+                                    labelId="category-label"
+                                    id="category"
+                                    name="category"
+                                    value={formData.category}
+                                    label="Categoría"
+                                    onChange={handleInputChange}
+                                    disabled={loading}
+                                >
+                                    {categories.map((category) => (
+                                        <MenuItem key={category._id} value={category.name}>
+                                            {category.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                {errors.category && (
+                                    <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.5 }}>
+                                        {errors.category}
+                                    </Typography>
+                                )}
+                                {categories.length === 0 && (
+                                    <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, ml: 1.5 }}>
+                                        No hay categorías disponibles. Crea una en la sección de categorías.
+                                    </Typography>
+                                )}
+                            </FormControl>
                         </Grid>
 
                         <Grid size={{ xs: 12 }}>

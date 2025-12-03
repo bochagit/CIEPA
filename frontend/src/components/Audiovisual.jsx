@@ -5,11 +5,14 @@ import {
     Container,
     Grid,
     Divider,
-    styled
+    styled,
+    IconButton
 } from '@mui/material'
 import YouTubeVideos from './YouTubeVideos'
 import InstagramCard from './InstagramCard';
 import { brand } from '../../shared-theme/themePrimitives';
+import { secondary } from '../../shared-theme/themePrimitives';
+import { Email as EmailIcon } from '@mui/icons-material';
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(10),
@@ -33,6 +36,52 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 const Audiovisual = () => {
     return (
         <Container maxWidth="xl" sx={{ py: 6 }}>
+            <IconButton
+                color="inherit"
+                size="large"
+                href="mailto:ciepa@agro.uba.ar"
+                target='_blank'
+                rel='noopener noreferrer'
+                aria-label="Email"
+                sx={{
+                    position: 'fixed',
+                    bottom: 40,
+                    right: 50,
+                    alignSelf: 'center', 
+                    borderRadius: '50%', 
+                    borderColor: secondary.variant,
+                    transition: 'transform .2s ease-in-out, box-shadow .2s ease-in-out, border-radius .2s ease-in-out', 
+                    backgroundColor: secondary.main,
+                    zIndex: 1000,
+                    '&:hover': 
+                        { 
+                            transform: 'translateY(-4px)', 
+                            boxShadow: 3,
+                            backgroundColor: secondary.variant,
+                            borderColor: secondary.main
+                        }, 
+                    '&::before':
+                        {
+                            content: { xs: '""', lg: '"Contactate"' }, 
+                            position: 'absolute', 
+                            fontSize: '.8rem',
+                            color: 'text.primary', 
+                            top: -22,
+                            fontWeight: 500
+                        },
+                    '&::after': 
+                        { 
+                            content: { xs: '""', lg: '"ciepa@agro.uba.ar"' }, 
+                            position: 'absolute', 
+                            fontSize: '.8rem', 
+                            color: 'text.primary', 
+                            top: 50, 
+                            fontWeight: 500 
+                        }
+                }}
+            >
+                <EmailIcon sx={{ color: '#fff' }} />
+            </IconButton>
             <SectionTitle variant="h3" component="h2">
                 Audiovisual
             </SectionTitle>

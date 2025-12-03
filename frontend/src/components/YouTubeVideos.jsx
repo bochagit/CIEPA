@@ -21,6 +21,7 @@ import {
     ThumbUp as LikeIcon
 } from '@mui/icons-material'
 import { youtubeService } from '../services/youtubeService'
+import { brand } from '../../shared-theme/themePrimitives'
 
 const YouTubeVideos = ({ maxVideos = 6 }) => {
     const [videos, setVideos] = React.useState([])
@@ -123,7 +124,7 @@ const YouTubeVideos = ({ maxVideos = 6 }) => {
     }
 
     return (
-        <Box sx={{ backgroundColor: 'background.paper', border: '1px solid #f00', borderRadius: 1, p: 2 }}>
+        <Box sx={{ backgroundColor: 'background.paper', border: `1px solid ${brand.main}`, borderRadius: 1, p: 2 }}>
             {channelInfo && (
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
                     <Avatar sx={{ width: 60, height: 60, mr: 2, backgroundColor: 'transparent' }}>
