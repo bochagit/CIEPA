@@ -12,17 +12,18 @@ import {
     Dialog,
     Button,
     Chip,
-    styled
+    styled,
+    CardContent
 } from '@mui/material'
 import {
     ArrowBack as ArrowBackIcon,
     ZoomIn as ZoomIcon,
-    Close as CloseIcon
+    Close as CloseIcon,
+    Instagram as InstagramIcon
 } from '@mui/icons-material'
 import { useParams, useNavigate } from 'react-router-dom'
 import { eventService } from '../services/eventService'
 import { brand } from '../../shared-theme/themePrimitives'
-import InstagramIcon from '@mui/icons-material/Instagram'
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
@@ -65,6 +66,12 @@ const HeroSection = styled(Box)(({ theme }) => ({
     background: 'rgba(0, 0, 0, 0.5)',
   }
 }));
+
+const InfoCard = styled(Card)(({ theme }) => ({
+    marginBottom: theme.spacing(4),
+    borderRadius: theme.spacing(2),
+    boxShadow: theme.shadows[2]
+}))
 
 export default function ActividadDetalle(){
     const { id } = useParams()
@@ -133,6 +140,7 @@ export default function ActividadDetalle(){
 
             const eventData = await eventService.getEventById(id)
             console.log('Evento cargado: ', eventData)
+            console.log('Instagram link: ', eventData.instagramLink)
 
             setEvent(eventData)
             setError('')
@@ -208,25 +216,51 @@ export default function ActividadDetalle(){
                 <Typography variant="h5" sx={{ opacity: .9 }}>
                     {formatDateForDisplay(event.date)}
                 </Typography>
-                {event.instagramLink && (
-                    <Button
-                        variant="contained"
-                        startIcon={<InstagramIcon />}
-                        href={event.instagramLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{
-                            bgcolor: '#e1306c',
-                            '&:hover': {
-                                bgcolor: '#c13584'
-                            }
-                        }}
-                    >
-                        Ver publicación en Instagram
-                    </Button>
-                )}
             </Box>
         </HeroSection>
+
+        {(event.introduction || event.instagramLink) && (
+            <InfoCard>
+                <CardContent>
+                    {event.introduction && (
+                        <Box sx={{ mb: event.instagramLink ? 3 : 0 }}>
+                            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: brand.main }}>
+                                Sobre el evento
+                            </Typography>
+                            <Typography variant="body1" sx={{ lineHeight: 1.7, color: 'text.secondary', whiteSpace: 'pre-wrap' }}>
+                                {event.introduction}
+                            </Typography>
+                        </Box>
+                    )}
+
+                    {event.instagramLink && (
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Button
+                                variant="contained"
+                                startIcon={<InstagramIcon />}
+                                href={event.instagramLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                sx={{
+                                    bgcolor: '#e1306c',
+                                    color: '#fff',
+                                    fontWeight: 600,
+                                    px: 3,
+                                    py: 1.5,
+                                    mt: 2,
+                                    border: 'none',
+                                    '&:hover': {
+                                        bgcolor: '#c13584'
+                                    }
+                                }}
+                            >
+                                Ver publicación en Instagram
+                            </Button>
+                        </Box>
+                    )}
+                </CardContent>
+            </InfoCard>
+        )}
 
         <SectionTitle variant="h3" component="h2">
             Galería de imágenes

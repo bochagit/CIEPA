@@ -100,7 +100,8 @@ export const createEvent = async (req, res) => {
             date,
             coverImage,
             gallery = [],
-            instagramLink
+            instagramLink,
+            introduction
         } = req.body
 
         const newEvent = new Event({
@@ -112,7 +113,8 @@ export const createEvent = async (req, res) => {
                 url: img.url || img,
                 order: img.order || index
             })),
-            instagramLink
+            instagramLink,
+            introduction
         })
 
         const savedEvent = await newEvent.save()

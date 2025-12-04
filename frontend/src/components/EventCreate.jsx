@@ -394,6 +394,37 @@ export default function EventCreate(){
                                     <Grid size={{ xs: 12 }}>
                                         <TextField
                                             fullWidth
+                                            multiline
+                                            minRows={3}
+                                            maxRows={10}
+                                            label="Introducción (opcional)"
+                                            value={formData.introduction}
+                                            onChange={(e) => handleInputChange('introduction', e.target.value)}
+                                            placeholder="Escribí una breve introducción al evento..."
+                                            sx={{
+                                                '& .MuiInputBase-root': {
+                                                    alignItems: 'flex-start',
+                                                    height: 'auto',
+                                                    minHeight: 'auto',
+                                                    padding: '12px',
+                                                },
+                                                '& .MuiInputBase-input': {
+                                                    height: 'auto !important',
+                                                    overflow: 'auto !important',
+                                                    whiteSpace: 'pre-wrap',
+                                                    wordWrap: 'break-word'
+                                                },
+                                                '& textarea': {
+                                                    resize: 'none',
+                                                    lineHeight: 1.5
+                                                }
+                                            }}
+                                        />
+                                    </Grid>
+
+                                    <Grid size={{ xs: 12 }}>
+                                        <TextField
+                                            fullWidth
                                             label="Link de Instagram (opcional)"
                                             value={formData.instagramLink}
                                             onChange={(e) => handleInputChange('instagramLink', e.target.value)}

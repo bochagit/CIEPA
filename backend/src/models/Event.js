@@ -15,6 +15,10 @@ const eventSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    introduction: {
+        type: String,
+        required: true
+    },
     coverImage: {
         type: String,
         required: true

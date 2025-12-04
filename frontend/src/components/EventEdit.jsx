@@ -37,7 +37,8 @@ export default function EventEdit() {
         date: new Date(),
         coverImage: '',
         gallery: [],
-        instagramLink: ''
+        instagramLink: '',
+        introduction: ''
     })
     const [originalData, setOriginalData] = React.useState(null)
     const [loading, setLoading] = React.useState(false)
@@ -93,7 +94,8 @@ export default function EventEdit() {
                     date: formatEventDate(event.date),
                     coverImage: event.coverImage,
                     gallery: event.gallery || [],
-                    instagramLink: event.instagramLink || ''
+                    instagramLink: event.instagramLink || '',
+                    introduction: event.introduction || ''
                 }
                 
                 setFormData(eventData)
@@ -273,6 +275,8 @@ export default function EventEdit() {
             formData.type !== originalData.type ||
             formData.date !== originalData.date ||
             formData.coverImage !== originalData.coverImage ||
+            formData.instagramLink !== originalData.instagramLink ||
+            formData.introduction !== originalData.introduction ||
             JSON.stringify(formData.gallery) !== JSON.stringify(originalData.gallery)
         )
     }
@@ -495,6 +499,37 @@ export default function EventEdit() {
                                             required
                                             InputLabelProps={{
                                                 shrink: true
+                                            }}
+                                        />
+                                    </Grid>
+
+                                    <Grid size={{ xs: 12 }}>
+                                        <TextField
+                                            fullWidth
+                                            multiline
+                                            minRows={3}
+                                            maxRows={10}
+                                            label="Introducción (opcional)"
+                                            value={formData.introduction}
+                                            onChange={(e) => handleInputChange('introduction', e.target.value)}
+                                            placeholder="Escribí una breve introducción al evento..."
+                                            sx={{
+                                                '& .MuiInputBase-root': {
+                                                    alignItems: 'flex-start',
+                                                    height: 'auto',
+                                                    minHeight: 'auto',
+                                                    padding: '12px',
+                                                },
+                                                '& .MuiInputBase-input': {
+                                                    height: 'auto !important',
+                                                    overflow: 'auto !important',
+                                                    whiteSpace: 'pre-wrap',
+                                                    wordWrap: 'break-word'
+                                                },
+                                                '& textarea': {
+                                                    resize: 'none',
+                                                    lineHeight: 1.5
+                                                }
                                             }}
                                         />
                                     </Grid>
