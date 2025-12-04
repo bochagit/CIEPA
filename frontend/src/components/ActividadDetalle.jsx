@@ -22,6 +22,7 @@ import {
 import { useParams, useNavigate } from 'react-router-dom'
 import { eventService } from '../services/eventService'
 import { brand } from '../../shared-theme/themePrimitives'
+import InstagramIcon from '@mui/icons-material/Instagram'
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
@@ -207,6 +208,23 @@ export default function ActividadDetalle(){
                 <Typography variant="h5" sx={{ opacity: .9 }}>
                     {formatDateForDisplay(event.date)}
                 </Typography>
+                {event.instagramLink && (
+                    <Button
+                        variant="contained"
+                        startIcon={<InstagramIcon />}
+                        href={event.instagramLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{
+                            bgcolor: '#e1306c',
+                            '&:hover': {
+                                bgcolor: '#c13584'
+                            }
+                        }}
+                    >
+                        Ver publicación en Instagram
+                    </Button>
+                )}
             </Box>
         </HeroSection>
 

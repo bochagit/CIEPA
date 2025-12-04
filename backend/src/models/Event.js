@@ -25,7 +25,12 @@ const eventSchema = new mongoose.Schema({
             type: Number,
             default: 0
         }
-    }]
+    }],
+    instagramLink: {
+        type: String,
+        trim: true,
+        default: ''
+    }
 }, {
     timestamps: true
 })

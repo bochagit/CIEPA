@@ -8,9 +8,11 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import YouTubeIcon from '@mui/icons-material/YouTube';
+import { EmailOutlined as EmailIcon } from '@mui/icons-material'
 import CiepaLogo from './CiepaLogo';
 import { useNavigate } from 'react-router-dom';
-
+import { brand } from '../../shared-theme/themePrimitives'
+import LogoBlanco from '../assets/images/logo_blanco.png'
 
 function Copyright() {
   return (
@@ -27,6 +29,24 @@ function Copyright() {
 
 export default function Footer() {
   const navigate = useNavigate()
+
+  const linkStyles = {
+    fontSize: '1rem',
+    fontWeight: 300,
+    color: 'white',
+    textDecoration: 'none',
+    position: 'relative',
+    cursor: 'pointer',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      height: '1px',
+      bottom: 0,
+      left: 0,
+      backgroundColor: '#fff',
+    }
+  }
+
   return (
     <React.Fragment>
       <Divider />
@@ -38,7 +58,8 @@ export default function Footer() {
           gap: { xs: 4, sm: 8 },
           py: { xs: 8, sm: 10 },
           textAlign: 'left',
-          minWidth: '100%'
+          minWidth: '100%',
+          backgroundColor: brand.main
         }}
       >
         <Box
@@ -52,8 +73,7 @@ export default function Footer() {
           <Box sx={{ display: 'flex', alignItems: 'center', width: 'auto' }}>
             <Box sx={{ height: '100%', display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 3, justifyContent: 'center', alignItems: 'center' }}>
               <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', gap: 1 }}>
-                <CiepaLogo />
-                <Typography variant="body1" color="text.secondary">ciepa@agro.uba.ar</Typography>
+                <Box component="img" src={LogoBlanco} width={200} />
               </Box>
               <Stack
                 spacing={2}
@@ -62,25 +82,36 @@ export default function Footer() {
               >
                 <IconButton
                   color="inherit"
-                  size="medium"
+                  size="large"
+                  href="https://youtube.com/"
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  aria-label="YouTube"
+                  sx={{ alignSelf: 'center', borderRadius: '50%', color: brand.main, backgroundColor: '#fff !important' }}
+                >
+                  <YouTubeIcon />
+                </IconButton>
+                <IconButton
+                  color="inherit"
+                  size="large"
                   href="https://www.instagram.com/ciepa.centro/"
                   target='_blank'
                   rel='noopener noreferrer'
                   aria-label="Instagram"
-                  sx={{ alignSelf: 'center' }}
+                  sx={{ alignSelf: 'center', borderRadius: '50%', color: brand.main, backgroundColor: '#fff !important' }}
                 >
                   <InstagramIcon />
                 </IconButton>
                 <IconButton
                   color="inherit"
-                  size="medium"
+                  size="large"
                   href="https://youtube.com/"
                   target='_blank'
                   rel='noopener noreferrer'
                   aria-label="YouTube"
-                  sx={{ alignSelf: 'center' }}
+                  sx={{ alignSelf: 'center', borderRadius: '50%', color: brand.main, backgroundColor: '#fff !important' }}
                 >
-                  <YouTubeIcon />
+                  <EmailIcon />
                 </IconButton>
               </Stack>
             </Box>
@@ -93,41 +124,40 @@ export default function Footer() {
               gap: 1,
             }}
           >
-            <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+            <Typography variant="body2" color="white" sx={{ fontWeight: 800, fontSize: '1rem' }}>
               Links
             </Typography>
-            <Link color="text.secondary" variant="body2" onClick={() => navigate("/quienes-somos")} sx={{ '&:hover': { cursor: 'pointer' } }}>
+            <Link variant="body2" onClick={() => navigate("/quienes-somos")} sx={linkStyles}>
               ¿Qué es el CIEPA?
             </Link>
-            <Link color="text.secondary" variant="body2" onClick={() => navigate("/que-hacemos")} sx={{ '&:hover': { cursor: 'pointer' } }}>
+            <Link variant="body2" onClick={() => navigate("/que-hacemos")} sx={linkStyles}>
               Nuestro trabajo
             </Link>
-            <Link color="text.secondary" variant="body2" onClick={() => navigate("/notas")} sx={{ '&:hover': { cursor: 'pointer' } }}>
+            <Link variant="body2" onClick={() => navigate("/notas")} sx={linkStyles}>
               Notas
             </Link>
-            <Link color="text.secondary" variant="body2" onClick={() => navigate("/conversatorios")} sx={{ '&:hover': { cursor: 'pointer' } }}>
-              Conversatorios
+            <Link variant="body2" onClick={() => navigate("/actividades")} sx={linkStyles}>
+              Actividades
             </Link>
-            <Link color="text.secondary" variant="body2" onClick={() => navigate("/contacto")} sx={{ '&:hover': { cursor: 'pointer' } }}>
+            <Link variant="body2" onClick={() => navigate("/contacto")} sx={linkStyles}>
               Contacto
             </Link>
           </Box>
         </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            pt: { xs: 4, sm: 8 },
-            width: '100%',
-            borderTop: '1px solid',
-            borderColor: 'divider',
-          }}
-        >
-          <div>
-            <Copyright />
-          </div>
-        </Box>
       </Container>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          pt: 4,
+          width: '100%',
+          borderTop: '1px solid',
+          borderColor: 'divider',
+          p: 2
+        }}
+      >
+        <Copyright />
+      </Box>
     </React.Fragment>
   );
 }

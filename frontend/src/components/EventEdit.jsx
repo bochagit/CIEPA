@@ -36,7 +36,8 @@ export default function EventEdit() {
         type: 'conversatorio',
         date: new Date(),
         coverImage: '',
-        gallery: []
+        gallery: [],
+        instagramLink: ''
     })
     const [originalData, setOriginalData] = React.useState(null)
     const [loading, setLoading] = React.useState(false)
@@ -91,7 +92,8 @@ export default function EventEdit() {
                     type: event.type,
                     date: formatEventDate(event.date),
                     coverImage: event.coverImage,
-                    gallery: event.gallery || []
+                    gallery: event.gallery || [],
+                    instagramLink: event.instagramLink || ''
                 }
                 
                 setFormData(eventData)
@@ -494,6 +496,16 @@ export default function EventEdit() {
                                             InputLabelProps={{
                                                 shrink: true
                                             }}
+                                        />
+                                    </Grid>
+
+                                    <Grid size={{ xs: 12 }}>
+                                        <TextField
+                                            fullWidth
+                                            label="Link de Instagram (opcional)"
+                                            value={formData.instagramLink}
+                                            onChange={(e) => handleInputChange('instagramLink', e.target.value)}
+                                            placeholder="https://www.instagram.com/p/..."
                                         />
                                     </Grid>
                                 </Grid>

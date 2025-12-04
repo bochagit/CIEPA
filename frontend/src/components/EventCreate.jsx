@@ -35,7 +35,8 @@ export default function EventCreate(){
         type: '',
         date: new Date().toISOString().split('T')[0],
         coverImage: '',
-        gallery: []
+        gallery: [],
+        instagramLink: ''
     })
     const [loading, setLoading] = React.useState(false)
     const [error, setError] = React.useState('')
@@ -387,6 +388,16 @@ export default function EventCreate(){
                                             InputLabelProps={{
                                                 shrink: true
                                             }}
+                                        />
+                                    </Grid>
+
+                                    <Grid size={{ xs: 12 }}>
+                                        <TextField
+                                            fullWidth
+                                            label="Link de Instagram (opcional)"
+                                            value={formData.instagramLink}
+                                            onChange={(e) => handleInputChange('instagramLink', e.target.value)}
+                                            placeholder="https://www.instagram.com/p/..."
                                         />
                                     </Grid>
                                 </Grid>
