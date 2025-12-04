@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Box, Typography, Chip, Avatar, Divider, IconButton, CircularProgress, Alert, Container, Button, styled } from '@mui/material'
+import { Box, Typography, Chip, Avatar, AvatarGroup, Divider, IconButton, CircularProgress, Alert, Container, Button, styled } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import { brand } from '../../shared-theme/themePrimitives'
@@ -226,17 +226,50 @@ export default function Note(){
             <ContentContainer>
                 <MetaInfo>
                     <AuthorInfo>
-                        <Avatar sx={{ width: 40, height: 40, bgcolor: brand.main }}>
-                        {post.authors?.[0]?.name?.charAt(0).toUpperCase() || 'A'}
-                        </Avatar>
-                        <Box>
-                        <Typography variant="body2" color="text.secondary">
-                            {post.authors?.length > 1 ? 'Autores' : 'Autor'}
-                        </Typography>
-                        <Typography variant="subtitle2" fontWeight={600}>
-                            {post.authors?.map(author => author.name).join(', ') || 'Autor desconocido'}
-                        </Typography>
-                        </Box>
+                        {post.authors?.length > 1 ? (
+                            <>
+                                <AvatarGroup 
+                                    max={4} 
+                                    sx={{ 
+                                        '& .MuiAvatar-root': { 
+                                            width: 36, 
+                                            height: 36, 
+                                            fontSize: '0.875rem',
+                                            border: '2px solid white',
+                                            bgcolor: brand.main
+                                        } 
+                                    }}
+                                >
+                                    {post.authors.map((author, index) => (
+                                        <Avatar key={index}>
+                                            {author.name.charAt(0).toUpperCase()}
+                                        </Avatar>
+                                    ))}
+                                </AvatarGroup>
+                                <Box>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Autores
+                                    </Typography>
+                                    <Typography variant="subtitle2" fontWeight={600}>
+                                        {post.authors.map(author => author.name).join(', ')}
+                                    </Typography>
+                                </Box>
+                            </>
+                        ) : (
+                            <>
+                                <Avatar sx={{ width: 40, height: 40, bgcolor: brand.main }}>
+                                    {post.authors?.[0]?.name?.charAt(0).toUpperCase() || 'A'}
+                                </Avatar>
+                                <Box>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Autor
+                                    </Typography>
+                                    <Typography variant="subtitle2" fontWeight={600}>
+                                        {post.authors?.[0]?.name || 'Autor desconocido'}
+                                    </Typography>
+                                </Box>
+                            </>
+                        )}
                     </AuthorInfo>
                     <DateInfo>
                         <CalendarTodayIcon fontSize="small" />

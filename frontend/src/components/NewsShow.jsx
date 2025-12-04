@@ -10,6 +10,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
+import GroupIcon from '@mui/icons-material/Group';
+import PersonIcon from '@mui/icons-material/Person';
+import Avatar from '@mui/material/Avatar';
+import AvatarGroup from '@mui/material/AvatarGroup';
 import useNotifications from '../hooks/useNotifications/useNotifications';
 import PageContainer from './PageContainer';
 import { postService } from '../services/postService';
@@ -63,7 +67,7 @@ export default function NewsShow() {
             id: post._id,
             title: post.title,
             content: post.content,
-            author: post.author,
+            authors: post.authors || [],
             date: post.date,
             category: post.category || 'General',
             status: post.status || 'draft',
@@ -196,9 +200,42 @@ export default function NewsShow() {
                 </Stack>
               </Box>
 
-              <Box>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  Por: {newsData.author} • {formatDateForDisplay(newsData.date)}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                {newsData.authors.length > 1 ? (
+                  <>
+                    <AvatarGroup max={3} sx={{ '& .MuiAvatar-root': { width: 32, height: 32, fontSize: '0.875rem' } }}>
+                      {newsData.authors.map((author, index) => (
+                        <Avatar key={index} sx={{ bgcolor: 'primary.main' }}>
+                          {author.name.charAt(0).toUpperCase()}
+                        </Avatar>
+                      ))}
+                    </AvatarGroup>
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">
+                        Autores
+                      </Typography>
+                      <Typography variant="body1" fontWeight={500}>
+                        {newsData.authors.map(a => a.name).join(', ')}
+                      </Typography>
+                    </Box>
+                  </>
+                ) : (
+                  <>
+                    <Avatar sx={{ bgcolor: 'primary.main', width: 40, height: 40 }}>
+                      {newsData.authors[0]?.name?.charAt(0).toUpperCase() || 'A'}
+                    </Avatar>
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">
+                        Autor
+                      </Typography>
+                      <Typography variant="body1" fontWeight={500}>
+                        {newsData.authors[0]?.name || 'Sin autor'}
+                      </Typography>
+                    </Box>
+                  </>
+                )}
+                <Typography variant="body2" color="text.secondary" sx={{ ml: 'auto' }}>
+                  {formatDateForDisplay(newsData.date)}
                 </Typography>
               </Box>
 

@@ -13,6 +13,8 @@ import { brand } from '../../shared-theme/themePrimitives'
 import { useTheme, useMediaQuery } from '@mui/material'
 import { postService } from '../services/postService';
 import { SearchRounded as SearchRoundedIcon } from '@mui/icons-material';
+import GroupIcon from '@mui/icons-material/Group';
+import PersonIcon from '@mui/icons-material/Person';
 
 export function Search({ onSearch, searchTerm }) {
   const [localSearchTerm, setLocalSearchTerm] = React.useState(searchTerm || '')
@@ -117,7 +119,7 @@ export default function NewsList() {
   const adaptPostToNews = (post) => ({
     id: post._id,
     title: post.title,
-    author: post.author,
+    authors: post.authors || [],
     category: post.category || 'General',
     date: post.date,
     status: post.status || 'published',
@@ -156,7 +158,7 @@ export default function NewsList() {
     const searchLower = searchTerm.toLowerCase()
     return news.filter(item =>
       item.title.toLowerCase().includes(searchLower) ||
-      item.author.toLowerCase().includes(searchLower) ||
+      item.authors?.some(author => author.name.toLowerCase().includes(searchLower)) ||
       item.category.toLowerCase().includes(searchLower) ||
       (item.summary && item.summary.toLowerCase().includes(searchLower))
     )
@@ -442,15 +444,31 @@ export default function NewsList() {
                         {row.title}
                       </Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ display: { xs: 'block', sm: 'none' } }}>
-                        {row.author} • {formatDateForDisplay(row.date)}
+                        {row.authors?.map(author => author.name).join(', ') || 'Sin autor'} • {formatDateForDisplay(row.date)}
                         <Typography component="span" variant="caption" color="primary.main" sx={{ ml: 1, fontWeight: 600 }}>Toca para ver</Typography>
                       </Typography>
                     </Box>
                   </TableCell>
                   <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
-                    <Typography variant="body2" noWrap>
-                      {row.author}
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      {row.authors?.length > 1 ? (
+                        <Tooltip title={row.authors.map(a => a.name).join(', ')}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <GroupIcon fontSize="small" color="action" />
+                            <Typography variant="body2" noWrap sx={{ maxWidth: 150 }}>
+                              {row.authors.length} autores
+                            </Typography>
+                          </Box>
+                        </Tooltip>
+                      ) : (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <PersonIcon fontSize="small" color="action" />
+                          <Typography variant="body2" noWrap sx={{ maxWidth: 150 }}>
+                            {row.authors?.[0]?.name || 'Sin autor'}
+                          </Typography>
+                        </Box>
+                      )}
+                    </Box>
                   </TableCell>
                   <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                     <Chip label={row.category} size="small" />

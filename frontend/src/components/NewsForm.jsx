@@ -207,6 +207,8 @@ function NewsForm(props) {
       return
     }
 
+    const validAuthors = formData.authors.filter(author => author.name.trim())
+
     if (validAuthors.length === 0) {
       alert('Debe incluir al menos un autor')
       return
@@ -592,7 +594,7 @@ function NewsForm(props) {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleFormClose} disabled={uploading} sx={{ '&:hover': { border: '1px solid #f00', backgroundColor: 'transparent' } }}>Cancelar</Button>
-        <Button type="submit" onClick={onFormSubmit} variant="contained" disabled={!formData.title || !formData.content || !formData.author || uploading || editorUploading}>
+        <Button type="submit" onClick={onFormSubmit} variant="contained" disabled={!formData.title || !formData.content || uploading || editorUploading}>
           {(uploading || editorUploading) ? 'Procesando...' : (initialValue ? 'Actualizar' : 'Crear')}
         </Button>
       </DialogActions>

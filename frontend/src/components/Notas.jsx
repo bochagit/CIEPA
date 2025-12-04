@@ -1,7 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import { Pagination, CircularProgress, Alert, IconButton, styled, OutlinedInput, InputAdornment, FormControl, Typography, Grid, CardMedia, CardContent, Card, Box, Avatar } from '@mui/material';
+import { Pagination, CircularProgress, Alert, IconButton, styled, OutlinedInput, InputAdornment, FormControl, Typography, Grid, CardMedia, CardContent, Card, Box, Avatar, AvatarGroup } from '@mui/material';
 import { brand } from '../../shared-theme/themePrimitives';
 import { postService } from '../services/postService';
 import { useNavigate } from 'react-router-dom';
@@ -108,15 +108,41 @@ function Author({ authors, date }) {
         padding: '16px',
       }}
     >
-      <Box
-        sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center' }}
-      >
-        <Avatar sx={{ width: 32, height: 32 }}>
-          {authors?.[0]?.name?.charAt(0).toUpperCase() || 'A'}
-        </Avatar>
-        <Typography variant="caption">
-          {authors?.map(author => author.name).join(', ') || 'Autor desconocido'}
-        </Typography>
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center' }}>
+        {authors?.length > 1 ? (
+          <AvatarGroup 
+            max={3} 
+            sx={{ 
+              '& .MuiAvatar-root': { 
+                width: 28, 
+                height: 28, 
+                fontSize: '0.75rem',
+                border: '2px solid white'
+              } 
+            }}
+          >
+            {authors.map((author, index) => (
+              <Avatar key={index} sx={{ bgcolor: brand.main }}>
+                {author.name.charAt(0).toUpperCase()}
+              </Avatar>
+            ))}
+          </AvatarGroup>
+        ) : (
+          <Avatar sx={{ width: 28, height: 28, bgcolor: brand.main, fontSize: '0.75rem' }}>
+            {authors?.[0]?.name?.charAt(0).toUpperCase() || 'A'}
+          </Avatar>
+        )}
+        <Box>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: '0.65rem' }}>
+            {authors?.length > 1 ? 'Autores' : 'Autor'}
+          </Typography>
+          <Typography variant="caption" sx={{ fontSize: '0.75rem' }}>
+            {authors?.length > 3 
+              ? `${authors.slice(0, 3).map(a => a.name).join(', ')} +${authors.length - 3}`
+              : authors?.map(author => author.name).join(', ') || 'Autor desconocido'
+            }
+          </Typography>
+        </Box>
       </Box>
       <Typography variant="caption">
         {formatDateForDisplay(date)}
@@ -126,7 +152,7 @@ function Author({ authors, date }) {
 }
 
 Author.propTypes = {
-  author: PropTypes.string.isRequired,
+  authors: PropTypes.array.isRequired,
   date: PropTypes.string.isRequired
 }
 

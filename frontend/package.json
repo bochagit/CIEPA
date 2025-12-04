@@ -16,17 +16,18 @@
     "@mui/x-data-grid": "8.11.3",
     "@mui/x-date-pickers": "8.11.3",
     "@mui/x-date-pickers-pro": "8.11.3",
-    "axios": "^1.12.2",
-    "date-fns": "^4.1.0",
+    "axios": "1.12.2",
+    "date-fns": "4.1.0",
     "dayjs": "1.11.18",
     "prop-types": "15.8.1",
     "react": "latest",
     "react-dom": "latest",
-    "react-quill": "^2.0.0",
+    "react-quill": "2.0.0",
     "react-router-dom": "7.9.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "latest",
-    "vite": "^7.1.12"
+    "terser": "5.44.1",
+    "vite": "7.1.12"
   }
 }
