@@ -242,15 +242,15 @@ export default function ActividadDetalle(){
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 sx={{
-                                    bgcolor: '#e1306c',
+                                    bgcolor: '#e1306c !important',
                                     color: '#fff',
                                     fontWeight: 600,
                                     px: 3,
                                     py: 1.5,
                                     mt: 2,
-                                    border: 'none',
+                                    border: 'none !important',
                                     '&:hover': {
-                                        bgcolor: '#c13584'
+                                        bgcolor: '#c13584 !important'
                                     }
                                 }}
                             >

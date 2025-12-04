@@ -153,7 +153,9 @@ export default function ReportsList() {
             
             const summaryMatch = item.summary?.toLowerCase().includes(searchLower)
             
-            return titleMatch || authorsMatch || summaryMatch
+            const categoryMatch = item.category?.toLowerCase().includes(searchLower)
+
+            return titleMatch || authorsMatch || summaryMatch || categoryMatch
         })
     }, [reports, searchTerm])
 
@@ -439,6 +441,7 @@ export default function ReportsList() {
                                     </TableCell>
                                     <TableCell sx={{ minWidth: {xs: 120, md: 200} }}>Título</TableCell>
                                     <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Autores</TableCell>
+                                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Categoría</TableCell>
                                     <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Fecha</TableCell>
                                     <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Descargas</TableCell>
                                     <TableCell align="center" sx={{ display: { xs: 'none', md:'table-cell' } }}>Acciones</TableCell>
@@ -485,6 +488,11 @@ export default function ReportsList() {
                                         <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                                             <Typography variant="body2" noWrap>
                                                 {row.authors.map(author => author.name).join(', ')}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                                            <Typography variant="body2">
+                                                {row.category}
                                             </Typography>
                                         </TableCell>
                                         <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>

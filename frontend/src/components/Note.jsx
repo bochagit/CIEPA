@@ -227,15 +227,15 @@ export default function Note(){
                 <MetaInfo>
                     <AuthorInfo>
                         <Avatar sx={{ width: 40, height: 40, bgcolor: brand.main }}>
-                            {post.author?.charAt(0).toUpperCase() || 'A'}
+                        {post.authors?.[0]?.name?.charAt(0).toUpperCase() || 'A'}
                         </Avatar>
                         <Box>
-                            <Typography variant="body2" color="text.secondary">
-                                Escrito por
-                            </Typography>
-                            <Typography variant="subtitle2" fontWeight={600}>
-                                {post.author || 'Autor desconocido'}
-                            </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            {post.authors?.length > 1 ? 'Autores' : 'Autor'}
+                        </Typography>
+                        <Typography variant="subtitle2" fontWeight={600}>
+                            {post.authors?.map(author => author.name).join(', ') || 'Autor desconocido'}
+                        </Typography>
                         </Box>
                     </AuthorInfo>
                     <DateInfo>

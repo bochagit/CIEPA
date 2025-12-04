@@ -21,6 +21,8 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import ImageIcon from '@mui/icons-material/Image'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { categoryService } from '../services/categoryService';
+import PersonIcon from '@mui/icons-material/Person'
+import AddIcon from '@mui/icons-material/Add'
 
 const statusOptions = [
   { value: 'published', label: 'Publicado' },
@@ -70,7 +72,7 @@ function NewsForm(props) {
     initialValue ?? {
       title: '',
       content: '',
-      author: '',
+      authors: [{ name: '' }],
       date: new Date().toISOString().split('T')[0],
       category: '',
       status: 'draft',
@@ -178,15 +180,40 @@ function NewsForm(props) {
     }
   }
 
+  const handleAuthorChange = (index, value) => {
+    const newAuthors = [...formData.authors]
+    newAuthors[index] = { name: value }
+    setFormData(prev => ({ ...prev, authors: newAuthors }))
+  }
+
+  const addAuthor = () => {
+    setFormData(prev => ({
+      ...prev,
+      authors: [...prev.authors, { name: '' }]
+    }))
+  }
+
+  const removeAuthor = (index) => {
+    if (formData.authors.length > 1) {
+      const newAuthors = formData.authors.filter((_, i) => i !== index)
+      setFormData(prev => ({ ...prev, authors: newAuthors }))
+    }
+  }
+
   const onFormSubmit = async (event) => {
     event.preventDefault();
 
-    if (!formData.title || !formData.content || !formData.author) {
+    if (!formData.title || !formData.content) {
+      return
+    }
+
+    if (validAuthors.length === 0) {
+      alert('Debe incluir al menos un autor')
       return
     }
 
     try {
-      let finalFormData = { ...formData }
+      let finalFormData = { ...formData, authors: validAuthors }
 
       if (imageFile) {
         console.log('Subiendo imagen a Cloudinary...')
@@ -295,7 +322,7 @@ function NewsForm(props) {
         _id: initialValue._id,
         title: initialValue.title || '',
         content: initialValue.content || '',
-        author: initialValue.author || '',
+        authors: initialValue.authors?.length > 0 ? initialValue.authors : [{ name: '' }],
         date: formatDateSafely(initialValue.date),
         category: initialValue.category || '',
         status: initialValue.status || 'draft',
@@ -379,19 +406,47 @@ function NewsForm(props) {
             <TextEditor id="content" value={formData.content} onChange={handleContentChange} onUploadChange={handleEditorUploadChange} />
           </FormControl>
 
-          <Stack direction="row" spacing={2}>
-            <FormControl sx={{ flex: 1 }}>
-              <FormLabel htmlFor="author">Autor</FormLabel>
-              <OutlinedInput
-                id="author"
-                name="author"
-                type="text"
-                value={formData.author}
-                onChange={handleInputChange}
-                placeholder="Nombre del autor"
-                required
-              />
-            </FormControl>
+          <FormControl>
+            <FormLabel>Autores</FormLabel>
+            <Stack spacing={1}>
+              {formData.authors.map((author, index) => (
+                <Box key={index} sx={{ 
+                  display: 'flex', 
+                  gap: 1, 
+                  p: 1.5,
+                  backgroundColor: 'action.hover',
+                  borderRadius: 1,
+                  alignItems: 'center'
+                }}>
+                  <PersonIcon sx={{ color: 'text.secondary' }} />
+                  <OutlinedInput
+                    size="small"
+                    fullWidth
+                    placeholder={`Autor ${index + 1}`}
+                    value={author.name}
+                    onChange={(e) => handleAuthorChange(index, e.target.value)}
+                  />
+                  <IconButton
+                    onClick={() => removeAuthor(index)}
+                    disabled={formData.authors.length === 1}
+                    color="error"
+                    size="small"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
+              ))}
+              <Button
+                startIcon={<AddIcon />}
+                onClick={addAuthor}
+                variant="outlined"
+                size="small"
+                sx={{ alignSelf: 'flex-start' }}
+              >
+                Agregar Autor
+              </Button>
+            </Stack>
+          </FormControl>
 
             <FormControl sx={{ flex: 1 }}>
               <FormLabel htmlFor="date">Fecha de publicación</FormLabel>
@@ -407,7 +462,6 @@ function NewsForm(props) {
                 required
               />
             </FormControl>
-          </Stack>
 
           <Stack direction="row" spacing={2}>
             <FormControl sx={{ flex: 1 }}>

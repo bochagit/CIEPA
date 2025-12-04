@@ -4,7 +4,13 @@ const postSchema = mongoose.Schema({
     title: { type: String, required: true },
     summary: { type: String },
     content: { type: String, required: true },
-    author: { type: String, required: true },
+    authors: [{
+        name: {
+            type: String, 
+            required: true,
+            trim: true 
+        }
+    }],
     date: { type: Date, default: Date.now },
     category: { type: String, default: 'General' },
     status: { type: String, enum: ['published', 'draft', 'archived'], default: 'draft' },

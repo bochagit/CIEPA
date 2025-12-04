@@ -70,15 +70,21 @@ const extractAllImages = (content, coverImage) => {
 
 export const createPost = async (req, res) => {
     try {
-        const { title, summary, content, author, date, category, status, coverImage, featured } = req.body
+        const { title, summary, content, authors, date, category, status, coverImage, featured } = req.body
 
         if (!title || !content){
             return res.status(400).json({ message: "El titulo y el contenido son obligatorios" })
         }
 
+        if (!Array.isArray(authors) || authors.length === 0){
+            return res.status(400).json({
+                message: 'Debe incluir al menos un autor'
+            })
+        }
+
         const cleanContent = sanitizeHtml(content, sanitizeOptions)
 
-        const post = new Post({ title, summary, content: cleanContent, author, date, category, status, coverImage, featured })
+        const post = new Post({ title, summary, content: cleanContent, authors: authors.map(author => ({ name: author.name.trim() })), date, category, status, coverImage, featured })
 
         await post.save()
         res.status(201).json(post)
@@ -109,7 +115,7 @@ export const getAllPosts = async (req, res) => {
             filter.$or = [
                 { title: { $regex: search, $options: 'i' } },
                 { content: { $regex: search, $options: 'i' } },
-                { author: { $regex: search, $options: 'i' } },
+                { 'authors.name': { $regex: search, $options: 'i' } },
                 { summary: { $regex: search, $options: 'i' } },
                 { category: { $regex: search, $options: 'i' } }
             ]
@@ -163,22 +169,27 @@ export const getPostById = async (req, res) => {
 
 export const updatePost = async (req, res) => {
     try {
-        const { title, summary, content, author, date, category, status, coverImage, featured } = req.body
+        const { title, summary, content, authors, date, category, status, coverImage, featured } = req.body
         const cleanContent = sanitizeHtml(content, sanitizeOptions)
+
+        const updateData = {
+            title,
+            summary,
+            content: cleanContent,
+            date,
+            category,
+            status,
+            coverImage,
+            featured
+        }
+
+        if (authors && Array.isArray(authors)){
+            updateData.authors = authors.map(author => ({ name: author.name.trim() }))
+        }
 
         const post = await Post.findByIdAndUpdate(
             req.params.id,
-            {
-                title,
-                summary,
-                content: cleanContent,
-                author,
-                date,
-                category,
-                status,
-                coverImage,
-                featured
-            },
+            updateData,
             { new: true }
         )
 

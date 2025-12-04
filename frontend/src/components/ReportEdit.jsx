@@ -32,6 +32,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom'
 import { uploadService } from '../services/uploadCloudinary'
 import { reportService } from '../services/reportService'
+import { categoryService } from '../services/categoryService'
 
 const UploadBox = styled(Box)(({ theme }) => ({
     border: `2px dashed ${theme.palette.divider}`,

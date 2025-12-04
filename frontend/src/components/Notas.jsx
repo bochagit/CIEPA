@@ -96,7 +96,7 @@ const formatDateForDisplay = (dateString) => {
     }
   }
 
-function Author({ author, date }) {
+function Author({ authors, date }) {
   return (
     <Box
       sx={{
@@ -112,10 +112,10 @@ function Author({ author, date }) {
         sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center' }}
       >
         <Avatar sx={{ width: 32, height: 32 }}>
-          {author.charAt(0).toUpperCase()}
+          {authors?.[0]?.name?.charAt(0).toUpperCase() || 'A'}
         </Avatar>
         <Typography variant="caption">
-          {author}
+          {authors?.map(author => author.name).join(', ') || 'Autor desconocido'}
         </Typography>
       </Box>
       <Typography variant="caption">
@@ -400,7 +400,7 @@ export default function Notas() {
                   {post.summary || getPlainTextFromHtml(post.content)}
                 </StyledTypography>
               </StyledCardContent>
-                <Author author={post.author} date={post.date} />
+                <Author authors={post.authors} date={post.date} />
               </StyledCard>
             </Grid>
         ))}
