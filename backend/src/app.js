@@ -15,7 +15,9 @@ app.use(cors({
     origin: [
         'http://localhost:5173',
         'https://ciepa.onrender.com',
-        /https:\/\/.*tunnelmole\.net$/
+        'http://ciepa.agro.uba.ar',
+        'https://ciepa.agro.uba.ar'
+
     ],
     credentials: true
 }))
