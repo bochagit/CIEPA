@@ -8,6 +8,7 @@ import categoryRoutes from './routes/category.routes.js'
 import youtubeRoutes from './routes/youtube.routes.js'
 import eventRoutes from './routes/event.routes.js'
 import reportRoutes from './routes/report.routes.js'
+import searchRoutes from './routes/search.routes.js'
 
 const app = express()
 
