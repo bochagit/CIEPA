@@ -33,7 +33,7 @@ const SearchResultsContainer = styled(Paper)(({ theme }) => ({
   marginTop: theme.spacing(1),
   maxHeight: '60vh',
   overflowY: 'auto',
-  zIndex: 1300,
+  zIndex: 100001,
   boxShadow: theme.shadows[8]
 }))
 
@@ -371,14 +371,14 @@ export default function AppAppBar() {
           top: isSticky ? '40px' : 'auto',
           left: 0,
           right: 0,
-          zIndex: 1200,
+          zIndex: 100000,
           transition: 'all 0.2s ease-out',
           width: '100vw',
           maxWidth: '100vw',
         }}
       >
-        <Container maxWidth="false" sx={{ backgroundColor: alpha(brand.main, .8) }}>
-          <StyledToolbar variant="dense" disableGutters sx={{ boxShadow: 'none', position: 'relative' }}>
+        <Container maxWidth="false" sx={{ backgroundColor: alpha(brand.main, .8), position: 'relative', zIndex: 100000 }}>
+          <StyledToolbar variant="dense" disableGutters sx={{ boxShadow: 'none', position: 'relative', zIndex: 100000 }}>
             {!searchMode ? (
               <>
                 <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

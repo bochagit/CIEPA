@@ -499,7 +499,11 @@ export default function MainContent() {
               sx={{
                 fontWeight: 700,
                 mb: 2,
-                fontSize: { xs: '1.5rem', lg: '1.25rem' }
+                fontSize: { xs: '1.5rem', lg: '1.25rem' },
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
               }}
               >
                 {publicaciones[currentPublicacion].titulo}
