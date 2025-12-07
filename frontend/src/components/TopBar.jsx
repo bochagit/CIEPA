@@ -1,10 +1,12 @@
 import * as React from 'react'
-import { Box, Button, Typography, Container, IconButton } from '@mui/material'
+import { Box, Button, Typography, Container, IconButton, Stack } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import ColorModeIconDropdown from '../../shared-theme/ColorModeIconDropdown'
 import InstagramIcon from '@mui/icons-material/Instagram'
-import YoutubeIcon from '@mui/icons-material/YouTube'
+import YouTubeIcon from '@mui/icons-material/YouTube'
+import EmailIcon from '@mui/icons-material/EmailOutlined'
 import { useAuth } from '../context/AuthContext'
+import { brand } from '../../shared-theme/themePrimitives'
 
 export default function TopBar(){
     const navigate = useNavigate()
@@ -33,30 +35,45 @@ export default function TopBar(){
         >
             <Container maxWidth="xl">
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Stack
+                        spacing={2}
+                        useFlexGap
+                        sx={{ justifyContent: 'left', color: 'text.secondary', flexDirection: 'row' }}
+                    >
                         <IconButton
                         color="inherit"
-                        size="small"
+                        size="large"
+                        href="https://www.youtube.com/@ciepacentro"
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        aria-label="YouTube"
+                        sx={{ alignSelf: 'center', borderRadius: '50%', color: brand.main, backgroundColor: '#fff !important' }}
+                        >
+                        <YouTubeIcon />
+                        </IconButton>
+                        <IconButton
+                        color="inherit"
+                        size="large"
                         href="https://www.instagram.com/ciepa.centro/"
                         target='_blank'
                         rel='noopener noreferrer'
                         aria-label="Instagram"
-                        sx={{ alignSelf: 'center' }}
+                        sx={{ alignSelf: 'center', borderRadius: '50%', color: brand.main, backgroundColor: '#fff !important' }}
                         >
                         <InstagramIcon />
                         </IconButton>
                         <IconButton
                         color="inherit"
-                        size="small"
-                        href="https://www.youtube.com/"
+                        size="large"
+                        href="mailto:ciepa@agro.uba.ar"
                         target='_blank'
                         rel='noopener noreferrer'
-                        aria-label="YouTube"
-                        sx={{ alignSelf: 'center' }}
+                        aria-label="Email"
+                        sx={{ alignSelf: 'center', borderRadius: '50%', color: brand.main, backgroundColor: '#fff !important' }}
                         >
-                        <YoutubeIcon />
+                        <EmailIcon />
                         </IconButton>
-                    </Box>
+                    </Stack>
                     <Box sx={{ display: 'flex', gap: 1 }}>
                         {isAuthenticated ? (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

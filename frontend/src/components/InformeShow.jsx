@@ -244,27 +244,17 @@ export default function InformeShow(){
                         </Box>
                     )}
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                         <PersonIcon sx={{ color: brand.main }} />
                         <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                            {report.authors.length > 1 ? 'Autores:' : 'Autor:'}
+                            Por:
                         </Typography>
+                        <Box sx={{ m: 'auto' }}>
+                            <Typography variant="body2" sx={{ opacity: .9, fontSize: { xs: '0.875rem', lg: '0.75rem' } }}>
+                                {report.authors?.map(a => a.name).join(', ') || 'Sin autor'}
+                            </Typography>
+                        </Box>
                     </Box>
-                </Box>
-
-                <Box sx={{ mb: 3 }}>
-                    {report.authors.map((author, index) => (
-                        <Chip
-                            key={index}
-                            label={author.name}
-                            variant="outlined"
-                            sx={{
-                                mr: 1,
-                                mb: 1,
-                                fontWeight: 500
-                            }}
-                        />
-                    ))}
                 </Box>
 
                 <Divider sx={{ mb: 3 }} />

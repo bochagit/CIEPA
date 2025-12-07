@@ -33,5 +33,6 @@ app.use("/categories", categoryRoutes)
 app.use("/youtube", youtubeRoutes)
 app.use("/eventos", eventRoutes)
 app.use('/reports', reportRoutes)
+app.use('/search', searchRoutes)
 
 export default app

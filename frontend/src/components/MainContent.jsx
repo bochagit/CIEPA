@@ -155,7 +155,7 @@ export default function MainContent() {
             descripcion: post.summary || post.content.substring(0, 200) + '...',
             imagen: post.coverImage,
             fecha: post.date,
-            autor: post.author
+            autores: post.authors || []
           }))
           
         setPublicaciones(publicacionesFormateadas)
@@ -510,18 +510,18 @@ export default function MainContent() {
                   mb: 3,
                   maxWidth: '800px',
                   fontSize: { xs: '.9rem', lg: '0.85rem' },
-                  lineHeight: 1.6,
+                  lineHeight: 1.2,
                   display: '-webkit-box',
-                  WebkitLineClamp: { xs: 4, lg: 3 },
+                  WebkitLineClamp: { xs: 1, md: 2 },
                   WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden'
+                  overflow: 'hidden',
                 }}
                 >
                   {publicaciones[currentPublicacion].descripcion}
                 </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, flexWrap: 'wrap' }}>
                     <Typography variant="body2" sx={{ opacity: .9, fontSize: { xs: '0.875rem', lg: '0.75rem' } }}>
-                      Por {publicaciones[currentPublicacion].autor}
+                      Por {publicaciones[currentPublicacion].autores?.map(a => a.name).join(', ') || 'Sin autor'}
                     </Typography>
                     <Typography variant="body2" sx={{ opacity: .9, fontSize: { xs: '0.875rem', lg: '0.75rem' } }}>
                       {formatDateForDisplay(publicaciones[currentPublicacion].fecha)}

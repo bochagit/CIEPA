@@ -83,7 +83,7 @@ export default function Footer() {
                 <IconButton
                   color="inherit"
                   size="large"
-                  href="https://youtube.com/"
+                  href="https://www.youtube.com/@ciepacentro"
                   target='_blank'
                   rel='noopener noreferrer'
                   aria-label="YouTube"
@@ -105,10 +105,10 @@ export default function Footer() {
                 <IconButton
                   color="inherit"
                   size="large"
-                  href="https://youtube.com/"
+                  href="mailto:ciepa@agro.uba.ar"
                   target='_blank'
                   rel='noopener noreferrer'
-                  aria-label="YouTube"
+                  aria-label="Email"
                   sx={{ alignSelf: 'center', borderRadius: '50%', color: brand.main, backgroundColor: '#fff !important' }}
                 >
                   <EmailIcon />
@@ -129,6 +129,9 @@ export default function Footer() {
             </Typography>
             <Link variant="body2" onClick={() => navigate("/quienes-somos")} sx={linkStyles}>
               ¿Qué es el CIEPA?
+            </Link>
+            <Link variant="body2" onClick={() => navigate("/lineas-trabajo")} sx={linkStyles}>
+              Consultoría
             </Link>
             <Link variant="body2" onClick={() => navigate("/que-hacemos")} sx={linkStyles}>
               Nuestro trabajo

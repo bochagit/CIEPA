@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Box, Typography, styled, Button, IconButton } from '@mui/material'
+import { Box, Typography, styled, Button, IconButton, alpha } from '@mui/material'
 import { brand, secondary } from '../../shared-theme/themePrimitives'
 import { Email as EmailIcon } from '@mui/icons-material';
 
@@ -92,7 +92,7 @@ export default function Lineas(){
                 <Typography variant="body1" color="textPrimary" fontSize='1rem'>
                     Para lograrlo, desarrollamos diversas líneas de trabajo orientadas a la formulación, gestión y evaluación de políticas públicas ambientales promoviendo instancias de formación y capacitación. 
                 </Typography>
-                <Typography variant="h4" color="primary" sx={{ '&::before': { content: '"• "' } }}>Plan Estratégico Ambiental</Typography>
+                <Typography variant="h4" color="primary" sx={{ '&::before': { content: '"• "' }, mt: 7 }}>Plan Estratégico Ambiental</Typography>
                 <Typography variant="body1" color="textPrimary" fontSize='1rem'>
                     Esta línea busca acompañar a los gobiernos locales en la formulación de su plan estratégico ambiental, entendido como una hoja de ruta para el desarrollo de políticas públicas que pongan en consideración las necesidades actuales y las demandas futuras. El trabajo puede incluir las siguientes etapas:
                 </Typography>
@@ -124,7 +124,7 @@ export default function Lineas(){
                 <Typography variant="body1" color="textPrimary" fontSize='1rem'>
                     Entre otras iniciativas, puede ofrecer:
                 </Typography>
-                <Box component="ul" sx={{ listStyle: 'none', '& li::before': { content: '"- "' }, px: 2, fontSize: '1rem', textAlign: 'justify' }}>
+                <Box component="ul" sx={{ p: '0 0 0 20px', mt: 0, fontSize: '1rem', textAlign: 'justify' }}>
                     <li>
                         Censos de arbolado mediante herramientas digitales.
                     </li>
@@ -142,7 +142,7 @@ export default function Lineas(){
                 <Typography variant="body1" color="textPrimary" fontSize='1rem'>
                     El trabajo se estructura en dos fases principales, que combinan el diagnóstico con la planificación de acciones estratégicas:
                 </Typography>
-                <Box component="ul" sx={{ px: 2, fontSize: '1rem', textAlign: 'justify' }}>
+                <Box component="ul" sx={{ p: '0 0 0 20px', fontSize: '1rem', textAlign: 'justify' }}>
                     <li>
                         <strong>Fase de Mitigación (Inventario GEI):</strong> Se realiza un inventario municipal de Gases de Efecto Invernadero (GEI) para identificar las principales fuentes de emisión. A partir de este diagnóstico, se definen metas claras de reducción y se proyectan acciones concretas para alcanzarlas, fomentando la transición energética local.
                     </li>
@@ -183,6 +183,31 @@ export default function Lineas(){
                     El CIEPA trabaja en el marco de convenios generales y específicos con los municipios, bajo la estructura formal de la Facultad de Agronomía de la Universidad de Buenos Aires. Los equipos interdisciplinarios del CIEPA están integrados por profesionales y técnicos especializados en políticas ambientales, con el apoyo de la Secretaría de Desarrollo y Relaciones Institucionales de la FAUBA.
                 </Typography>
             </Box>
+            <SectionContainer>
+                    <Box 
+                    component="ul" 
+                    sx={{ 
+                        listStyle: 'none',
+                        fontSize: '1rem',
+                        border: `1px solid ${brand.main}`,
+                        borderRadius: 2,
+                        backgroundColor: alpha(brand.main, .1),
+                        boxShadow: 2,
+                        p: 2,
+                        marginTop: 7,
+                        textAlign: 'center',
+                        transition: 'transform .2s ease-in-out, box-shadow .2s ease-in-out',
+                        '&:hover': {
+                            transform: 'translateY(-4px)',
+                            boxShadow: 1
+                        }
+                    }}>
+                        <Typography variant="h6" color="primary">¿Te interesa? ¡Contactanos!</Typography>
+                        <Button variant="contained" color="primary" onClick={() => navigate("/contacto")} sx={{ marginTop: 2 }}>
+                          Contacto
+                        </Button>
+                    </Box>
+                  </SectionContainer>
         </SectionContainer>
     )
 } 

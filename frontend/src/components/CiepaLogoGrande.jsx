@@ -11,9 +11,10 @@ export default function CiepaLogoGrande() {
 
     return (
         <Box component="img" onClick={handleLogoClick} src={logoGrande} sx={{
-            height: '40vh',
+            height: '35vh',
             width: 'auto',
             margin: 'auto',
+            mb: 2,
             objectFit: 'contain',
             cursor: 'pointer',
             transition: 'transform .2s ease-in-out',

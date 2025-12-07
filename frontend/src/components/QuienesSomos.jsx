@@ -95,7 +95,21 @@ export default function QuienesSomos(){
             <Typography variant="body1" color="textPrimary" fontSize={'1rem'}>
                 Creemos que las instituciones académicas deben involucrarse y contribuir activamente, mediante la discusión, el análisis y el abordaje de las principales problemáticas que aquejan a nuestra sociedad, co-construyendo junto al Estado y actores de la sociedad civil, las mejores alternativas para su resolución. Es por ello que trabajamos con compromiso, cooperación y responsabilidad.
             </Typography>
-            <Box sx={{ mt: '2rem', maxWidth: '100%', height: 600, border: `1px solid ${alpha(brand.main, 1)}`, borderRadius: '1.5rem', backgroundImage: `url(${quienesSomosImage})`, backgroundPosition: 'center', backgroundSize: 'cover' , backgroundRepeat: 'no-repeat' }} />
+            <Box 
+                sx={{ 
+                    mt: '2rem', 
+                    width: '100%',
+                    aspectRatio: { xs: '138/100', sm: '16/9' },
+                    height: { xs: 'auto', md: 600 },
+                    border: `1px solid ${alpha(brand.main, 1)}`, 
+                    borderRadius: '1.5rem', 
+                    backgroundImage: `url(${quienesSomosImage})`, 
+                    backgroundPosition: 'center', 
+                    backgroundSize: { xs: 'contain', sm: 'cover' },
+                    backgroundRepeat: 'no-repeat',
+                    backgroundColor: alpha(brand.main, 0.05)
+                }} 
+            />
             <Box 
                 component="ul" 
                 sx={{ 
@@ -110,7 +124,7 @@ export default function QuienesSomos(){
                 <li><strong>Co-Directora:</strong> Dra. Patricia Lombardo</li>
                 <li><strong>Coordinadora:</strong> Lic. Lucía Belén Yáñez</li>
                 <li><strong>Coordinadora Comisión de Gestión Integral de Residuos con Inclusión Social:</strong> Lic. Lucía Jolias</li>
-                <li><strong>Coordinadora Comisión de Cambio Climático y Energía:</strong> Mg. Lic. Mauro Giangarelli</li>
+                <li><strong>Coordinador Comisión de Cambio Climático y Energía:</strong> Mg. Lic. Mauro Giangarelli</li>
             </Box>
             <Typography variant="h4" color="primary" sx={{textDecoration: 'underline'}}>Integrantes</Typography>
             <Box component="ul" sx={{ px: 2, fontSize: '.9rem' }}>
