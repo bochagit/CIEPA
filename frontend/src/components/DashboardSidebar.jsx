@@ -23,7 +23,7 @@ import {
 } from '../mixins';
 import PictureAsPdf from '@mui/icons-material/PictureAsPdf';
 import Badge from '@mui/material/Badge';
-import { contactService } from '../services/contactService';
+import { useContacts } from '../context/ContactsContext';
 
 function DashboardSidebar({
   expanded = true,
@@ -34,6 +34,7 @@ function DashboardSidebar({
   const theme = useTheme();
 
   const { pathname } = useLocation();
+  const { unreadCount } = useContacts();
 
   const [expandedItemIds, setExpandedItemIds] = React.useState([]);
 
@@ -42,24 +43,6 @@ function DashboardSidebar({
 
   const [isFullyExpanded, setIsFullyExpanded] = React.useState(expanded);
   const [isFullyCollapsed, setIsFullyCollapsed] = React.useState(!expanded);
-  const [unreadCount, setUnreadCount] = React.useState(0);
-
-  React.useEffect(() => {
-    const fetchUnreadCount = async () => {
-      try {
-        const count = await contactService.getUnreadCount();
-        setUnreadCount(count);
-      } catch (error) {
-        console.error('Error fetching unread count:', error);
-      }
-    };
-    
-    fetchUnreadCount();
-    
-    // Refresh every minute
-    const interval = setInterval(fetchUnreadCount, 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   React.useEffect(() => {
     if (expanded) {

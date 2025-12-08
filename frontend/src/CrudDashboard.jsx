@@ -25,6 +25,7 @@ import ReportsList from './components/ReportsList';
 import ReportShow from './components/ReportShow';
 import ReportEdit from './components/ReportEdit';
 import ContactsList from './components/ContactsList';
+import { ContactsProvider } from './context/ContactsContext';
 
 const themeComponents = {
   ...dataGridCustomizations,
@@ -39,7 +40,8 @@ export default function CrudDashboard(props) {
       <CssBaseline enableColorScheme />
       <NotificationsProvider>
         <DialogsProvider>
-          <DashboardLayout>
+          <ContactsProvider>
+            <DashboardLayout>
             <Routes>
               <Route path="/" element={<NewsList />} />
               <Route path="/news" element={<NewsList />} />
@@ -58,6 +60,7 @@ export default function CrudDashboard(props) {
               <Route path="/contacts" element={<ContactsList />} />
             </Routes>
           </DashboardLayout>
+          </ContactsProvider>
         </DialogsProvider>
       </NotificationsProvider>
     </AppTheme>

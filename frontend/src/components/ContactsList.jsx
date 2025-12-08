@@ -8,6 +8,7 @@ import { contactService } from '../services/contactService'
 import useNotifications from '../hooks/useNotifications/useNotifications'
 import PageContainer from './PageContainer'
 import { brand } from '../../shared-theme/themePrimitives'
+import { useContacts } from '../context/ContactsContext'
 
 export default function ContactsList() {
     const [contacts, setContacts] = React.useState([])
@@ -20,6 +21,7 @@ export default function ContactsList() {
     const [notas, setNotas] = React.useState('')
     const [error, setError] = React.useState('')
     const notifications = useNotifications()
+    const { refreshUnreadCount } = useContacts()
 
     React.useEffect(() => {
         fetchContacts()
@@ -53,6 +55,7 @@ export default function ContactsList() {
             try {
                 await contactService.updateContact(contact._id, { leido: true })
                 fetchContacts()
+                refreshUnreadCount()
             } catch (error) {
                 console.error('Error al marcar como leído:', error)
             }
@@ -68,19 +71,35 @@ export default function ContactsList() {
             notifications.show('Contacto marcado como respondido', { severity: 'success' })
             setOpenDialog(false)
             fetchContacts()
+            refreshUnreadCount()
         } catch (error) {
             console.error('Error al actualizar contacto:', error)
             notifications.show('Error al actualizar contacto', { severity: 'error' })
         }
     }
 
-    const handleDelete = async (id) => {
+    const handleToggleRead = async (e, contact) => {
+        e.stopPropagation()
+        try {
+            await contactService.updateContact(contact._id, { leido: !contact.leido })
+            notifications.show(contact.leido ? 'Marcado como no leído' : 'Marcado como leído', { severity: 'success' })
+            fetchContacts()
+            refreshUnreadCount()
+        } catch (error) {
+            console.error('Error al actualizar estado:', error)
+            notifications.show('Error al actualizar estado', { severity: 'error' })
+        }
+    }
+
+    const handleDelete = async (e, id) => {
+        e.stopPropagation()
         if (!window.confirm('¿Estás seguro de eliminar este mensaje?')) return
 
         try {
             await contactService.deleteContact(id)
             notifications.show('Mensaje eliminado', { severity: 'success' })
             fetchContacts()
+            refreshUnreadCount()
         } catch (error) {
             console.error('Error al eliminar contacto:', error)
             notifications.show('Error al eliminar mensaje', { severity: 'error' })
@@ -91,9 +110,7 @@ export default function ContactsList() {
         return new Date(dateString).toLocaleDateString('es-AR', {
             year: 'numeric',
             month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+            day: 'numeric'
         })
     }
 
@@ -149,10 +166,14 @@ export default function ContactsList() {
                             ) : (
                                 contacts.map((contact) => (
                                     <TableRow 
-                                        key={contact._id} 
+                                        key={contact._id}
+                                        onClick={() => handleViewContact(contact)}
                                         sx={{ 
                                             backgroundColor: !contact.leido ? 'action.hover' : 'inherit',
-                                            '&:hover': { backgroundColor: 'action.selected' }
+                                            '&:hover': { 
+                                                backgroundColor: 'action.selected',
+                                                cursor: 'pointer'
+                                            }
                                         }}
                                     >
                                         <TableCell>
@@ -197,14 +218,22 @@ export default function ContactsList() {
                                                 )}
                                             </Stack>
                                         </TableCell>
-                                        <TableCell align="center">
-                                            <Tooltip title="Ver detalle">
-                                                <IconButton onClick={() => handleViewContact(contact)} size="small">
-                                                    <VisibilityIcon />
+                                        <TableCell align="center" sx={{ display: 'flex', gap: .5, justifyContent: 'center', alignItems: 'center' }}>
+                                            <Tooltip title={contact.leido ? 'Marcar como no leído' : 'Marcar como leído'}>
+                                                <IconButton 
+                                                    onClick={(e) => handleToggleRead(e, contact)} 
+                                                    size="small"
+                                                    color={contact.leido ? 'default' : 'primary'}
+                                                >
+                                                    <EmailIcon />
                                                 </IconButton>
                                             </Tooltip>
                                             <Tooltip title="Eliminar">
-                                                <IconButton onClick={() => handleDelete(contact._id)} size="small" color="error">
+                                                <IconButton 
+                                                    onClick={(e) => handleDelete(e, contact._id)} 
+                                                    size="small" 
+                                                    color="error"
+                                                >
                                                     <DeleteIcon />
                                                 </IconButton>
                                             </Tooltip>
@@ -273,16 +302,34 @@ export default function ContactsList() {
                                         </Typography>
                                     </Paper>
                                 </Box>
-                                
+
                                 <TextField
-                                    label="Notas internas"
+                                    fullWidth
                                     multiline
-                                    rows={4}
+                                    minRows={3}
+                                    maxRows={10}
+                                    label="Notas internas"
                                     value={notas}
                                     onChange={(e) => setNotas(e.target.value)}
                                     placeholder="Agregá notas sobre este contacto..."
-                                    fullWidth
-                                    variant="outlined"
+                                    sx={{
+                                        '& .MuiInputBase-root': {
+                                            alignItems: 'flex-start',
+                                            height: 'auto',
+                                            minHeight: 'auto',
+                                            padding: '12px',
+                                        },
+                                        '& .MuiInputBase-input': {
+                                            height: 'auto !important',
+                                            overflow: 'auto !important',
+                                            whiteSpace: 'pre-wrap',
+                                            wordWrap: 'break-word'
+                                        },
+                                        '& textarea': {
+                                            resize: 'none',
+                                            lineHeight: 1.5
+                                        }
+                                    }}
                                 />
                             </Stack>
                         )}

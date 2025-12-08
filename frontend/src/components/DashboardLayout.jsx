@@ -15,7 +15,7 @@ import { useAuth } from '../context/AuthContext';
 export default function DashboardLayout({ children }) {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { isAuthenticated, user, logout } = useAuth()
+  const { isAuthenticated, user, logout } = useAuth();
 
   const handleBackToBlog = () => {
     navigate('/');
@@ -63,7 +63,7 @@ export default function DashboardLayout({ children }) {
 
   return (
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      <Box sx={{
+        <Box sx={{
         position: 'fixed', 
         top: 0, 
         left: 0, 
