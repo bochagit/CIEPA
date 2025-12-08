@@ -1,10 +1,11 @@
 import * as React from 'react'
-import { styled, Typography, Box, alpha, TextField, Button, Paper, Stack, IconButton } from '@mui/material';
+import { styled, Typography, Box, alpha, TextField, Button, Stack, IconButton, Snackbar, Alert } from '@mui/material';
 import { brand } from '../../shared-theme/themePrimitives';
 import Mapa from './Mapa';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import EmailIcon from '@mui/icons-material/Email';
+import { contactService } from '../services/contactService';
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(3),
@@ -40,6 +41,12 @@ export default function Contacto(){
         mensaje: ''
     })
 
+    const [snackbar, setSnackbar] = React.useState({
+        open: false,
+        message: '',
+        severity: 'success'
+    })
+
     const handleInputChange = (event) => {
         const { name, value } = event.target
         setFormData(prev => ({
@@ -48,23 +55,42 @@ export default function Contacto(){
         }))
     }
 
-    const handleSubmit = (event) => {
+    const handleCloseSnackbar = () => {
+        setSnackbar(prev => ({ ...prev, open: false }))
+    }
+
+    const handleSubmit = async (event) => {
         event.preventDefault()
 
         if (!formData.nombre || !formData.correo || !formData.mensaje){
-            alert('Por favor completá todos los campos')
+            setSnackbar({
+                open: true,
+                message: 'Por favor completá todos los campos',
+                severity: 'error'
+            })
             return
         }
 
-        console.log('Datos del formulario: ', formData)
-
-        setFormData({
-            nombre: '',
-            correo: '',
-            mensaje: ''
-        })
-
-        alert('¡Mensaje enviado correctamente!')
+        try {
+            await contactService.sendMessage(formData)
+            setSnackbar({
+                open: true,
+                message: '¡Mensaje enviado correctamente! Te responderemos pronto.',
+                severity: 'success'
+            })
+            setFormData({
+                nombre: '',
+                correo: '',
+                mensaje: ''
+            })
+        } catch (error) {
+            console.error('Error al enviar mensaje:', error)
+            setSnackbar({
+                open: true,
+                message: 'Error al enviar el mensaje. Por favor intentá nuevamente.',
+                severity: 'error'
+            })
+        }
     }
 
     return (
@@ -193,6 +219,17 @@ export default function Contacto(){
                     </IconButton>
                 </Box>
             </Box>
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </SectionContainer>
     )
 }

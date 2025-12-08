@@ -361,7 +361,7 @@ export default function AppAppBar() {
 
   return (
     <>
-      {isSticky && (
+      {isSticky && !open && (
         <Box sx={{ height: appBarHeight }} />
       )}
       <Box
@@ -375,6 +375,7 @@ export default function AppAppBar() {
           transition: 'all 0.2s ease-out',
           width: '100vw',
           maxWidth: '100vw',
+          display: { xs: open ? 'none' : 'block', md: 'block' }
         }}
       >
         <Container maxWidth="false" sx={{ backgroundColor: alpha(brand.main, .8), position: 'relative', zIndex: 100000 }}>
@@ -464,6 +465,10 @@ export default function AppAppBar() {
                     anchor="top"
                     open={open}
                     onClose={toggleDrawer(false)}
+                    hideBackdrop={true}
+                    ModalProps={{
+                      keepMounted: true
+                    }}
                     slotProps={{
                       paper: {
                         sx: {

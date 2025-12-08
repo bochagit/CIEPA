@@ -10,6 +10,7 @@ import ArticleIcon from '@mui/icons-material/Article';
 import { Event as EventIcon } from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
 import ListIcon from '@mui/icons-material/List';
+import ContactMailIcon from '@mui/icons-material/ContactMail';
 import { matchPath, useLocation } from 'react-router';
 import DashboardSidebarContext from '../context/DashboardSidebarContext';
 import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from '../constants';
@@ -21,6 +22,8 @@ import {
   getDrawerWidthTransitionMixin,
 } from '../mixins';
 import PictureAsPdf from '@mui/icons-material/PictureAsPdf';
+import Badge from '@mui/material/Badge';
+import { contactService } from '../services/contactService';
 
 function DashboardSidebar({
   expanded = true,
@@ -39,6 +42,24 @@ function DashboardSidebar({
 
   const [isFullyExpanded, setIsFullyExpanded] = React.useState(expanded);
   const [isFullyCollapsed, setIsFullyCollapsed] = React.useState(!expanded);
+  const [unreadCount, setUnreadCount] = React.useState(0);
+
+  React.useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const count = await contactService.getUnreadCount();
+        setUnreadCount(count);
+      } catch (error) {
+        console.error('Error fetching unread count:', error);
+      }
+    };
+    
+    fetchUnreadCount();
+    
+    // Refresh every minute
+    const interval = setInterval(fetchUnreadCount, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   React.useEffect(() => {
     if (expanded) {
@@ -167,6 +188,19 @@ function DashboardSidebar({
               icon={<PictureAsPdf />}
               href="/dashboard/informes"
               selected={!!matchPath('/dashboard/informes', pathname)}
+            />
+            <DashboardSidebarDividerItem />
+            <DashboardSidebarHeaderItem>Contactos</DashboardSidebarHeaderItem>
+            <DashboardSidebarPageItem
+              id="contacts"
+              title="Mensajes recibidos"
+              icon={
+                <Badge badgeContent={unreadCount} color="error">
+                  <ContactMailIcon />
+                </Badge>
+              }
+              href="/dashboard/contacts"
+              selected={!!matchPath('/dashboard/contacts', pathname)}
             />
           </List>
         </Box>

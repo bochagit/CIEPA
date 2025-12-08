@@ -24,6 +24,7 @@ import ReportCreate from './components/ReportCreate';
 import ReportsList from './components/ReportsList';
 import ReportShow from './components/ReportShow';
 import ReportEdit from './components/ReportEdit';
+import ContactsList from './components/ContactsList';
 
 const themeComponents = {
   ...dataGridCustomizations,
@@ -54,6 +55,7 @@ export default function CrudDashboard(props) {
               <Route path="/informes/new" element={<ReportCreate />} />
               <Route path="/informes/:reportId" element={<ReportShow />} />
               <Route path="/informes/edit/:reportId" element={<ReportEdit />} />
+              <Route path="/contacts" element={<ContactsList />} />
             </Routes>
           </DashboardLayout>
         </DialogsProvider>

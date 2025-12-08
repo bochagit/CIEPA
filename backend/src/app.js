@@ -9,6 +9,7 @@ import youtubeRoutes from './routes/youtube.routes.js'
 import eventRoutes from './routes/event.routes.js'
 import reportRoutes from './routes/report.routes.js'
 import searchRoutes from './routes/search.routes.js'
+import contactRoutes from './routes/contact.routes.js'
 
 const app = express()
 
@@ -35,5 +36,6 @@ app.use("/youtube", youtubeRoutes)
 app.use("/eventos", eventRoutes)
 app.use('/reports', reportRoutes)
 app.use('/search', searchRoutes)
+app.use('/contacts', contactRoutes)
 
 export default app
