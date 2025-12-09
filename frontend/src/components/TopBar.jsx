@@ -47,7 +47,7 @@ export default function TopBar(){
                         target='_blank'
                         rel='noopener noreferrer'
                         aria-label="YouTube"
-                        sx={{ alignSelf: 'center', borderRadius: '50%', color: brand.main, backgroundColor: '#fff !important' }}
+                        sx={{ alignSelf: 'center', borderRadius: '50%', color: '#fff', backgroundColor: `${brand.main} !important` }}
                         >
                         <YouTubeIcon />
                         </IconButton>
@@ -58,7 +58,7 @@ export default function TopBar(){
                         target='_blank'
                         rel='noopener noreferrer'
                         aria-label="Instagram"
-                        sx={{ alignSelf: 'center', borderRadius: '50%', color: brand.main, backgroundColor: '#fff !important' }}
+                        sx={{ alignSelf: 'center', borderRadius: '50%', color: '#fff', backgroundColor: `${brand.main} !important` }}
                         >
                         <InstagramIcon />
                         </IconButton>
@@ -69,7 +69,7 @@ export default function TopBar(){
                         target='_blank'
                         rel='noopener noreferrer'
                         aria-label="Email"
-                        sx={{ alignSelf: 'center', borderRadius: '50%', color: brand.main, backgroundColor: '#fff !important' }}
+                        sx={{ alignSelf: 'center', borderRadius: '50%', color: '#fff', backgroundColor: `${brand.main} !important` }}
                         >
                         <EmailIcon />
                         </IconButton>

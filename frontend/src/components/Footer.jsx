@@ -130,14 +130,14 @@ export default function Footer() {
             <Link variant="body2" onClick={() => navigate("/quienes-somos")} sx={linkStyles}>
               ¿Qué es el CIEPA?
             </Link>
-            <Link variant="body2" onClick={() => navigate("/lineas-trabajo")} sx={linkStyles}>
-              Consultoría
-            </Link>
             <Link variant="body2" onClick={() => navigate("/que-hacemos")} sx={linkStyles}>
               Nuestro trabajo
             </Link>
+            <Link variant="body2" onClick={() => navigate("/lineas-trabajo")} sx={linkStyles}>
+              Consultoría
+            </Link>
             <Link variant="body2" onClick={() => navigate("/notas")} sx={linkStyles}>
-              Notas
+              Publicaciones
             </Link>
             <Link variant="body2" onClick={() => navigate("/actividades")} sx={linkStyles}>
               Actividades

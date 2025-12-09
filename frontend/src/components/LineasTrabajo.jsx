@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Box, Typography, styled, Button, IconButton, alpha } from '@mui/material'
 import { brand, secondary } from '../../shared-theme/themePrimitives'
 import { Email as EmailIcon } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom'
 
 const SectionContainer = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(2),
@@ -31,6 +32,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 }));
 
 export default function Lineas(){
+    const navigate = useNavigate()
     return(
         <SectionContainer>
             <SectionTitle variant="h3" component="h2">Líneas de trabajo</SectionTitle>
@@ -96,7 +98,7 @@ export default function Lineas(){
                 <Typography variant="body1" color="textPrimary" fontSize='1rem'>
                     Esta línea busca acompañar a los gobiernos locales en la formulación de su plan estratégico ambiental, entendido como una hoja de ruta para el desarrollo de políticas públicas que pongan en consideración las necesidades actuales y las demandas futuras. El trabajo puede incluir las siguientes etapas:
                 </Typography>
-                <Box component="ul" sx={{ listStyle: 'none', '& li::before': { content: '"- "' }, px: 2, fontSize: '1rem', textAlign: 'justify' }}>
+                <Box component="ul" sx={{ p: '0 0 0 20px', mt: 0, fontSize: '1rem', textAlign: 'justify' }}>
                     <li>
                         Una etapa de diagnóstico participativo junto al equipo municipal y otros actores locales, junto a la definición de los ejes temáticos a trabajar.
                     </li>

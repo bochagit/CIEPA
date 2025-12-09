@@ -382,7 +382,7 @@ export default function AppAppBar() {
           <StyledToolbar variant="dense" disableGutters sx={{ boxShadow: 'none', position: 'relative', zIndex: 100000 }}>
             {!searchMode ? (
               <>
-                <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+                <Box sx={{ display: { xs: 'flex', md: 'none', filter: 'grayscale(1) brightness(10)' } }}>
                   <CiepaLogo />
                 </Box>
                 <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'center', px: 0, gap: 4 }}>
@@ -450,6 +450,14 @@ export default function AppAppBar() {
                 </Box>
                 <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
                   <IconButton 
+                    aria-label="home" 
+                    size="medium" 
+                    onClick={() => handleNavigate('/')} 
+                    sx={{ color: brand.main, borderRadius: '50%' }}
+                  >
+                    <HomeOutlinedIcon />
+                  </IconButton>
+                  <IconButton 
                     aria-label="search" 
                     size="medium" 
                     onClick={handleSearchToggle}
@@ -513,9 +521,6 @@ export default function AppAppBar() {
                           </MenuItem>
                           <MenuItem onClick={() => handleNavigate('/contacto')}>
                             Contacto
-                          </MenuItem>
-                          <MenuItem onClick={() => handleNavigate('/')}>
-                            Volver al inicio
                           </MenuItem>
                           <Divider sx={{ my: 3 }} />
                           <MenuItem>

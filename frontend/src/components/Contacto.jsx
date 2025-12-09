@@ -194,7 +194,7 @@ export default function Contacto(){
                         <IconButton
                         color="inherit"
                         size="medium"
-                        href="https://youtube.com/"
+                        href="https://www.youtube.com/@ciepacentro"
                         target='_blank'
                         rel='noopener noreferrer'
                         aria-label="YouTube"
