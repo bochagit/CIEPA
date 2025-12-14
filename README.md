@@ -110,7 +110,7 @@ El proyecto fue desarrollado en su totalidad por mí, desde el diseño del siste
 
 Se realizó un tratamiento especial para permitir HTML en los posts, manteniendo seguridad:
 
-- **DOMPurify / sanitize-html**
+- **sanitize-html**
 - Strict mode con whitelists
 - Remoción de scripts, iframes y payloads XSS
 - Permisión limitada de tags de estilo y formato
@@ -123,8 +123,6 @@ SSL
 Dominio configurado con Let’s Encrypt
 
 Redirección a https automática
-
-Cloudflare opcional como capa de seguridad
 
 📄 Licencia
 
