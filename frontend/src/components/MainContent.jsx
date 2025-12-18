@@ -522,8 +522,7 @@ export default function MainContent() {
                 fontSize: { xs: '0.75rem', lg: '0.7rem' },
                 position: 'relative',
                 top: 10,
-                left: 15,
-                zIndex: 10000
+                left: 15
               }}
             />
             <Box sx={{
