@@ -10,7 +10,8 @@ import {
   Avatar,
   Skeleton,
   Alert,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import { brand } from '../../shared-theme/themePrimitives';
@@ -21,6 +22,7 @@ import PublicIcon from '@mui/icons-material/Public';
 import { useNavigate } from 'react-router-dom';
 import { postService } from '../services/postService';
 import { eventService } from '../services/eventService';
+import { reportService } from '../services/reportService';
 import heroImage from '../assets/images/static-photos/1.jpg'
 import { Email as EmailIcon } from '@mui/icons-material';
 const SectionContainer = styled(Box)(({ theme }) => ({
@@ -140,30 +142,56 @@ export default function MainContent() {
         setLoadingPublicaciones(true)
         setErrorPublicaciones('')
 
-        const response = await postService.getAllPosts({
-          limit: 3,
+        const postsResponse = await postService.getAllPosts({
+          limit: 10,
           status: 'published',
           featured: true
         })
 
-        console.log('Posts obtenidos: ', response)
+        const reportsResponse = await reportService.getAllReports({
+          limit: 10
+        })
 
-        if (response.posts && response.posts.length > 0) {
-          const publicacionesFormateadas = response.posts.map(post => ({
-            id: post._id,
-            titulo: post.title,
-            descripcion: post.summary || post.content.substring(0, 200) + '...',
-            imagen: post.coverImage,
-            fecha: post.date,
-            autores: post.authors || []
-          }))
-          
-        setPublicaciones(publicacionesFormateadas)
-        } else {
-          setPublicaciones([])
+        console.log('Posts obtenidos: ', postsResponse)
+        console.log('Informes obtenidos: ', reportsResponse)
+
+        const allPublicaciones = []
+
+        if (postsResponse.posts && postsResponse.posts.length > 0) {
+          postsResponse.posts.forEach(post => {
+            allPublicaciones.push({
+              id: post._id,
+              tipo: 'nota',
+              titulo: post.title,
+              descripcion: post.summary || post.content.substring(0, 200) + '...',
+              imagen: post.coverImage,
+              fecha: post.date,
+              autores: post.authors || []
+            })
+          })
         }
+
+        if (reportsResponse.reports && reportsResponse.reports.length > 0) {
+          reportsResponse.reports.forEach(report => {
+            allPublicaciones.push({
+              id: report._id,
+              tipo: 'informe',
+              titulo: report.title,
+              descripcion: report.introduction || 'Informe disponible para descarga',
+              imagen: report.coverImage,
+              fecha: report.date,
+              autores: report.authors || []
+            })
+          })
+        }
+
+        const publicacionesOrdenadas = allPublicaciones
+          .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+          .slice(0, 4)
+
+        setPublicaciones(publicacionesOrdenadas)
       } catch(error) {
-        console.error('Error al cargar publicaciones: ', error)
+        console.error('Error al cargar publicaciones:', error)
         setErrorPublicaciones('Error al cargar publicaciones')
         setPublicaciones([])
       } finally {
@@ -288,8 +316,12 @@ export default function MainContent() {
 
   const handleVerPublicacion = () => {
     if (publicaciones.length > 0) {
-      const currentPost = publicaciones[currentPublicacion]
-      navigate(`/notas/${currentPost.id}`)
+      const currentItem = publicaciones[currentPublicacion]
+      if (currentItem.tipo === 'nota') {
+        navigate(`/notas/${currentItem.id}`)
+      } else {
+        navigate(`/informes/${currentItem.id}`)
+      }
     }
   }
 
@@ -480,6 +512,20 @@ export default function MainContent() {
               height: '100%',
               backgroundColor: 'rgba(0, 0, 0, .4)'
             }} />
+            <Chip
+              label={publicaciones[currentPublicacion].tipo === 'nota' ? 'Nota' : 'Informe'}
+              size="small"
+              color="primary"
+              sx={{
+                backgroundColor: publicaciones[currentPublicacion].tipo === 'nota' ? secondary.main : brand.main,
+                fontWeight: 600,
+                fontSize: { xs: '0.75rem', lg: '0.7rem' },
+                position: 'relative',
+                top: 10,
+                left: 15,
+                zIndex: 10000
+              }}
+            />
             <Box sx={{
               position: 'absolute',
               bottom: 0,
@@ -525,7 +571,7 @@ export default function MainContent() {
                 </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, flexWrap: 'wrap' }}>
                     <Typography variant="body2" sx={{ opacity: .9, fontSize: { xs: '0.875rem', lg: '0.75rem' } }}>
-                      Por {publicaciones[currentPublicacion].autores?.map(a => a.name).join(', ') || 'Sin autor'}
+                      Por {publicaciones[currentPublicacion].autores?.map(a => a.name).join(', ') || 'CIEPA'}
                     </Typography>
                     <Typography variant="body2" sx={{ opacity: .9, fontSize: { xs: '0.875rem', lg: '0.75rem' } }}>
                       {formatDateForDisplay(publicaciones[currentPublicacion].fecha)}
