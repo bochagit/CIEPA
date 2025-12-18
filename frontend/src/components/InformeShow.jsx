@@ -73,6 +73,23 @@ export default function InformeShow(){
     const [loading, setLoading] = React.useState(true)
     const [error, setError] = React.useState('')
 
+    const [showInstagramWarning, setShowInstagramWarning] = React.useState(false)
+
+    const [copied, setCopied] = React.useState(false)
+
+    const handleCopyLink = () => {
+        const url = window.location.href
+        navigator.clipboard.writeText(url)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+    }
+
+    React.useEffect(() => {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera
+        const isInstagram = /Instagram|FBAN|FBAV/i.test(userAgent)
+        setShowInstagramWarning(isInstagram)
+    }, [])
+
     const formatDateForDisplay = (dateString) => {
         if (!dateString) return ''
 
@@ -202,6 +219,38 @@ export default function InformeShow(){
             >
                 Volver a informes
             </Button>
+
+            {showInstagramWarning && (
+                <Alert 
+                    severity="info" 
+                    sx={{ 
+                        mb: 3,
+                        '& .MuiAlert-message': {
+                            width: '100%'
+                        }
+                    }}
+                >
+                    <Typography variant="body2" gutterBottom sx={{ fontWeight: 600 }}>
+                        📱 Estás navegando desde Instagram
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                        Para descargar el PDF correctamente:
+                    </Typography>
+                    <Typography variant="body2" component="div">
+                        1. Toca los <strong>tres puntos (⋯)</strong> arriba a la derecha<br />
+                        2. Selecciona <strong>"Abrir en Chrome"</strong> o <strong>"Abrir en Safari"</strong><br />
+                        3. Luego podrás descargar el PDF sin problemas
+                    </Typography>
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={handleCopyLink}
+                        sx={{ mt: 1 }}
+                    >
+                        {copied ? '✓ Enlace copiado' : 'Copiar enlace'}
+                    </Button>
+                </Alert>
+            )}
 
             <HeroSection sx={{ backgroundImage: `url(${report.coverImage})` }}>
                 <Box sx={{ position: 'relative', zIndex: 2, textAlign: 'center', color: '#fff' }}>
