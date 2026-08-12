@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './Layout'
 import SignIn from './SignIn';
 import CrudDashboard from './CrudDashboard';
@@ -21,6 +21,7 @@ import { CssBaseline } from '@mui/material';
 import Proyectos from './components/Proyectos';
 import Lineas from './components/LineasTrabajo';
 import MateriaEnergias from './components/MateriaEnergias';
+import ProblematicasSocioambientales from './components/ProblematicasSocioambientales';
 
 export default function App() {
   return (
@@ -92,9 +93,15 @@ export default function App() {
               <ActividadDetalle />
             </Layout>
           } />
-          <Route path="/cursos" element={
+          <Route path="/cursos" element={<Navigate to="/cursos/energia-y-transicion-energetica" replace />} />
+          <Route path="/cursos/energia-y-transicion-energetica" element={
             <Layout>
               <MateriaEnergias />
+            </Layout>
+          } />
+          <Route path="/cursos/problematicas-socioambientales" element={
+            <Layout>
+              <ProblematicasSocioambientales />
             </Layout>
           } />
           <Route path="/contacto" element={

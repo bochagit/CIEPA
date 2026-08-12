@@ -429,7 +429,7 @@ export default function MainContent() {
                 </Typography>
             </CardContent>
         </StyledCard>
-        <StyledCard onClick={() => navigate('/cursos')}>
+        <StyledCard onClick={() => navigate('/cursos/energia-y-transicion-energetica')}>
             <CardContent sx={{ display: 'flex', flexDirection: {xs: 'column', md: 'row'}, justifyContent: 'space-evenly', alignItems: 'center' }}>
                 <Box>
                     <Avatar sx={{ bgcolor: alpha(brand.main, 0.1), color: brand.main, width: 64, height: 64, margin: 'auto' }}>

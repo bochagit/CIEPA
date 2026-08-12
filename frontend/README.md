@@ -18,6 +18,16 @@ npm install
 npm run dev
 ```
 
+## Environment
+
+Create a local `.env` file in this folder and set the backend URL for your Render deployment:
+
+```bash
+VITE_API_BASE_URL=https://tu-backend.onrender.com/api
+```
+
+You can copy `.env.example` as a starting point.
+
 or:
 
 <!-- #target-branch-reference -->

@@ -1,6 +1,7 @@
 {
   "name": "material-ui-vite",
   "version": "7.0.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -8,26 +9,28 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@date-io/dayjs": "3.2.0",
-    "@emotion/react": "latest",
-    "@emotion/styled": "latest",
-    "@mui/icons-material": "7.3.2",
-    "@mui/material": "latest",
-    "@mui/x-data-grid": "8.11.3",
-    "@mui/x-date-pickers": "8.11.3",
-    "@mui/x-date-pickers-pro": "8.11.3",
-    "axios": "1.12.2",
-    "date-fns": "4.1.0",
-    "dayjs": "1.11.18",
-    "prop-types": "15.8.1",
-    "react": "latest",
-    "react-dom": "latest",
-    "react-quill": "2.0.0",
-    "react-router-dom": "7.9.1"
+    "@date-io/dayjs": "^3.2.0",
+    "@emotion/react": "11.14.0",
+    "@emotion/styled": "11.14.1",
+    "@mui/icons-material": "^7.3.2",
+    "@mui/material": "9.3.1",
+    "@mui/utils": "9.3.0",
+    "@mui/x-data-grid": "^8.11.3",
+    "@mui/x-date-pickers": "^8.11.3",
+    "@mui/x-date-pickers-pro": "^8.11.3",
+    "axios": "^1.19.0",
+    "date-fns": "^4.1.0",
+    "dayjs": "^1.11.18",
+    "prop-types": "^15.8.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-quill": "^2.0.0",
+    "react-router": "7.9.1",
+    "react-router-dom": "^7.9.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "latest",
-    "terser": "5.44.1",
-    "vite": "7.1.12"
+    "@vitejs/plugin-react": "^6.0.5",
+    "terser": "^5.44.1",
+    "vite": "^8.2.1"
   }
 }

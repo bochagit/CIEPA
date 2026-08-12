@@ -53,8 +53,8 @@ const menuData = {
     { label: 'Audiovisual', href: '/audiovisual' }
   ],
   formacion: [
-    { label: 'Energías y Transición energética', href: '/cursos' },
-    { label: 'Problemáticas Socioambientales', href: '/cursos' }
+    { label: 'Energías y Transición energética', href: '/cursos/energia-y-transicion-energetica' },
+    { label: 'Problemáticas Socioambientales', href: '/cursos/problematicas-socioambientales' }
   ]
 }
 
@@ -510,47 +510,57 @@ export default function AppAppBar() {
                         </IconButton>
                       </Box>
                       {!activeSubmenu ? (
-                        <>
+                        <List dense disablePadding>
                           {Object.entries(menuLabels).map(([key, label]) => (
-                            <MenuItem key={key} onClick={() => handleMainMenuClick(key)}>
-                              {label}...
-                            </MenuItem>
+                            <ListItem key={key} disablePadding>
+                              <ListItemButton onClick={() => handleMainMenuClick(key)}>
+                                <ListItemText primary={`${label}...`} />
+                              </ListItemButton>
+                            </ListItem>
                           ))}
-                          <MenuItem onClick={() => handleNavigate('/actividades')}>
-                            Actividades
-                          </MenuItem>
-                          <MenuItem onClick={() => handleNavigate('/contacto')}>
-                            Contacto
-                          </MenuItem>
+                          <ListItem disablePadding>
+                            <ListItemButton onClick={() => handleNavigate('/actividades')}>
+                              <ListItemText primary="Actividades" />
+                            </ListItemButton>
+                          </ListItem>
+                          <ListItem disablePadding>
+                            <ListItemButton onClick={() => handleNavigate('/contacto')}>
+                              <ListItemText primary="Contacto" />
+                            </ListItemButton>
+                          </ListItem>
                           <Divider sx={{ my: 3 }} />
-                          <MenuItem>
-                            {isAuthenticated ? (
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="body2">
-                                  Hola, {user?.name}
-                                </Typography>
-                                <Button color="primary" variant="outlined" size="small" onClick={handleDashboardClick}>
-                                  Dashboard
+                          <ListItem disablePadding>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 1, px: 2, width: '100%' }}>
+                              {isAuthenticated ? (
+                                <>
+                                  <Typography variant="body2">
+                                    Hola, {user?.name}
+                                  </Typography>
+                                  <Button color="primary" variant="outlined" size="small" onClick={handleDashboardClick}>
+                                    Dashboard
+                                  </Button>
+                                  <Button color="primary" variant="outlined" size="small" onClick={handleLogout}>
+                                    Cerrar sesión
+                                  </Button>
+                                </>
+                              ) : (
+                                <Button color="primary" variant="contained" size="small" onClick={handleSignInClick}>
+                                  Sign In
                                 </Button>
-                                <Button color="primary" variant="outlined" size="small" onClick={handleLogout}>
-                                  Cerrar sesión
-                                </Button>
-                              </Box>
-                            ) : (
-                              <Button color="primary" variant="contained" size="small" onClick={handleSignInClick}>
-                                Sign In
-                              </Button>
-                            )}
-                          </MenuItem>
-                        </>
+                              )}
+                            </Box>
+                          </ListItem>
+                        </List>
                       ) : (
-                        <>
+                        <List dense disablePadding>
                           {menuData[activeSubmenu].map((item, index) => (
-                            <MenuItem key={index} onClick={() => handleNavigate(item.href)}>
-                              {item.label}
-                            </MenuItem>
+                            <ListItem key={index} disablePadding>
+                              <ListItemButton onClick={() => handleNavigate(item.href)}>
+                                <ListItemText primary={item.label} />
+                              </ListItemButton>
+                            </ListItem>
                           ))}
-                        </>
+                        </List>
                       )}
                     </Box>
                   </Drawer>
