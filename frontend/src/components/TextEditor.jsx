@@ -1,7 +1,7 @@
 import { Box, useColorScheme } from '@mui/material'
 import React, { useState, useRef } from 'react'
-import ReactQuill from 'react-quill'
-import 'react-quill/dist/quill.snow.css'
+import ReactQuill from 'react-quill-new'
+import 'react-quill-new/dist/quill.snow.css'
 import { secondary } from '../../shared-theme/themePrimitives'
 import { uploadService } from '../services/uploadCloudinary'
 
