@@ -240,6 +240,7 @@ export default function TextEditor({ value = '', onChange, onUploadChange, place
             <ReactQuill 
                 ref={quillRef}
                 theme='snow' 
+                useSemanticHTML={false}
                 value={content}
                 onChange={handleChange}
                 modules={modules}
